@@ -5,7 +5,8 @@ import sys
 import traceback
 import glob
 import csv
-from datetime import datetime
+#from datetime import datetime, timedelta
+import datetime
 import statistics
 
 import numpy
@@ -15,26 +16,54 @@ _script_home = os.path.dirname(os.path.abspath(__file__))
 
 def _ave_onset_repconf(csv_reader):
     days_diff = []
-    row_num = 1
     for row in csv_reader:
-        if row["DateOnset"] and row["DateRepConf"]:
+        case_code = row["CaseCode"]
+        onset = row["DateOnset"]
+        repconf = row["DateRepConf"]
+        if onset and repconf and (onset <= repconf):
             try:
-                diff = (datetime.strptime(row["DateRepConf"], "%Y-%m-%d")
-                        - datetime.strptime(row["DateOnset"], "%Y-%m-%d"))
+                daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
+                dateonset = datetime.datetime.strptime(onset, "%Y-%m-%d")
+                diff = daterepconf - dateonset
                 days_diff.append(diff.days)
-                row_num += 1
             except ValueError as e:
-                print("row num: " + str(row_num))
+                print("CaseCode: " + str(case_code))
                 print(e)
     stdev = statistics.stdev(days_diff)
     mean = numpy.mean(days_diff)
+    minimum = min(days_diff)
+    maximum = max(days_diff)
+    percentile10th = numpy.percentile(days_diff, 10)
+    percentile50th = numpy.percentile(days_diff, 50)
+    percentile90th = numpy.percentile(days_diff, 90)
     print("std dev: " + str(stdev))
-    print("mean: " + str())
-    return mean
+    print("mean: " + str(mean))
+    print("min: " + str(minimum))
+    print("max: " + str(maximum))
+    print("10th percentile: " + str(percentile10th))
+    print("50th percentile: " + str(percentile50th))
+    print("90th percentile: " + str(percentile90th))
+    return int(mean)
 
-def _consolidate_daily(csv_reader):
+def _consolidate_daily(csv_reader, rep_delay):
+    """Return a list containing the list of daily onset and daily repconf.
+    """
+    day_onset = []
+    for row in csv_reader:
+        case_code = row["CaseCode"]
+        onset = row["DateOnset"]
+        repconf = row["DateRepConf"]
+        daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
+        dateonset = None
+    if onset:
+        dateonset = datetime.datetime.strptime(onset, "%Y-%m-%d")
+    else:
+        # onset is assumed using the mean RepConf delay
+         dateonset = daterepconf - datetime.timedelta(days=rep_delay)
+
+
+def _consolidate_daily_deaths(csv_reader):
     day_case = []
-
 
 def _read_case_information():
     ci_file_name = ""
@@ -42,14 +71,12 @@ def _read_case_information():
         ci_file_name = name
         # We expect the name to be unique.
         break
-    with open(ci_file_name) as ci_file:
-        csv_reader = csv.DictReader(ci_file)
-        rep_delay = _ave_onset_repconf(csv_reader)
-
+    return csv.DictReader(open(ci_file_name))
 
 
 def main():
-    _read_case_information()
+    csv_reader = _read_case_information()
+    rep_delay = _ave_onset_repconf(csv_reader)
     return
 
 
