@@ -14,9 +14,9 @@ import numpy
 _script_home = os.path.dirname(os.path.abspath(__file__))
 
 
-def ave_onset_repconf(csv_reader):
+def ave_onset_repconf(data):
     days_diff = []
-    for row in csv_reader:
+    for row in data:
         case_code = row["CaseCode"]
         onset = row["DateOnset"]
         repconf = row["DateRepConf"]
@@ -45,43 +45,48 @@ def ave_onset_repconf(csv_reader):
     print("90th percentile: " + str(percentile90th))
     return int(mean)
 
-def consolidate_daily_repconf(csv_reader, rep_delay):
+def consolidate_daily_repconf(data):
     """Return a dictionary containing repconf.
     """
-    day_repconf = {}
-    for row in csv_reader:
+    daily_repconf = {}
+    for row in data:
         case_code = row["CaseCode"]
-        print("case code " + case_code)
         repconf = row["DateRepConf"]
+        if not repconf:
+            # Not to sure of what to do with empty entries at this point.
+            continue
         daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
-        if daterepconf not in day_repconf:
-            print("creating entry for: " + str(daterepconf))
-            day_repconf[daterepconf] = 1
+        if daterepconf not in daily_repconf:
+            daily_repconf[daterepconf] = 1
         else:
-            print("adding to :" + str(daterepconf))
-            day_repconf[daterepconf] += 1
-    print(sorted(day_repconf))
-    return day_repconf
+            daily_repconf[daterepconf] += 1
+    return sorted(daily_repconf)
 
-def _consolidate_daily_onset(csv_reader, rep_delay):
+def _consolidate_daily_onset(data, rep_delay):
     """Return a dictionary containing daily onset.
     """
-    day_onset = {}
-    day_repconf = {}
-    for row in csv_reader:
+    daily_onset = {}
+    for row in data:
         case_code = row["CaseCode"]
         onset = row["DateOnset"]
         repconf = row["DateRepConf"]
-        daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
         dateonset = None
         if onset:
             dateonset = datetime.datetime.strptime(onset, "%Y-%m-%d")
         else:
             # onset is assumed using the mean RepConf delay
+            if not repconf:
+                # Not to sure of what to do with empty entries at this point.
+                continue
+            daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
             dateonset = daterepconf - datetime.timedelta(days=rep_delay)
+        if dateonset not in daily_onset:
+            daily_onset[dateonset] = 1
+        else:
+            daily_onset[dateonset] += 1
+    return sorted(daily_onset)
 
-
-def consolidate_daily_deaths(csv_reader):
+def consolidate_daily_deaths(data):
     day_case = []
 
 def read_case_information():
@@ -90,15 +95,14 @@ def read_case_information():
         ci_file_name = name
         # We expect the name to be unique.
         break
-    return csv.DictReader(open(ci_file_name))
-
+    return list(csv.DictReader(open(ci_file_name)))
 
 def main():
-    csv_reader = read_case_information()
+    data = read_case_information()
     # TODO: convert to multithread
-    rep_delay = ave_onset_repconf(csv_reader)
-    # FIXME: looks like csv reader cannot be used more than once.
-    consolidate_daily_repconf(csv_reader, rep_delay)
+    rep_delay = ave_onset_repconf(data)
+    daily_repconf = consolidate_daily_repconf(data)
+    daily_onset = _consolidate_daily_onset(data, rep_delay)
     return
 
 
