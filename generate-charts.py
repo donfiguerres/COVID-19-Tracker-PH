@@ -33,19 +33,19 @@ def ave_onset_repconf(data):
     mean = numpy.mean(days_diff)
     minimum = min(days_diff)
     maximum = max(days_diff)
-    percentile10th = numpy.percentile(days_diff, 10)
+    percentile5th = numpy.percentile(days_diff, 5)
     percentile50th = numpy.percentile(days_diff, 50)
-    percentile90th = numpy.percentile(days_diff, 90)
+    percentile95th = numpy.percentile(days_diff, 95)
     print("std dev: " + str(stdev))
     print("mean: " + str(mean))
     print("min: " + str(minimum))
     print("max: " + str(maximum))
-    print("10th percentile: " + str(percentile10th))
+    print("5th percentile: " + str(percentile5th))
     print("50th percentile: " + str(percentile50th))
-    print("90th percentile: " + str(percentile90th))
+    print("95th percentile: " + str(percentile95th))
     return int(mean)
 
-def consolidate_daily_repconf(data):
+def aggregate_daily_repconf(data):
     """Return a dictionary containing repconf.
     """
     daily_repconf = {}
@@ -62,7 +62,7 @@ def consolidate_daily_repconf(data):
             daily_repconf[daterepconf] += 1
     return sorted(daily_repconf)
 
-def _consolidate_daily_onset(data, rep_delay):
+def aggregate_daily_onset(data, rep_delay):
     """Return a dictionary containing daily onset.
     """
     daily_onset = {}
@@ -86,7 +86,7 @@ def _consolidate_daily_onset(data, rep_delay):
             daily_onset[dateonset] += 1
     return sorted(daily_onset)
 
-def consolidate_daily_deaths(data):
+def aggregate_daily_deaths(data):
     day_case = []
 
 def read_case_information():
@@ -101,8 +101,8 @@ def main():
     data = read_case_information()
     # TODO: convert to multithread
     rep_delay = ave_onset_repconf(data)
-    daily_repconf = consolidate_daily_repconf(data)
-    daily_onset = _consolidate_daily_onset(data, rep_delay)
+    daily_repconf = aggregate_daily_repconf(data)
+    daily_onset = aggregate_daily_onset(data, rep_delay)
     return
 
 
