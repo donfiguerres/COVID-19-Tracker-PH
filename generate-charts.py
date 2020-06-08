@@ -86,11 +86,6 @@ def aggregate_daily_onset(data, rep_delay):
             daily_onset[dateonset] += 1
     return sorted(daily_onset)
 
-def filter_deaths(data):
-    death_filter = data['RemovalType'] == 'Died'
-    death_list = data[death_filter]
-    return death_list
-
 def filter_active_closed(data):
     active_filter = data.RemovalType.isnull()
     active_data = data[active_filter]
