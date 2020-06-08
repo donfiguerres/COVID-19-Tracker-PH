@@ -5,18 +5,18 @@ import sys
 import traceback
 import glob
 import csv
-#from datetime import datetime, timedelta
 import datetime
 import statistics
 
-import numpy
+import numpy as np
+import pandas as pd
 
 _script_home = os.path.dirname(os.path.abspath(__file__))
 
 
 def ave_onset_repconf(data):
     days_diff = []
-    for row in data:
+    for row in data.iterrows():
         case_code = row["CaseCode"]
         onset = row["DateOnset"]
         repconf = row["DateRepConf"]
@@ -30,12 +30,12 @@ def ave_onset_repconf(data):
                 print("CaseCode: " + str(case_code))
                 print(e)
     stdev = statistics.stdev(days_diff)
-    mean = numpy.mean(days_diff)
+    mean = np.mean(days_diff)
     minimum = min(days_diff)
     maximum = max(days_diff)
-    percentile5th = numpy.percentile(days_diff, 5)
-    percentile50th = numpy.percentile(days_diff, 50)
-    percentile95th = numpy.percentile(days_diff, 95)
+    percentile5th = np.percentile(days_diff, 5)
+    percentile50th = np.percentile(days_diff, 50)
+    percentile95th = np.percentile(days_diff, 95)
     print("std dev: " + str(stdev))
     print("mean: " + str(mean))
     print("min: " + str(minimum))
@@ -86,8 +86,17 @@ def aggregate_daily_onset(data, rep_delay):
             daily_onset[dateonset] += 1
     return sorted(daily_onset)
 
-def aggregate_daily_deaths(data):
-    day_case = []
+def filter_deaths(data):
+    death_filter = data['RemovalType'] == 'Died'
+    death_list = data[death_filter]
+    return death_list
+
+def filter_active_closed(data):
+    active_filter = data.RemovalType.isnull()
+    active_data = data[active_filter]
+    closed_filter = [not i for i in active_filter]
+    closed_data = data[closed_filter]
+    return active_data, closed_data
 
 def read_case_information():
     ci_file_name = ""
@@ -95,14 +104,18 @@ def read_case_information():
         ci_file_name = name
         # We expect the name to be unique.
         break
-    return list(csv.DictReader(open(ci_file_name)))
+    #return list(csv.DictReader(open(ci_file_name)))
+    return pd.read_csv(ci_file_name)
+
 
 def main():
     data = read_case_information()
     # TODO: convert to multithread
-    rep_delay = ave_onset_repconf(data)
-    daily_repconf = aggregate_daily_repconf(data)
-    daily_onset = aggregate_daily_onset(data, rep_delay)
+    print("Shape: " + str(data.shape))
+    #repconf_delay = ave_onset_repconf(data)
+    active_data, closed_data = filter_active_closed(data)
+    print(active_data.head())
+    print(closed_data.head())
     return
 
 
