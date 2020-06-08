@@ -16,19 +16,22 @@ _script_home = os.path.dirname(os.path.abspath(__file__))
 
 def ave_onset_repconf(data):
     days_diff = []
-    for row in data.iterrows():
+    repconf_filter = data.DateRepConf.notnull()
+    data = data[repconf_filter]
+    onset_filter = data.DateOnset.notnull()
+    data = data[onset_filter]
+    for index, row in data.iterrows():
         case_code = row["CaseCode"]
         onset = row["DateOnset"]
         repconf = row["DateRepConf"]
-        if onset and repconf and (onset <= repconf):
-            try:
-                daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
-                dateonset = datetime.datetime.strptime(onset, "%Y-%m-%d")
-                diff = daterepconf - dateonset
-                days_diff.append(diff.days)
-            except ValueError as e:
-                print("CaseCode: " + str(case_code))
-                print(e)
+        try:
+            daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
+            dateonset = datetime.datetime.strptime(onset, "%Y-%m-%d")
+            diff = daterepconf - dateonset
+            days_diff.append(diff.days)
+        except ValueError as e:
+            print("CaseCode: " + str(case_code))
+            print(e)
     stdev = statistics.stdev(days_diff)
     mean = np.mean(days_diff)
     minimum = min(days_diff)
@@ -107,7 +110,7 @@ def main():
     data = read_case_information()
     # TODO: convert to multithread
     print("Shape: " + str(data.shape))
-    #repconf_delay = ave_onset_repconf(data)
+    repconf_delay = ave_onset_repconf(data)
     active_data, closed_data = filter_active_closed(data)
     print(active_data.head())
     print(closed_data.head())
