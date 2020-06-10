@@ -11,7 +11,8 @@ import statistics
 import numpy as np
 import pandas as pd
 
-_script_home = os.path.dirname(os.path.abspath(__file__))
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def ave_onset_repconf(data):
@@ -98,7 +99,7 @@ def filter_active_closed(data):
 
 def read_case_information():
     ci_file_name = ""
-    for name in glob.glob(f"{_script_home}/data/*Case Information.csv"):
+    for name in glob.glob(f"{SCRIPT_DIR}/data/*Case Information.csv"):
         ci_file_name = name
         # We expect the name to be unique.
         break
