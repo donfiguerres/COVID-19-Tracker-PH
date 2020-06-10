@@ -7,6 +7,8 @@ import glob
 import csv
 import datetime
 import statistics
+import logging
+import argparse
 
 import numpy as np
 import pandas as pd
@@ -15,6 +17,11 @@ import pandas as pd
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+def _parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--loglevel", help="set log level")
+    return parser.parse_args()
+
 def ave_onset_repconf(data):
     days_diff = []
     repconf_filter = data.DateRepConf.notnull()
@@ -22,32 +29,25 @@ def ave_onset_repconf(data):
     onset_filter = data.DateOnset.notnull()
     data = data[onset_filter]
     for index, row in data.iterrows():
-        case_code = row["CaseCode"]
-        onset = row["DateOnset"]
-        repconf = row["DateRepConf"]
         try:
-            daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
-            dateonset = datetime.datetime.strptime(onset, "%Y-%m-%d")
+            case_code = row['CaseCode']
+            daterepconf = datetime.datetime.strptime(row['DateRepConf'], "%Y-%m-%d")
+            dateonset = datetime.datetime.strptime(row['DateOnset'], "%Y-%m-%d")
+            if dateonset > daterepconf:
+                logging.debug(f"Dates for Case Code {case_code} need to be validated."
+                        + f" DateOnset: {dateonset} , DateRepConf: {daterepconf}")
+                continue
             diff = daterepconf - dateonset
             days_diff.append(diff.days)
         except ValueError as e:
-            print("CaseCode: " + str(case_code))
+            print("CaseCode: " + str(row["CaseCode"]))
             print(e)
-    stdev = statistics.stdev(days_diff)
-    mean = np.mean(days_diff)
-    minimum = min(days_diff)
-    maximum = max(days_diff)
-    percentile5th = np.percentile(days_diff, 5)
     percentile50th = np.percentile(days_diff, 50)
-    percentile95th = np.percentile(days_diff, 95)
-    print("std dev: " + str(stdev))
-    print("mean: " + str(mean))
-    print("min: " + str(minimum))
-    print("max: " + str(maximum))
-    print("5th percentile: " + str(percentile5th))
+    print("min: " + str(min(days_diff)))
+    print("max: " + str(max(days_diff)))
     print("50th percentile: " + str(percentile50th))
-    print("95th percentile: " + str(percentile95th))
-    return int(mean)
+    print("90th percentile: " + str(np.percentile(days_diff, 90)))
+    return int(percentile50th)
 
 def aggregate_daily_repconf(data):
     """Return a dictionary containing repconf.
@@ -101,26 +101,28 @@ def read_case_information():
     ci_file_name = ""
     for name in glob.glob(f"{SCRIPT_DIR}/data/*Case Information.csv"):
         ci_file_name = name
-        # We expect the name to be unique.
+        # We expect to have only one file.
         break
-    #return list(csv.DictReader(open(ci_file_name)))
     return pd.read_csv(ci_file_name)
 
 
 def main():
+    args = _parse_args()
     data = read_case_information()
+    numeric_level = getattr(logging, args.loglevel.upper())
+    logging.basicConfig(level=numeric_level)
     # TODO: convert to multithread
-    print("Shape: " + str(data.shape))
+    logging.debug("Shape: " + str(data.shape))
     repconf_delay = ave_onset_repconf(data)
     active_data, closed_data = filter_active_closed(data)
-    print(active_data.head())
-    print(closed_data.head())
-    return
+    logging.debug(active_data.head())
+    logging.debug(closed_data.head())
+    return 0
 
 
 if __name__ == "__main__":
     try:
         sys.exit(main())
     except Exception:
-        print(traceback.format_exc())
+        logging.error(traceback.format_exc())
         sys.exit(1)
