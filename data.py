@@ -14,6 +14,7 @@ import logging
 import traceback
 import io
 import requests
+import re
 
 import pickle
 from googleapiclient.discovery import build
@@ -57,6 +58,12 @@ def build_gdrive_service():
             pickle.dump(creds, token)
     return build('drive', 'v3', credentials=creds)
 
+def get_gdrive_id(url):
+    matches = re.findall(r"[-\w]{25,}", url)
+    # We only expect one match from the URL.
+    for m in matches:
+        return m
+
 def download_gdrive_file(drive_service, file_id):
     request = drive_service.files().get_media(fileId=file_id)
     fh = open(README_FILE_NAME, 'wb')
@@ -97,6 +104,7 @@ def extract_datadrop_link(filename):
                         return url
     raise PDFParsingError(f"Failed to extract datadrop link from {filename}")
 
+
 def get_full_url(url):
     return requests.head(url).headers['location']
 
@@ -106,6 +114,7 @@ def main():
     download_gdrive_file(drive_service, readme_file_id)
     extracted_url = extract_datadrop_link(README_FILE_NAME)
     full_url = get_full_url(extracted_url)
+    get_gdrive_id(full_url)
     return 0
 
 if __name__ == "__main__":
