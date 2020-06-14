@@ -94,6 +94,8 @@ def download_data_files(drive_service, folder_id):
                 q=f"mimeType='application/pdf' and parents in '{folder_id}' and trashed = false",
                 fields="nextPageToken, files(id, name)").execute()
     items = results.get('files', [])
+    if not items:
+        logging.warning(f"No files listed in folder ID: {folder_id}")
     for item in items:
         print(f"Found file: {item['name']}")
         download_path = os.path.join(DATA_DIR, item['name'])
