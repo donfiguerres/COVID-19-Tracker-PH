@@ -27,7 +27,7 @@ import PyPDF2
 
 CREDENTIALS_PATH = "credentials.json"
 TOKEN = "token.pickle"
-ACCESS_SCOPES = ['https://www.googleapis.com/auth/drive']
+ACCESS_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
 README_FILE_NAME = "READ ME FIRST.pdf"
 DATA_DIR = "data"
