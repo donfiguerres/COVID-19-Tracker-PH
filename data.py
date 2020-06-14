@@ -12,12 +12,14 @@ import os
 import sys
 import logging
 import traceback
+import io
 
 import pickle
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from apiclient import errors
+from googleapiclient import errors
+from googleapiclient.http import MediaIoBaseDownload
 
 
 class RemoteFileNotFoundError(Exception):
@@ -29,7 +31,7 @@ def build_gdrive_service():
     creds = None
     CREDENTIALS_FILE_PATH = "credentials.json"
     TOKEN_FILE_PATH = "token.pickle"
-    GDRIVE_SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
+    GDRIVE_SCOPES = ['https://www.googleapis.com/auth/drive']
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
@@ -48,11 +50,19 @@ def build_gdrive_service():
             pickle.dump(creds, token)
     return build('drive', 'v3', credentials=creds)
 
+def download_gdrive_file(drive_service, file_id):
+    request = drive_service.files().get_media(fileId=file_id)
+    fh = open("READ ME FIRST.pdf", 'wb')
+    downloader = MediaIoBaseDownload(fh, request)
+    done = False
+    while done is False:
+        status, done = downloader.next_chunk()
+        logging("Download %d%%." % int(status.progress() * 100))
 
 def get_readme_id(drive_service):
     DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
     results = drive_service.files().list(
-                q=f"name contains 'READ ME' and parents in '{DOH_README_FOLDER_ID}' and trashed = false",
+                q=f"mimeType='application/pdf' and name contains 'READ ME' and parents in '{DOH_README_FOLDER_ID}' and trashed = false",
                 fields="nextPageToken, files(id, name)").execute()
     items = results.get('files', [])
     if not items:
@@ -62,11 +72,13 @@ def get_readme_id(drive_service):
         if len(items) > 1:
             logging.warning("The READ ME contents have changed.")
         for item in items:
+            logging.info(f"Found file: {item['name']}")
             return item['id']
 
 def main():
     drive_service = build_gdrive_service()
     readme_file_id = get_readme_id(drive_service)
+    download_gdrive_file(drive_service, readme_file_id)
     return 0
 
 if __name__ == "__main__":
