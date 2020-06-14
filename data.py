@@ -25,7 +25,11 @@ from googleapiclient.http import MediaIoBaseDownload
 import PyPDF2
 
 
+CREDENTIALS_PATH = "credentials.json"
+TOKEN = "token.pickle"
+ACCESS_SCOPES = ['https://www.googleapis.com/auth/drive']
 README_FILE_NAME = "READ ME FIRST.pdf"
+DATA_DIR = "data"
 
 class RemoteFileNotFoundError(Exception):
     pass
@@ -34,27 +38,24 @@ class PDFParsingError(Exception):
     pass
 
 
-def build_gdrive_service():
+def build_gdrive_service(credentials_path, token_path, scopes):
     """ This function is derived from the Google Drive API quickstart guide. """
     creds = None
-    CREDENTIALS_FILE_PATH = "credentials.json"
-    TOKEN_FILE_PATH = "token.pickle"
-    GDRIVE_SCOPES = ['https://www.googleapis.com/auth/drive']
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists(TOKEN_FILE_PATH):
-        with open(TOKEN_FILE_PATH, 'rb') as token:
+    if os.path.exists(token_path):
+        with open(token_path, 'rb') as token:
             creds = pickle.load(token)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                                CREDENTIALS_FILE_PATH, GDRIVE_SCOPES)
+                                credentials_path, scopes)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open(TOKEN_FILE_PATH, 'wb') as token:
+        with open(token_path, 'wb') as token:
             pickle.dump(creds, token)
     return build('drive', 'v3', credentials=creds)
 
@@ -64,14 +65,15 @@ def get_gdrive_id(url):
     for m in matches:
         return m
 
-def download_gdrive_file(drive_service, file_id):
+def download_gdrive_file(drive_service, file_id, name):
     request = drive_service.files().get_media(fileId=file_id)
-    fh = open(README_FILE_NAME, 'wb')
+    fh = open(name, 'wb')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
+    logging.info(f"Downloading {name}")
     while done is False:
         status, done = downloader.next_chunk()
-        logging.info("Download %d%%." % int(status.progress() * 100))
+        logging.info("Downloading %d%%." % int(status.progress() * 100))
 
 def get_readme_id(drive_service):
     DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
@@ -86,6 +88,16 @@ def get_readme_id(drive_service):
         logging.info(f"Found file: {item['name']}")
         return item['id']
     raise RemoteFileNotFoundError("DOH Readme Not Found")
+
+def download_data_files(drive_service, folder_id):
+    results = drive_service.files().list(
+                q=f"mimeType='application/pdf' and parents in '{folder_id}' and trashed = false",
+                fields="nextPageToken, files(id, name)").execute()
+    items = results.get('files', [])
+    for item in items:
+        print(f"Found file: {item['name']}")
+        download_path = os.path.join(DATA_DIR, item['name'])
+        download_gdrive_file(drive_service, item['id'], download_path)
 
 def extract_datadrop_link(filename):
     pdf = PyPDF2.PdfFileReader(filename)
@@ -104,17 +116,17 @@ def extract_datadrop_link(filename):
                         return url
     raise PDFParsingError(f"Failed to extract datadrop link from {filename}")
 
-
 def get_full_url(url):
     return requests.head(url).headers['location']
 
 def main():
-    drive_service = build_gdrive_service()
+    drive_service = build_gdrive_service(CREDENTIALS_PATH, TOKEN, ACCESS_SCOPES)
     readme_file_id = get_readme_id(drive_service)
-    download_gdrive_file(drive_service, readme_file_id)
+    download_gdrive_file(drive_service, readme_file_id, README_FILE_NAME)
     extracted_url = extract_datadrop_link(README_FILE_NAME)
     full_url = get_full_url(extracted_url)
-    get_gdrive_id(full_url)
+    gdrive_data_folder_id = get_gdrive_id(full_url)
+    download_data_files(drive_service, gdrive_data_folder_id)
     return 0
 
 if __name__ == "__main__":
