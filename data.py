@@ -28,6 +28,7 @@ import PyPDF2
 CREDENTIALS_PATH = "credentials.json"
 TOKEN = "token.pickle"
 ACCESS_SCOPES = ['https://www.googleapis.com/auth/drive']
+DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
 README_FILE_NAME = "READ ME FIRST.pdf"
 DATA_DIR = "data"
 
@@ -76,7 +77,6 @@ def download_gdrive_file(drive_service, file_id, name):
         logging.info("Downloading %d%%." % int(status.progress() * 100))
 
 def get_readme_id(drive_service):
-    DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
     results = drive_service.files().list(
                 q=f"mimeType='application/pdf' and name contains 'READ ME' and parents in '{DOH_README_FOLDER_ID}' and trashed = false",
                 fields="nextPageToken, files(id, name)").execute()
