@@ -70,15 +70,13 @@ def get_readme_id(drive_service):
                 q=f"mimeType='application/pdf' and name contains 'READ ME' and parents in '{DOH_README_FOLDER_ID}' and trashed = false",
                 fields="nextPageToken, files(id, name)").execute()
     items = results.get('files', [])
-    if not items:
-        raise RemoteFileNotFoundError("DOH Readme Not Found")
-    else:
-        # We expect only one file in the folder.
-        if len(items) > 1:
-            logging.warning("The READ ME contents have changed.")
-        for item in items:
-            logging.info(f"Found file: {item['name']}")
-            return item['id']
+    # We expect only one file in the folder.
+    if len(items) > 1:
+        logging.warning("The READ ME contents have changed.")
+    for item in items:
+        logging.info(f"Found file: {item['name']}")
+        return item['id']
+    raise RemoteFileNotFoundError("DOH Readme Not Found")
 
 
 def extract_datadrop_link(filename):
