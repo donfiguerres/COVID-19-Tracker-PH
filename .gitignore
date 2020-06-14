@@ -121,6 +121,9 @@ $RECYCLE.BIN/
 .vscode
 *.code-workspace
 
+# Google Drive API
+credentials.json
+token.pickle
+
 # project directories
-data
 images
