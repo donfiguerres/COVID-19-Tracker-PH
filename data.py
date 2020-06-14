@@ -22,7 +22,12 @@ from googleapiclient import errors
 from googleapiclient.http import MediaIoBaseDownload
 
 
+README_FILE_NAME = "READ ME FIRST.pdf"
+
 class RemoteFileNotFoundError(Exception):
+    pass
+
+class PDFParsingError(Exception):
     pass
 
 
@@ -52,12 +57,12 @@ def build_gdrive_service():
 
 def download_gdrive_file(drive_service, file_id):
     request = drive_service.files().get_media(fileId=file_id)
-    fh = open("READ ME FIRST.pdf", 'wb')
+    fh = open(README_FILE_NAME, 'wb')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
     while done is False:
         status, done = downloader.next_chunk()
-        logging("Download %d%%." % int(status.progress() * 100))
+        logging.info("Download %d%%." % int(status.progress() * 100))
 
 def get_readme_id(drive_service):
     DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
@@ -75,10 +80,31 @@ def get_readme_id(drive_service):
             logging.info(f"Found file: {item['name']}")
             return item['id']
 
+
+def extract_datadrop_link(filename):
+    import PyPDF2
+    pdf = PyPDF2.PdfFileReader(filename)
+    for page in range(pdf.numPages):
+        logging.debug(f"Reading PDF page: {page}")
+        pdfPage = pdf.getPage(page)
+        pageObject = pdfPage.getObject()
+        if '/Annots' in pageObject.keys():
+            ann = pageObject['/Annots']
+            for a in ann:
+                u = a.getObject()
+                if '/URI' in u['/A'].keys():
+                    url = u['/A']['/URI']
+                    logging.debug(f"URL: {url}")
+                    if "DataDropArchives" not in url and "mailto:" not in url:
+                        return url
+    raise PDFParsingError(f"Failed to extract datadrop link from {filename}")
+
+
 def main():
     drive_service = build_gdrive_service()
     readme_file_id = get_readme_id(drive_service)
     download_gdrive_file(drive_service, readme_file_id)
+    extracted_url = extract_datadrop_link(README_FILE_NAME)
     return 0
 
 if __name__ == "__main__":
