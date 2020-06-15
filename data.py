@@ -25,7 +25,7 @@ from googleapiclient.http import MediaIoBaseDownload
 import PyPDF2
 
 
-CREDENTIALS_PATH = "credentials.json"
+CLIENT_KEY_PATH = "client_secret.json"
 TOKEN = "token.pickle"
 ACCESS_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
@@ -66,12 +66,22 @@ def get_gdrive_id(url):
     for m in matches:
         return m
 
-def download_gdrive_file(drive_service, file_id, name):
+def fix_readme_path(path):
+    """" Replace the forward slash in path with underscore to avoid path errors.
+    This is added to address the naming convention followed in the README PDF
+    files. e.g. 01 READ ME FIRST (06/07).pdf
+    """
+    newpath = re.sub(r" (\(\d+)/(\d+\))", r"", path)
+    return newpath
+
+def download_gdrive_file(drive_service, file_id, download_path):
     request = drive_service.files().get_media(fileId=file_id)
-    fh = open(name, 'wb')
+    if "READ ME" in download_path:
+        download_path = fix_readme_path(download_path)
+    fh = open(download_path, 'wb+')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
-    logging.info(f"Downloading {name}")
+    logging.info(f"Downloading {download_path}")
     while done is False:
         status, done = downloader.next_chunk()
         logging.info("Downloading %d%%." % int(status.progress() * 100))
@@ -91,8 +101,10 @@ def get_readme_id(drive_service):
 
 def download_data_files(drive_service, folder_id):
     results = drive_service.files().list(
-                q=f"mimeType='application/pdf' and parents in '{folder_id}' and trashed = false",
-                fields="nextPageToken, files(id, name)").execute()
+                q=f"parents in '{folder_id}' and trashed = false",
+                fields="nextPageToken, files(id, name)",
+                supportsAllDrives=True,
+                includeItemsFromAllDrives=True).execute()
     items = results.get('files', [])
     if not items:
         logging.warning(f"No files listed in folder ID: {folder_id}")
@@ -122,7 +134,7 @@ def get_full_url(url):
     return requests.head(url).headers['location']
 
 def main():
-    drive_service = build_gdrive_service(CREDENTIALS_PATH, TOKEN, ACCESS_SCOPES)
+    drive_service = build_gdrive_service(CLIENT_KEY_PATH, TOKEN, ACCESS_SCOPES)
     readme_file_id = get_readme_id(drive_service)
     download_gdrive_file(drive_service, readme_file_id, README_FILE_NAME)
     extracted_url = extract_datadrop_link(README_FILE_NAME)
