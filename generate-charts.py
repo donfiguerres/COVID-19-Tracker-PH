@@ -13,6 +13,8 @@ import argparse
 import numpy as np
 import pandas as pd
 
+import datadrop
+
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -105,18 +107,23 @@ def read_case_information():
         break
     return pd.read_csv(ci_file_name)
 
+def set_loglevel(loglevel):
+    numeric_level = getattr(logging, loglevel.upper())
+    logging.basicConfig(level=numeric_level)
 
 def main():
     args = _parse_args()
-    data = read_case_information()
-    numeric_level = getattr(logging, args.loglevel.upper())
-    logging.basicConfig(level=numeric_level)
+    set_loglevel(args.loglevel)
     # TODO: convert to multithread
+    datadrop.download()
+    data = read_case_information()
     logging.debug("Shape: " + str(data.shape))
     repconf_delay = ave_onset_repconf(data)
     active_data, closed_data = filter_active_closed(data)
     logging.debug(active_data.head())
     logging.debug(closed_data.head())
+    data_daily = data['DateRepConf'].value_counts()
+    logging.debug(data_daily)
     return 0
 
 
