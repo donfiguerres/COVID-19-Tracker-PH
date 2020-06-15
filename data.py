@@ -67,12 +67,16 @@ def get_gdrive_id(url):
         return m
 
 def trim_readme_name(name):
-    """" Remove date in name for easier tracking in the repo. """
+    """"Remove date in name for easier tracking in the repo."""
     return re.sub(r" (\(\d+)/(\d+\))", r"", name)
 
 def trim_data_file_name(name):
-    """" Remove date in name for easier tracking in the repo. """
+    """"Remove date in name for easier tracking in the repo."""
     return re.sub(r"(DOH COVID Data Drop_ \d{8} - )", r"", name)
+
+def trim_excel_file_name(name):
+    """"Remove date in name for easier tracking in the repo."""
+    return re.sub(r" \d{8}", r"", name)
 
 def download_gdrive_file(drive_service, file_id, download_path):
     request = drive_service.files().get_media(fileId=file_id)
@@ -123,10 +127,10 @@ def download_data_files(drive_service, folder_id):
             file_name = trim_readme_name(file_name)
         elif ".csv" in file_name:
             file_name = trim_data_file_name(file_name)
+        elif ".xlsx" in file_name:
+            file_name = trim_excel_file_name(file_name)
         download_path = os.path.join(DATA_DIR, file_name)
         download_gdrive_file(drive_service, item['id'], download_path)
-
-
 
 def extract_datadrop_link(filename):
     pdf = PyPDF2.PdfFileReader(filename)
