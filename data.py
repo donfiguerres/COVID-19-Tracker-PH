@@ -89,7 +89,9 @@ def download_gdrive_file(drive_service, file_id, download_path):
 def get_readme_id(drive_service):
     results = drive_service.files().list(
                 q=f"mimeType='application/pdf' and name contains 'READ ME' and parents in '{DOH_README_FOLDER_ID}' and trashed = false",
-                fields="nextPageToken, files(id, name)").execute()
+                fields="nextPageToken, files(id, name)",
+                supportsAllDrives=True,
+                includeItemsFromAllDrives=True).execute()
     items = results.get('files', [])
     # We expect only one file in the folder.
     if len(items) > 1:
