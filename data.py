@@ -128,10 +128,10 @@ def extract_datadrop_link(filename):
     pdf = PyPDF2.PdfFileReader(filename)
     for page in range(pdf.numPages):
         logging.debug(f"Reading PDF page: {page}")
-        pdfPage = pdf.getPage(page)
-        pageObject = pdfPage.getObject()
-        if '/Annots' in pageObject.keys():
-            ann = pageObject['/Annots']
+        pdf_page = pdf.getPage(page)
+        page_object = pdf_page.getObject()
+        if '/Annots' in page_object.keys():
+            ann = page_object['/Annots']
             for a in ann:
                 u = a.getObject()
                 if '/URI' in u['/A'].keys():
