@@ -76,8 +76,6 @@ def fix_readme_path(path):
 
 def download_gdrive_file(drive_service, file_id, download_path):
     request = drive_service.files().get_media(fileId=file_id)
-    if "READ ME" in download_path:
-        download_path = fix_readme_path(download_path)
     fh = open(download_path, 'wb+')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
@@ -101,7 +99,7 @@ def get_readme_id(drive_service):
         return item['id']
     raise RemoteFileNotFoundError("DOH Readme Not Found")
 
-def download_data_files(drive_service, folder_id):
+def list_data_files(drive_service, folder_id):
     results = drive_service.files().list(
                 q=f"parents in '{folder_id}' and trashed = false",
                 fields="nextPageToken, files(id, name)",
@@ -109,10 +107,21 @@ def download_data_files(drive_service, folder_id):
                 includeItemsFromAllDrives=True).execute()
     items = results.get('files', [])
     if not items:
-        logging.warning(f"No files listed in folder ID: {folder_id}")
+        raise RemoteFileNotFoundError(f"No files listed in folder ID: {folder_id}")
+    while True:
+        for item in items:
+            logging.info(f"Found file: {item['name']}")
+            yield item
+        if results.get('nextPageToken', None) is None:
+            break
+
+def download_data_files(drive_service, folder_id):
+    items = list_data_files(drive_service, folder_id)
     for item in items:
-        print(f"Found file: {item['name']}")
-        download_path = os.path.join(DATA_DIR, item['name'])
+        file_name = item['name']
+        if "READ ME" in file_name:
+            file_name = fix_readme_path(file_name)
+        download_path = os.path.join(DATA_DIR, file_name)
         download_gdrive_file(drive_service, item['id'], download_path)
 
 def extract_datadrop_link(filename):
