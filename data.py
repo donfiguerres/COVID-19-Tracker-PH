@@ -66,13 +66,14 @@ def get_gdrive_id(url):
     for m in matches:
         return m
 
-def fix_readme_path(path):
-    """" Replace the forward slash in path with underscore to avoid path errors.
-    This is added to address the naming convention followed in the README PDF
-    files. e.g. 01 READ ME FIRST (06/07).pdf
-    """
-    newpath = re.sub(r" (\(\d+)/(\d+\))", r"", path)
-    return newpath
+def trim_readme_name(name):
+    """" Remove date in name for easier tracking in the repo. """
+    return re.sub(r" (\(\d+)/(\d+\))", r"", name)
+
+def trim_data_file_name(name):
+    """" Remove date in name for easier tracking in the repo. """
+    name = re.sub(r"(DOH COVID Data Drop_ \d{8} - )", r"", name)
+    return name
 
 def download_gdrive_file(drive_service, file_id, download_path):
     request = drive_service.files().get_media(fileId=file_id)
@@ -120,7 +121,9 @@ def download_data_files(drive_service, folder_id):
     for item in items:
         file_name = item['name']
         if "READ ME" in file_name:
-            file_name = fix_readme_path(file_name)
+            file_name = trim_readme_name(file_name)
+        elif ".csv" in file_name:
+            file_name = trim_data_file_name(file_name)
         download_path = os.path.join(DATA_DIR, file_name)
         download_gdrive_file(drive_service, item['id'], download_path)
 
