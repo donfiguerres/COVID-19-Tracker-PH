@@ -161,9 +161,9 @@ def get_datadrop_url(drive_service):
 
 def download():
     drive_service = build_gdrive_service(CLIENT_KEY_PATH, TOKEN, ACCESS_SCOPES)
-    datadrop_url = get_datadrop_url(drive_service)
-    full_url = get_full_url(datadrop_url)
-    gdrive_data_folder_id = get_gdrive_id(full_url)
+    datadrop_short_url = get_datadrop_url(drive_service)
+    datadrop_full_url = get_full_url(datadrop_short_url)
+    gdrive_data_folder_id = get_gdrive_id(datadrop_full_url)
     download_data_files(drive_service, gdrive_data_folder_id)
 
 def main():
