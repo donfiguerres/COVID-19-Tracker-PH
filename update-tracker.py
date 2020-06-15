@@ -21,6 +21,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def _parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--skip-download", action="store_true",
+                            help="skip download of data")
     parser.add_argument("--loglevel", help="set log level")
     return parser.parse_args()
 
@@ -115,7 +117,8 @@ def main():
     args = _parse_args()
     set_loglevel(args.loglevel)
     # TODO: convert to multithread
-    datadrop.download()
+    if not args.skip_download:
+        datadrop.download()
     data = read_case_information()
     logging.debug("Shape: " + str(data.shape))
     repconf_delay = ave_onset_repconf(data)
