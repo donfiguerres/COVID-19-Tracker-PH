@@ -157,6 +157,7 @@ def main():
     readme_file_id = get_readme_id(drive_service)
     download_gdrive_file(drive_service, readme_file_id, README_FILE_NAME)
     extracted_url = extract_datadrop_link(README_FILE_NAME)
+    os.remove(README_FILE_NAME)
     full_url = get_full_url(extracted_url)
     gdrive_data_folder_id = get_gdrive_id(full_url)
     download_data_files(drive_service, gdrive_data_folder_id)
