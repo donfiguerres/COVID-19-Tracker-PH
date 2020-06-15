@@ -152,15 +152,22 @@ def extract_datadrop_link(filename):
 def get_full_url(url):
     return requests.head(url).headers['location']
 
-def main():
-    drive_service = build_gdrive_service(CLIENT_KEY_PATH, TOKEN, ACCESS_SCOPES)
+def get_datadrop_url(drive_service):
     readme_file_id = get_readme_id(drive_service)
     download_gdrive_file(drive_service, readme_file_id, README_FILE_NAME)
     extracted_url = extract_datadrop_link(README_FILE_NAME)
     os.remove(README_FILE_NAME)
-    full_url = get_full_url(extracted_url)
+    return extracted_url
+
+def download():
+    drive_service = build_gdrive_service(CLIENT_KEY_PATH, TOKEN, ACCESS_SCOPES)
+    datadrop_url = get_datadrop_url(drive_service)
+    full_url = get_full_url(datadrop_url)
     gdrive_data_folder_id = get_gdrive_id(full_url)
     download_data_files(drive_service, gdrive_data_folder_id)
+
+def main():
+    download()
     return 0
 
 if __name__ == "__main__":
