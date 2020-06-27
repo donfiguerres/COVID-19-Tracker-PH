@@ -31,7 +31,7 @@ def _parse_args():
 def convert_string_to_date(val):
     return datetime.strptime(val, "%Y-%m-%d")
 
-def calc_specimen_to_repconf(data):
+def calc_processing_times(data):
     """Calculate how many days it took from specimen collection to reporting.
     The return is the input data frame that has the calculated values in a
     column named 'SpecimenToRepConf'.
@@ -39,8 +39,8 @@ def calc_specimen_to_repconf(data):
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
     data["SpecimenToRepConf"] = data.apply(lambda row : 
-                (convert_string_to_date(row['DateRepConf'])
-                - convert_string_to_date(row['DateSpecimen'])).days
+                convert_string_to_date(row['DateRepConf'])
+                - convert_string_to_date(row['DateSpecimen'])
                 if convert_string_to_date(row['DateRepConf'])
                     and isinstance(row['DateSpecimen'], str)
                     and convert_string_to_date(row['DateSpecimen'])
@@ -48,8 +48,20 @@ def calc_specimen_to_repconf(data):
                             < convert_string_to_date(row['DateRepConf'])
                 else "",
                 axis=1)
+    data["SpecimenToRelease"] = data.apply(lambda row : 
+                convert_string_to_date(row['DateResultRelease'])
+                - convert_string_to_date(row['DateSpecimen'])
+                if isinstance(row['DateSpecimen'], str)
+                    and isinstance(row['DateResultRelease'], str)
+                    and convert_string_to_date(row['DateResultRelease'])
+                    and convert_string_to_date(row['DateSpecimen'])
+                    and convert_string_to_date(row['DateSpecimen'])
+                            < convert_string_to_date(row['DateResultRelease'])
+                else "",
+                axis=1)
     logging.debug(data.head())
     logging.debug(data["SpecimenToRepConf"].describe(percentiles=[0.5, 0.9]))
+    logging.debug(data["SpecimenToRelease"].describe(percentiles=[0.5, 0.9]))
     return data
 
 def aggregate_daily_repconf(data):
@@ -120,7 +132,7 @@ def main():
         datadrop.download()
     data = read_case_information()
     logging.debug("Shape: " + str(data.shape))
-    data = calc_specimen_to_repconf(data)
+    data = calc_processing_times(data)
     active_data, closed_data = filter_active_closed(data)
     logging.debug(active_data.head())
     logging.debug(closed_data.head())
