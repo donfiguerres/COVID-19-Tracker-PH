@@ -5,13 +5,15 @@ import sys
 import traceback
 import glob
 import csv
-import datetime
+from datetime import datetime
+from datetime import timedelta
 import statistics
 import logging
 import argparse
 
 import numpy as np
 import pandas as pd
+import plotly.express as px
 
 import datadrop
 
@@ -26,21 +28,27 @@ def _parse_args():
     parser.add_argument("--loglevel", help="set log level")
     return parser.parse_args()
 
+def convert_string_to_date(val):
+    return datetime.strptime(val, "%Y-%m-%d")
+
 def calc_specimen_to_repconf(data):
     """Calculate how many days it took from specimen collection to reporting.
     The return is the input data frame that has the calculated values in a
     column named 'SpecimenToRepConf'.
     """
-    days_diff = []
-    data = data[data.DateSpecimen.notnull()]
-    data = data[data.DateRepConf.notnull()]
-    data = data[data.DateSpecimen < data.DateRepConf]
-    for index, row in data.iterrows():
-        date_repconf = datetime.datetime.strptime(row['DateRepConf'], "%Y-%m-%d")
-        date_specimen = datetime.datetime.strptime(row['DateSpecimen'], "%Y-%m-%d")
-        diff = date_repconf - date_specimen
-        days_diff.append(diff.days)
-    data["SpecimenToRepConf"] = days_diff
+    # Some incomplete data have no dates so we need to check first before
+    # making a computation.
+    data["SpecimenToRepConf"] = data.apply(lambda row : 
+                (convert_string_to_date(row['DateRepConf'])
+                - convert_string_to_date(row['DateSpecimen'])).days
+                if convert_string_to_date(row['DateRepConf'])
+                    and isinstance(row['DateSpecimen'], str)
+                    and convert_string_to_date(row['DateSpecimen'])
+                    and convert_string_to_date(row['DateSpecimen'])
+                            < convert_string_to_date(row['DateRepConf'])
+                else "",
+                axis=1)
+    logging.debug(data.head())
     logging.debug(data["SpecimenToRepConf"].describe(percentiles=[0.5, 0.9]))
     return data
 
@@ -54,7 +62,7 @@ def aggregate_daily_repconf(data):
         if not repconf:
             # Not to sure of what to do with empty entries at this point.
             continue
-        daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
+        daterepconf = datetime.strptime(repconf, "%Y-%m-%d")
         if daterepconf not in daily_repconf:
             daily_repconf[daterepconf] = 1
         else:
@@ -71,14 +79,14 @@ def aggregate_daily_onset(data, rep_delay):
         repconf = row["DateRepConf"]
         dateonset = None
         if onset:
-            dateonset = datetime.datetime.strptime(onset, "%Y-%m-%d")
+            dateonset = datetime.strptime(onset, "%Y-%m-%d")
         else:
             # onset is assumed using the mean RepConf delay
             if not repconf:
                 # Not to sure of what to do with empty entries at this point.
                 continue
-            daterepconf = datetime.datetime.strptime(repconf, "%Y-%m-%d")
-            dateonset = daterepconf - datetime.timedelta(days=rep_delay)
+            daterepconf = datetime.strptime(repconf, "%Y-%m-%d")
+            dateonset = daterepconf - timedelta(days=rep_delay)
         if dateonset not in daily_onset:
             daily_onset[dateonset] = 1
         else:
@@ -112,8 +120,7 @@ def main():
         datadrop.download()
     data = read_case_information()
     logging.debug("Shape: " + str(data.shape))
-    #repconf_delay = ave_onset_repconf(data)
-    calc_specimen_to_repconf(data)
+    data = calc_specimen_to_repconf(data)
     active_data, closed_data = filter_active_closed(data)
     logging.debug(active_data.head())
     logging.debug(closed_data.head())
