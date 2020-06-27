@@ -3,7 +3,7 @@ Case Information,CaseCode,Random code assigned for labelling cases; does not equ
 Case Information,Age,Age,Number,,,
 Case Information,AgeGroup,Five-year age group,Text,,,
 Case Information,Sex,Sex,Text,,,
-Case Information,DateSpecimen,Date when specimen was received by confirming laboratory,Date,,,
+Case Information,DateSpecimen,Date when specimen was collected,Date,,,
 Case Information,DateResultRelease,Date of release of result,Date,,,
 Case Information,DateRepConf,Date publicly announced as confirmed case,Date,,,
 Case Information,DateDied,Date died,Date,,,
