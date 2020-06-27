@@ -26,32 +26,23 @@ def _parse_args():
     parser.add_argument("--loglevel", help="set log level")
     return parser.parse_args()
 
-def ave_onset_repconf(data):
+def calc_specimen_to_repconf(data):
+    """Calculate how many days it took from specimen collection to reporting.
+    The return is the input data frame that has the calculated values in a
+    column named 'SpecimenToRepConf'.
+    """
     days_diff = []
-    repconf_filter = data.DateRepConf.notnull()
-    data = data[repconf_filter]
-    onset_filter = data.DateOnset.notnull()
-    data = data[onset_filter]
+    data = data[data.DateSpecimen.notnull()]
+    data = data[data.DateRepConf.notnull()]
+    data = data[data.DateSpecimen < data.DateRepConf]
     for index, row in data.iterrows():
-        try:
-            case_code = row['CaseCode']
-            daterepconf = datetime.datetime.strptime(row['DateRepConf'], "%Y-%m-%d")
-            dateonset = datetime.datetime.strptime(row['DateOnset'], "%Y-%m-%d")
-            if dateonset > daterepconf:
-                logging.debug(f"Dates for Case Code {case_code} need to be validated."
-                        + f" DateOnset: {dateonset} , DateRepConf: {daterepconf}")
-                continue
-            diff = daterepconf - dateonset
-            days_diff.append(diff.days)
-        except ValueError as e:
-            print("CaseCode: " + str(row["CaseCode"]))
-            print(e)
-    percentile50th = np.percentile(days_diff, 50)
-    print("min: " + str(min(days_diff)))
-    print("max: " + str(max(days_diff)))
-    print("50th percentile: " + str(percentile50th))
-    print("90th percentile: " + str(np.percentile(days_diff, 90)))
-    return int(percentile50th)
+        date_repconf = datetime.datetime.strptime(row['DateRepConf'], "%Y-%m-%d")
+        date_specimen = datetime.datetime.strptime(row['DateSpecimen'], "%Y-%m-%d")
+        diff = date_repconf - date_specimen
+        days_diff.append(diff.days)
+    data["SpecimenToRepConf"] = days_diff
+    logging.debug(data["SpecimenToRepConf"].describe(percentiles=[0.5, 0.9]))
+    return data
 
 def aggregate_daily_repconf(data):
     """Return a dictionary containing repconf.
@@ -121,7 +112,8 @@ def main():
         datadrop.download()
     data = read_case_information()
     logging.debug("Shape: " + str(data.shape))
-    repconf_delay = ave_onset_repconf(data)
+    #repconf_delay = ave_onset_repconf(data)
+    calc_specimen_to_repconf(data)
     active_data, closed_data = filter_active_closed(data)
     logging.debug(active_data.head())
     logging.debug(closed_data.head())
