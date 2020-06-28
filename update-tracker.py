@@ -27,12 +27,6 @@ def _parse_args():
     parser.add_argument("--loglevel", help="set log level")
     return parser.parse_args()
 
-def str_to_date(val):
-    if isinstance(val, str):
-        return datetime.strptime(val, "%Y-%m-%d")
-    else:
-        return None
-
 def calc_processing_times(data):
     """Calculate how many days it took from specimen collection to reporting.
     The return is the input data frame that has the calculated values in a
@@ -41,17 +35,17 @@ def calc_processing_times(data):
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
     data["SpecimenToRepConf"] = data.apply(lambda row : 
-                row['DateRepConf'] - row['DateSpecimen']
+                (row['DateRepConf'] - row['DateSpecimen']).days
                 if row['DateRepConf'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateRepConf']
                 else "", axis=1)
     data["SpecimenToRelease"] = data.apply(lambda row : 
-                row['DateResultRelease'] - row['DateSpecimen']
+                (row['DateResultRelease'] - row['DateSpecimen']).days
                 if row['DateResultRelease'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateResultRelease']
                 else "", axis=1)
     data["ReleaseToRepConf"] = data.apply(lambda row : 
-                row['DateRepConf'] - row['DateResultRelease']
+                (row['DateRepConf'] - row['DateResultRelease']).days
                 if row['DateRepConf'] and row['DateResultRelease']
                     and row['DateRepConf'] < row['DateResultRelease']
                 else "", axis=1)
@@ -68,7 +62,7 @@ def filter_active_closed(data):
 def plot_charts(data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
-    fig = px.histogram(data, x="SpecimenToRepConf")
+    fig = px.histogram(data, x='SpecimenToRepConf')
     fig.write_image(f"{CHART_OUTPUT}/SpecimenToRepConf.png")
 
 def read_case_information():
