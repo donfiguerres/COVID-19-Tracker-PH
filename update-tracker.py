@@ -76,47 +76,6 @@ def calc_processing_times(data):
     logging.debug(data["SpecimenToRelease"].describe(percentiles=[0.5, 0.9]))
     return data
 
-def aggregate_daily_repconf(data):
-    """Return a dictionary containing repconf.
-    """
-    daily_repconf = {}
-    for row in data:
-        case_code = row["CaseCode"]
-        repconf = row["DateRepConf"]
-        if not repconf:
-            # Not to sure of what to do with empty entries at this point.
-            continue
-        daterepconf = datetime.strptime(repconf, "%Y-%m-%d")
-        if daterepconf not in daily_repconf:
-            daily_repconf[daterepconf] = 1
-        else:
-            daily_repconf[daterepconf] += 1
-    return sorted(daily_repconf)
-
-def aggregate_daily_onset(data, rep_delay):
-    """Return a dictionary containing daily onset.
-    """
-    daily_onset = {}
-    for row in data:
-        case_code = row["CaseCode"]
-        onset = row["DateOnset"]
-        repconf = row["DateRepConf"]
-        dateonset = None
-        if onset:
-            dateonset = datetime.strptime(onset, "%Y-%m-%d")
-        else:
-            # onset is assumed using the mean RepConf delay
-            if not repconf:
-                # Not to sure of what to do with empty entries at this point.
-                continue
-            daterepconf = datetime.strptime(repconf, "%Y-%m-%d")
-            dateonset = daterepconf - timedelta(days=rep_delay)
-        if dateonset not in daily_onset:
-            daily_onset[dateonset] = 1
-        else:
-            daily_onset[dateonset] += 1
-    return sorted(daily_onset)
-
 def filter_active_closed(data):
     active_filter = data.RemovalType.isnull()
     active_data = data[active_filter]
