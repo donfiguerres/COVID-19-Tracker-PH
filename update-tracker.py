@@ -63,6 +63,7 @@ def plot_charts(data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     fig = px.histogram(data, x='SpecimenToRepConf')
+    fig.update_layout(xaxis_title="Specimen Collection to Reporting")
     fig.write_image(f"{CHART_OUTPUT}/SpecimenToRepConf.png")
 
 def read_case_information():
