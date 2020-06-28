@@ -26,7 +26,7 @@ def _parse_args():
     parser.add_argument("--loglevel", help="set log level")
     return parser.parse_args()
 
-def string_to_date(val):
+def str_to_date(val):
     return datetime.strptime(val, "%Y-%m-%d")
 
 def calc_processing_times(data):
@@ -37,36 +37,36 @@ def calc_processing_times(data):
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
     data["SpecimenToRepConf"] = data.apply(lambda row : 
-                string_to_date(row['DateRepConf'])
-                - string_to_date(row['DateSpecimen'])
+                str_to_date(row['DateRepConf'])
+                - str_to_date(row['DateSpecimen'])
                 if isinstance(row['DateSpecimen'], str)
                     and isinstance(row['DateRepConf'], str)
-                    and string_to_date(row['DateRepConf'])
-                    and string_to_date(row['DateSpecimen'])
-                    and string_to_date(row['DateSpecimen'])
-                            < string_to_date(row['DateRepConf'])
+                    and str_to_date(row['DateRepConf'])
+                    and str_to_date(row['DateSpecimen'])
+                    and str_to_date(row['DateSpecimen'])
+                            < str_to_date(row['DateRepConf'])
                 else "",
                 axis=1)
     data["SpecimenToRelease"] = data.apply(lambda row : 
-                string_to_date(row['DateResultRelease'])
-                - string_to_date(row['DateSpecimen'])
+                str_to_date(row['DateResultRelease'])
+                - str_to_date(row['DateSpecimen'])
                 if isinstance(row['DateSpecimen'], str)
                     and isinstance(row['DateResultRelease'], str)
-                    and string_to_date(row['DateResultRelease'])
-                    and string_to_date(row['DateSpecimen'])
-                    and string_to_date(row['DateSpecimen'])
-                            < string_to_date(row['DateResultRelease'])
+                    and str_to_date(row['DateResultRelease'])
+                    and str_to_date(row['DateSpecimen'])
+                    and str_to_date(row['DateSpecimen'])
+                            < str_to_date(row['DateResultRelease'])
                 else "",
                 axis=1)
     data["ReleaseToRepConf"] = data.apply(lambda row : 
-                string_to_date(row['DateRepConf'])
-                - string_to_date(row['DateResultRelease'])
+                str_to_date(row['DateRepConf'])
+                - str_to_date(row['DateResultRelease'])
                 if isinstance(row['DateResultRelease'], str)
                     and isinstance(row['DateRepConf'], str)
-                    and string_to_date(row['DateRepConf'])
-                    and string_to_date(row['DateResultRelease'])
-                    and string_to_date(row['DateRepConf'])
-                            < string_to_date(row['DateResultRelease'])
+                    and str_to_date(row['DateRepConf'])
+                    and str_to_date(row['DateResultRelease'])
+                    and str_to_date(row['DateRepConf'])
+                            < str_to_date(row['DateResultRelease'])
                 else "",
                 axis=1)
     logging.debug(data.head())
