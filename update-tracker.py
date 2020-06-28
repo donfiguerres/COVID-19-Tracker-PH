@@ -28,7 +28,10 @@ def _parse_args():
     return parser.parse_args()
 
 def str_to_date(val):
-    return datetime.strptime(val, "%Y-%m-%d")
+    if isinstance(val, str):
+        return datetime.strptime(val, "%Y-%m-%d")
+    else:
+        return None
 
 def calc_processing_times(data):
     """Calculate how many days it took from specimen collection to reporting.
@@ -38,38 +41,20 @@ def calc_processing_times(data):
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
     data["SpecimenToRepConf"] = data.apply(lambda row : 
-                str_to_date(row['DateRepConf'])
-                - str_to_date(row['DateSpecimen'])
-                if isinstance(row['DateSpecimen'], str)
-                    and isinstance(row['DateRepConf'], str)
-                    and str_to_date(row['DateRepConf'])
-                    and str_to_date(row['DateSpecimen'])
-                    and str_to_date(row['DateSpecimen'])
-                            < str_to_date(row['DateRepConf'])
-                else "",
-                axis=1)
+                row['DateRepConf'] - row['DateSpecimen']
+                if row['DateRepConf'] and row['DateSpecimen']
+                    and row['DateSpecimen'] < row['DateRepConf']
+                else "", axis=1)
     data["SpecimenToRelease"] = data.apply(lambda row : 
-                str_to_date(row['DateResultRelease'])
-                - str_to_date(row['DateSpecimen'])
-                if isinstance(row['DateSpecimen'], str)
-                    and isinstance(row['DateResultRelease'], str)
-                    and str_to_date(row['DateResultRelease'])
-                    and str_to_date(row['DateSpecimen'])
-                    and str_to_date(row['DateSpecimen'])
-                            < str_to_date(row['DateResultRelease'])
-                else "",
-                axis=1)
+                row['DateResultRelease'] - row['DateSpecimen']
+                if row['DateResultRelease'] and row['DateSpecimen']
+                    and row['DateSpecimen'] < row['DateResultRelease']
+                else "", axis=1)
     data["ReleaseToRepConf"] = data.apply(lambda row : 
-                str_to_date(row['DateRepConf'])
-                - str_to_date(row['DateResultRelease'])
-                if isinstance(row['DateResultRelease'], str)
-                    and isinstance(row['DateRepConf'], str)
-                    and str_to_date(row['DateRepConf'])
-                    and str_to_date(row['DateResultRelease'])
-                    and str_to_date(row['DateRepConf'])
-                            < str_to_date(row['DateResultRelease'])
-                else "",
-                axis=1)
+                row['DateRepConf'] - row['DateResultRelease']
+                if row['DateRepConf'] and row['DateResultRelease']
+                    and row['DateRepConf'] < row['DateResultRelease']
+                else "", axis=1)
     logging.debug(data.head())
     logging.debug(data["SpecimenToRepConf"].describe(percentiles=[0.5, 0.9]))
     logging.debug(data["SpecimenToRelease"].describe(percentiles=[0.5, 0.9]))
@@ -92,7 +77,11 @@ def read_case_information():
         ci_file_name = name
         # We expect to have only one file.
         break
-    return pd.read_csv(ci_file_name)
+    data = pd.read_csv(ci_file_name)
+    data['DateSpecimen'] = pd.to_datetime(data['DateSpecimen'])
+    data['DateRepConf'] = pd.to_datetime(data['DateRepConf'])
+    data['DateResultRelease'] = pd.to_datetime(data['DateResultRelease'])
+    return data
 
 def set_loglevel(loglevel):
     numeric_level = getattr(logging, loglevel.upper())
