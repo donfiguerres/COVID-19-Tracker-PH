@@ -75,10 +75,8 @@ def calc_processing_times(data):
     return data
 
 def filter_active_closed(data):
-    active_filter = data.RemovalType.isnull()
-    active_data = data[active_filter]
-    closed_filter = active_filter.apply(lambda row : not row)
-    closed_data = data[closed_filter]
+    active_data = data[data.RemovalType.isnull()]
+    closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
 def read_case_information():
