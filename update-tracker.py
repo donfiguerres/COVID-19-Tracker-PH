@@ -17,6 +17,7 @@ import datadrop
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CHART_OUTPUT = "charts"
 
 
 def _parse_args():
@@ -79,6 +80,12 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
+def plot_charts(data):
+    if not os.path.exists(CHART_OUTPUT):
+        os.mkdir(CHART_OUTPUT)
+    fig = px.histogram(data, x="SpecimenToRepConf")
+    fig.write_image(f"{CHART_OUTPUT}/SpecimenToRepConf.png")
+
 def read_case_information():
     ci_file_name = ""
     for name in glob.glob(f"{SCRIPT_DIR}/data/*Case Information.csv"):
@@ -105,6 +112,7 @@ def main():
     logging.debug(closed_data.head())
     data_daily = data['DateRepConf'].value_counts()
     logging.debug(data_daily)
+    plot_charts(data)
     return 0
 
 
