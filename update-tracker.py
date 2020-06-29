@@ -52,9 +52,6 @@ def calc_processing_times(data):
                     and row['DateResultRelease'] < row['DateRepConf']
                 else "", axis=1)
     logging.debug(data.head())
-    logging.debug(data["SpecimenToRepConf"].describe(percentiles=[0.5, 0.9]))
-    logging.debug(data["SpecimenToRelease"].describe(percentiles=[0.5, 0.9]))
-    logging.debug(data["ReleaseToRepConf"].describe(percentiles=[0.5, 0.9]))
     return data
 
 def filter_active_closed(data):
@@ -68,6 +65,7 @@ def filter_last_n_days(data, days=7, column='DateRepConf'):
     return data[data[column] > cutoff_date]
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
+    logging.debug(data[xaxis].describe(percentiles=[0.5, 0.9]))
     if data[xaxis].dtype == 'timedelta64[ns]':
         new_xaxis = xaxis+"Converted"
         data[new_xaxis] = data.apply(lambda row : row[xaxis].days
