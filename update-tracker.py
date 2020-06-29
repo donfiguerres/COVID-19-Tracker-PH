@@ -62,22 +62,23 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
-def filter_last_n_days(data, days=7, column='DateOnset'):
-    cutoff_date = data['DateOnset'].iloc[-1] - pd.Timedelta(days=days)
+def filter_last_n_days(data, days=7, column='DateRepConf'):
+    cutoff_date = data[column].max() - pd.Timedelta(days=days)
+    logging.debug(f"Filtering {column} cutoff f{cutoff_date}.")
+    return data[data[column] > cutoff_date]
 
-
-def plot_histogram(data, xaxis, xaxis_title):
+def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     if data[xaxis].dtype == 'timedelta64[ns]':
         new_xaxis = xaxis+"Converted"
         data[new_xaxis] = data.apply(lambda row : row[xaxis].days
                                         if row[xaxis] else "", axis=1)
         fig = px.histogram(data, x=new_xaxis)
         fig.update_layout(xaxis_title=xaxis_title)
-        fig.write_image(f"{CHART_OUTPUT}/{xaxis}.png")
+        fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
     else:
         fig = px.histogram(data, x=xaxis)
         fig.update_layout(xaxis_title=xaxis_title)
-        fig.write_image(f"{CHART_OUTPUT}/{xaxis}.png")
+        fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
 
 def plot_charts(data):
     if not os.path.exists(CHART_OUTPUT):
@@ -85,6 +86,11 @@ def plot_charts(data):
     plot_histogram(data, 'SpecimenToRepConf', "Specimen Collection to Reporting")
     plot_histogram(data, 'SpecimenToRelease', "Specimen Collection to Result Release")
     plot_histogram(data, 'ReleaseToRepConf', "Result Release to Reporting")
+    data_last_days = filter_last_n_days(data)
+    logging.debug(data_last_days.head())
+    plot_histogram(data_last_days, 'SpecimenToRepConf', "Specimen Collection to Reporting Last 7 days", suffix="7days")
+    plot_histogram(data_last_days, 'SpecimenToRelease', "Specimen Collection to Result Release Last 7 days", suffix="7days")
+    plot_histogram(data_last_days, 'ReleaseToRepConf', "Result Release to Reporting Last 7 days", suffix="7days")
 
 def read_case_information():
     ci_file_name = ""
