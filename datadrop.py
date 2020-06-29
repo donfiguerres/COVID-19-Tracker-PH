@@ -68,7 +68,12 @@ def get_gdrive_id(url):
 
 def trim_readme_name(name):
     """"Remove date in name for easier tracking in the repo."""
-    return re.sub(r" (\(\d+)/(\d+\))", r"", name)
+    if '/' in name:
+        return re.sub(r" (\(\d+)/(\d+\))", r"", name)
+    elif '_' in name:
+        return re.sub(r" (\(\d+)/(\d+\))", r"", name)
+    else:
+        return(name)
 
 def trim_data_file_name(name):
     """"Remove date in name for easier tracking in the repo."""
