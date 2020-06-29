@@ -71,7 +71,7 @@ def trim_readme_name(name):
     if '/' in name:
         return re.sub(r" (\(\d+)/(\d+\))", r"", name)
     elif '_' in name:
-        return re.sub(r" (\(\d+)/(\d+\))", r"", name)
+        return re.sub(r" (\(\d+)_(\d+\))", r"", name)
     else:
         return(name)
 
@@ -164,12 +164,13 @@ def get_datadrop_url(drive_service):
     os.remove(README_FILE_NAME)
     return extracted_url
 
-def download():
+def download(folder_id=None):
     drive_service = build_gdrive_service(CLIENT_KEY_PATH, TOKEN, ACCESS_SCOPES)
-    datadrop_short_url = get_datadrop_url(drive_service)
-    datadrop_full_url = get_full_url(datadrop_short_url)
-    gdrive_data_folder_id = get_gdrive_id(datadrop_full_url)
-    download_data_files(drive_service, gdrive_data_folder_id)
+    if not folder_id:
+        datadrop_short_url = get_datadrop_url(drive_service)
+        datadrop_full_url = get_full_url(datadrop_short_url)
+        folder_id = get_gdrive_id(datadrop_full_url)
+    download_data_files(drive_service, folder_id)
 
 def main():
     download()

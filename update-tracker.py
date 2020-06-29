@@ -24,6 +24,8 @@ def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-download", action="store_true",
                             help="skip download of data")
+    parser.add_argument("--folder-id", nargs='?',
+                        help="specify the folder id of the latest datadrop")
     parser.add_argument("--loglevel", help="set log level")
     return parser.parse_args()
 
@@ -85,9 +87,11 @@ def set_loglevel(loglevel):
 def main():
     args = _parse_args()
     set_loglevel(args.loglevel)
-    # TODO: convert to multithread
     if not args.skip_download:
-        datadrop.download()
+        if args.folder_id:
+            datadrop.download(folder_id=args.folder_id)
+        else:
+            datadrop.download()
     data = read_case_information()
     logging.debug("Shape: " + str(data.shape))
     data = calc_processing_times(data)
