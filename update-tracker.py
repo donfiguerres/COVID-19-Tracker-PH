@@ -17,7 +17,7 @@ import datadrop
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CHART_OUTPUT = "charts"
+CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
 
 
 def _parse_args():
@@ -37,23 +37,24 @@ def calc_processing_times(data):
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
     data["SpecimenToRepConf"] = data.apply(lambda row : 
-                (row['DateRepConf'] - row['DateSpecimen']).days
+                row['DateRepConf'] - row['DateSpecimen']
                 if row['DateRepConf'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateRepConf']
                 else "", axis=1)
     data["SpecimenToRelease"] = data.apply(lambda row : 
-                (row['DateResultRelease'] - row['DateSpecimen']).days
+                row['DateResultRelease'] - row['DateSpecimen']
                 if row['DateResultRelease'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateResultRelease']
                 else "", axis=1)
     data["ReleaseToRepConf"] = data.apply(lambda row : 
-                (row['DateRepConf'] - row['DateResultRelease']).days
+                row['DateRepConf'] - row['DateResultRelease']
                 if row['DateRepConf'] and row['DateResultRelease']
-                    and row['DateRepConf'] < row['DateResultRelease']
+                    and row['DateResultRelease'] < row['DateRepConf']
                 else "", axis=1)
     logging.debug(data.head())
     logging.debug(data["SpecimenToRepConf"].describe(percentiles=[0.5, 0.9]))
     logging.debug(data["SpecimenToRelease"].describe(percentiles=[0.5, 0.9]))
+    logging.debug(data["ReleaseToRepConf"].describe(percentiles=[0.5, 0.9]))
     return data
 
 def filter_active_closed(data):
@@ -61,12 +62,25 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
+def plot_histogram(data, xaxis, xaxis_title):
+    if data[xaxis].dtype == 'timedelta64[ns]':
+        new_xaxis = xaxis+"Converted"
+        data[new_xaxis] = data.apply(lambda row : row[xaxis].days
+                                        if row[xaxis] else "", axis=1)
+        fig = px.histogram(data, x=new_xaxis)
+        fig.update_layout(xaxis_title=xaxis_title)
+        fig.write_image(f"{CHART_OUTPUT}/{xaxis}.png")
+    else:
+        fig = px.histogram(data, x=xaxis)
+        fig.update_layout(xaxis_title=xaxis_title)
+        fig.write_image(f"{CHART_OUTPUT}/{xaxis}.png")
+
 def plot_charts(data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
-    fig = px.histogram(data, x='SpecimenToRepConf')
-    fig.update_layout(xaxis_title="Specimen Collection to Reporting")
-    fig.write_image(f"{CHART_OUTPUT}/SpecimenToRepConf.png")
+    plot_histogram(data, 'SpecimenToRepConf', "Specimen Collection to Reporting")
+    plot_histogram(data, 'SpecimenToRelease', "Specimen Collection to Result Release")
+    plot_histogram(data, 'ReleaseToRepConf', "Result Release to Reporting")
 
 def read_case_information():
     ci_file_name = ""
