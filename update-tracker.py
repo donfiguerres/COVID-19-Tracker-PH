@@ -62,6 +62,10 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
+def filter_last_n_days(data, days=7, column='DateOnset'):
+    cutoff_date = data['DateOnset'].iloc[-1] - pd.Timedelta(days=days)
+
+
 def plot_histogram(data, xaxis, xaxis_title):
     if data[xaxis].dtype == 'timedelta64[ns]':
         new_xaxis = xaxis+"Converted"
@@ -89,9 +93,10 @@ def read_case_information():
         # We expect to have only one file.
         break
     data = pd.read_csv(ci_file_name)
-    data['DateSpecimen'] = pd.to_datetime(data['DateSpecimen'])
-    data['DateRepConf'] = pd.to_datetime(data['DateRepConf'])
-    data['DateResultRelease'] = pd.to_datetime(data['DateResultRelease'])
+    convert_columns = ['DateSpecimen', 'DateRepConf', 'DateResultRelease',
+            'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
+    for column in convert_columns:
+        data[column] = pd.to_datetime(data[column])
     return data
 
 def set_loglevel(loglevel):
