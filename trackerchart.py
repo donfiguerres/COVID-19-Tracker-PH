@@ -14,7 +14,7 @@ import plotly.express as px
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
-
+TEMPLATE = 'plotly_dark'
 
 def calc_processing_times(data):
     """Calculate how many days it took from specimen collection to reporting.
@@ -52,13 +52,27 @@ def filter_last_n_days(data, days=7, column='DateRepConf'):
     return data[data[column] > cutoff_date]
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
-    logging.debug(data[xaxis].describe(percentiles=[0.5, 0.9]))
+    desc = data[xaxis].describe(percentiles=[0.5, 0.9])
+    logging.debug(desc)
+    percentile_50 = desc['50%'].days
+    percentile_90 = desc['90%'].days
     if data[xaxis].dtype == 'timedelta64[ns]':
         new_xaxis = xaxis+"Converted"
         data[new_xaxis] = data.apply(lambda row : row[xaxis].days
                                         if row[xaxis] else "", axis=1)
-        fig = px.histogram(data, x=new_xaxis, log_x=True)
-        fig.update_layout(xaxis_title=xaxis_title)
+        fig = px.histogram(data, x=new_xaxis, log_x=True, template=TEMPLATE)
+        fig.update_layout(xaxis_title=xaxis_title,
+                            shapes=[
+                                dict(
+                                    type='line', yref='paper', y0=0, y1=1,
+                                    xref='x', x0=percentile_50, x1=percentile_50
+                                ),
+                                dict(
+                                    type='line', yref='paper', y0=0, y1=1,
+                                    xref='x', x0=percentile_90, x1=percentile_90
+                                )
+                            ]
+        )
         fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
     else:
         fig = px.histogram(data, x=xaxis)
