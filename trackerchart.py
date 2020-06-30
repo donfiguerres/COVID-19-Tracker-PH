@@ -57,7 +57,7 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
         new_xaxis = xaxis+"Converted"
         data[new_xaxis] = data.apply(lambda row : row[xaxis].days
                                         if row[xaxis] else "", axis=1)
-        fig = px.histogram(data, x=new_xaxis)
+        fig = px.histogram(data, x=new_xaxis, log_x=True)
         fig.update_layout(xaxis_title=xaxis_title)
         fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
     else:
