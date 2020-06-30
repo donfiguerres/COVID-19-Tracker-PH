@@ -1,5 +1,5 @@
 """
-DOH data drop scraper
+DOH data drop downloader.
 
 The data drop is a bit hard to pull since there is no fixed URL to pull the data
 from. The data drop links are listed in the PDF files that are uploaded daily by
