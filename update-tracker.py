@@ -7,7 +7,6 @@ import glob
 import logging
 import argparse
 
-
 import datadrop
 import trackerchart
 
