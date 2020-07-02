@@ -125,6 +125,8 @@ def list_data_files(drive_service, folder_id):
             break
 
 def download_data_files(drive_service, folder_id):
+    if not os.path.exists(DATA_DIR):
+        os.mkdir(DATA_DIR)
     items = list_data_files(drive_service, folder_id)
     for item in items:
         file_name = item['name']
