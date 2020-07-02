@@ -47,7 +47,7 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
-def filter_last_n_days(data, days=7, column='DateRepConf'):
+def filter_last_n_days(data, days, column='DateRepConf'):
     cutoff_date = data[column].max() - pd.Timedelta(days=days)
     logging.debug(f"Filtering {column} cutoff f{cutoff_date}.")
     return data[data[column] > cutoff_date]
@@ -78,11 +78,11 @@ def plot_charts(data):
     plot_histogram(data, 'SpecimenToRepConf', "Specimen Collection to Reporting")
     plot_histogram(data, 'SpecimenToRelease', "Specimen Collection to Result Release")
     plot_histogram(data, 'ReleaseToRepConf', "Result Release to Reporting")
-    data_last_days = filter_last_n_days(data)
+    data_last_days = filter_last_n_days(data, 14)
     logging.debug(data_last_days.head())
-    plot_histogram(data_last_days, 'SpecimenToRepConf', "Specimen Collection to Reporting Last 7 days", suffix="7days")
-    plot_histogram(data_last_days, 'SpecimenToRelease', "Specimen Collection to Result Release Last 7 days", suffix="7days")
-    plot_histogram(data_last_days, 'ReleaseToRepConf', "Result Release to Reporting Last 7 days", suffix="7days")
+    plot_histogram(data_last_days, 'SpecimenToRepConf', "Specimen Collection to Reporting Last 14 days", suffix="14days")
+    plot_histogram(data_last_days, 'SpecimenToRelease', "Specimen Collection to Result Release Last 14 days", suffix="14days")
+    plot_histogram(data_last_days, 'ReleaseToRepConf', "Result Release to Reporting Last 14 days", suffix="14days")
 
 def read_case_information():
     ci_file_name = ""
