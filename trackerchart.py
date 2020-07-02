@@ -9,6 +9,7 @@ from datetime import timedelta
 import logging
 
 import pandas as pd
+import numpy as np
 import plotly.express as px
 
 
@@ -24,20 +25,20 @@ def calc_processing_times(data):
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
     data["SpecimenToRepConf"] = data.apply(lambda row : 
-                row['DateRepConf'] - row['DateSpecimen']
+                (row['DateRepConf'] - row['DateSpecimen']).days
                 if row['DateRepConf'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateRepConf']
-                else "", axis=1)
+                else np.NaN, axis=1)
     data["SpecimenToRelease"] = data.apply(lambda row : 
-                row['DateResultRelease'] - row['DateSpecimen']
+                (row['DateResultRelease'] - row['DateSpecimen']).days
                 if row['DateResultRelease'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateResultRelease']
-                else "", axis=1)
+                else np.NaN, axis=1)
     data["ReleaseToRepConf"] = data.apply(lambda row : 
-                row['DateRepConf'] - row['DateResultRelease']
+                (row['DateRepConf'] - row['DateResultRelease']).days
                 if row['DateRepConf'] and row['DateResultRelease']
                     and row['DateResultRelease'] < row['DateRepConf']
-                else "", axis=1)
+                else np.NaN, axis=1)
     logging.debug(data.head())
     return data
 
@@ -54,30 +55,22 @@ def filter_last_n_days(data, days=7, column='DateRepConf'):
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
-    percentile_50 = desc['50%'].days
-    percentile_90 = desc['90%'].days
-    if data[xaxis].dtype == 'timedelta64[ns]':
-        new_xaxis = xaxis+"Converted"
-        data[new_xaxis] = data.apply(lambda row : row[xaxis].days
-                                        if row[xaxis] else "", axis=1)
-        fig = px.histogram(data, x=new_xaxis, log_x=True, template=TEMPLATE)
-        fig.update_layout(xaxis_title=xaxis_title,
-                            shapes=[
-                                dict(
-                                    type='line', yref='paper', y0=0, y1=1,
-                                    xref='x', x0=percentile_50, x1=percentile_50
-                                ),
-                                dict(
-                                    type='line', yref='paper', y0=0, y1=1,
-                                    xref='x', x0=percentile_90, x1=percentile_90
-                                )
-                            ]
-        )
-        fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
-    else:
-        fig = px.histogram(data, x=xaxis)
-        fig.update_layout(xaxis_title=xaxis_title)
-        fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
+    percentile_50 = desc['50%']
+    percentile_90 = desc['90%']
+    fig = px.histogram(data, x=xaxis, log_x=True, template=TEMPLATE)
+    fig.update_layout(xaxis_title=xaxis_title,
+                        shapes=[
+                            dict(
+                                type='line', yref='paper', y0=0, y1=1,
+                                xref='x', x0=percentile_50, x1=percentile_50
+                            ),
+                            dict(
+                                type='line', yref='paper', y0=0, y1=1,
+                                xref='x', x0=percentile_90, x1=percentile_90
+                            )
+                        ]
+    )
+    fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
 
 def plot_charts(data):
     if not os.path.exists(CHART_OUTPUT):
