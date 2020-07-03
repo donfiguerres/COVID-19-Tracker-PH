@@ -112,7 +112,6 @@ def plot():
     test_data = read_testing_aggregates()
     data_test_daily_aggregated = test_data.groupby('report_date').sum()
     logging.debug(data_test_daily_aggregated)
-    logging.debug("Shape: " + str(ci_data.shape))
     ci_data = calc_processing_times(ci_data)
     active_data, closed_data = filter_active_closed(ci_data)
     logging.debug(active_data.head())
