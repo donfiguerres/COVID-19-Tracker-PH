@@ -14,10 +14,11 @@ import trackerchart
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-download", action="store_true",
-                            help="skip download of data")
+                    help="skip download of data")
     parser.add_argument("--folder-id", nargs='?',
-                        help="specify the folder id of the latest datadrop")
-    parser.add_argument("--loglevel", help="set log level")
+                    help="specify the folder id of the latest datadrop")
+    parser.add_argument("--loglevel", 
+                    help="set log level")
     return parser.parse_args()
 
 def set_loglevel(loglevel):
@@ -26,7 +27,8 @@ def set_loglevel(loglevel):
 
 def main():
     args = _parse_args()
-    set_loglevel(args.loglevel)
+    if args.loglevel:
+        set_loglevel(args.loglevel)
     if not args.skip_download:
         if args.folder_id:
             datadrop.download(folder_id=args.folder_id)
