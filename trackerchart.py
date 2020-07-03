@@ -47,10 +47,10 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
-def filter_last_n_days(data, days, column='DateRepConf'):
-    cutoff_date = data[column].max() - pd.Timedelta(days=days)
-    logging.debug(f"Filtering {column} cutoff f{cutoff_date}.")
-    return data[data[column] > cutoff_date]
+def filter_last_n_days(data, date_column, days=14):
+    cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
+    logging.debug(f"Filtering {date_column} cutoff f{cutoff_date}.")
+    return data[data[date_column] > cutoff_date]
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
@@ -72,17 +72,49 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     )
     fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
 
-def plot_charts(data):
+def plot_reporting(ci_data, test_data, title_suffix="", filename_suffix=""):
+    plot_histogram(ci_data, 'SpecimenToRepConf',
+                        f"Specimen Collection to Reporting{title_suffix}",
+                        suffix=filename_suffix)
+    plot_histogram(ci_data, 'SpecimenToRelease',
+                        f"Specimen Collection to Result Release{title_suffix}",
+                        suffix=filename_suffix)
+    plot_histogram(ci_data, 'ReleaseToRepConf',
+                        f"Result Release to Reporting{title_suffix}",
+                        suffix=filename_suffix)
+
+def plot_test(test_data, title_suffix="", filename_suffix=""):
+    data_test_daily_aggregated = test_data.groupby('report_date').sum()
+    logging.debug(data_test_daily_aggregated)
+    test_agg_line = px.line(data_test_daily_aggregated,
+                                title=f"Daily Ouptut Positive Individuals{title_suffix}",
+                                template=TEMPLATE,
+                                x=data_test_daily_aggregated.index,
+                                y='daily_output_positive_individuals')
+    test_agg_line.write_image(f"{CHART_OUTPUT}/test_daily_output_positive_individuals{filename_suffix}.png")
+
+def plot_test_reports_comparison(ci_data, test_data,
+                                    title_suffix="", filename_suffix=""):
+    # Daily reporting
+    data_report_daily = ci_data['DateRepConf'].value_counts()
+    logging.debug(data_report_daily)
+
+def do_plot_charts(ci_data, test_data, title_suffix="", filename_suffix=""):
+    plot_reporting(ci_data, test_data, title_suffix=title_suffix,
+                        filename_suffix=filename_suffix)
+    plot_test(test_data, title_suffix=title_suffix,
+                        filename_suffix=filename_suffix)
+
+def plot_charts(ci_data, test_data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
-    plot_histogram(data, 'SpecimenToRepConf', "Specimen Collection to Reporting")
-    plot_histogram(data, 'SpecimenToRelease', "Specimen Collection to Result Release")
-    plot_histogram(data, 'ReleaseToRepConf', "Result Release to Reporting")
-    data_last_days = filter_last_n_days(data, 14)
-    logging.debug(data_last_days.head())
-    plot_histogram(data_last_days, 'SpecimenToRepConf', "Specimen Collection to Reporting Last 14 days", suffix="14days")
-    plot_histogram(data_last_days, 'SpecimenToRelease', "Specimen Collection to Result Release Last 14 days", suffix="14days")
-    plot_histogram(data_last_days, 'ReleaseToRepConf', "Result Release to Reporting Last 14 days", suffix="14days")
+    do_plot_charts(ci_data, test_data)
+    # Last 14 days seems good enough for recent data.
+    ci_data_last_days = filter_last_n_days(ci_data, 'DateRepConf')
+    logging.debug(ci_data_last_days.head())
+    test_data_last_days = filter_last_n_days(test_data, 'report_date')
+    logging.debug(test_data_last_days.head())
+    do_plot_charts(ci_data, test_data, title_suffix=" - Last 14 days", filename_suffix="14days")
 
 def read_case_information():
     ci_file_name = ""
@@ -109,13 +141,9 @@ def read_testing_aggregates():
 
 def plot():
     ci_data = read_case_information()
-    test_data = read_testing_aggregates()
-    data_test_daily_aggregated = test_data.groupby('report_date').sum()
-    logging.debug(data_test_daily_aggregated)
     ci_data = calc_processing_times(ci_data)
+    test_data = read_testing_aggregates()
     active_data, closed_data = filter_active_closed(ci_data)
     logging.debug(active_data.head())
     logging.debug(closed_data.head())
-    data_report_daily = ci_data['DateRepConf'].value_counts()
-    logging.debug(data_report_daily)
-    plot_charts(ci_data)
+    plot_charts(ci_data, test_data)
