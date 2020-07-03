@@ -97,13 +97,26 @@ def read_case_information():
         data[column] = pd.to_datetime(data[column])
     return data
 
+def read_testing_aggregates():
+    ci_file_name = ""
+    for name in glob.glob(f"{SCRIPT_DIR}/data/*Testing Aggregates.csv"):
+        ci_file_name = name
+        # We expect to have only one file.
+        break
+    data = pd.read_csv(ci_file_name)
+    data['report_date'] = pd.to_datetime(data['report_date'])
+    return data
+
 def plot():
-    data = read_case_information()
-    logging.debug("Shape: " + str(data.shape))
-    data = calc_processing_times(data)
-    active_data, closed_data = filter_active_closed(data)
+    ci_data = read_case_information()
+    test_data = read_testing_aggregates()
+    data_test_daily_aggregated = test_data.groupby('report_date').sum()
+    logging.debug(data_test_daily_aggregated)
+    logging.debug("Shape: " + str(ci_data.shape))
+    ci_data = calc_processing_times(ci_data)
+    active_data, closed_data = filter_active_closed(ci_data)
     logging.debug(active_data.head())
     logging.debug(closed_data.head())
-    data_daily = data['DateRepConf'].value_counts()
-    logging.debug(data_daily)
-    plot_charts(data)
+    data_report_daily = ci_data['DateRepConf'].value_counts()
+    logging.debug(data_report_daily)
+    plot_charts(ci_data)
