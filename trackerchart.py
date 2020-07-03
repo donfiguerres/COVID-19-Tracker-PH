@@ -59,16 +59,28 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     percentile_90 = desc['90%']
     fig = px.histogram(data, x=xaxis, log_x=True, template=TEMPLATE)
     fig.update_layout(xaxis_title=xaxis_title,
-                        shapes=[
-                            dict(
-                                type='line', yref='paper', y0=0, y1=1,
-                                xref='x', x0=percentile_50, x1=percentile_50
-                            ),
-                            dict(
-                                type='line', yref='paper', y0=0, y1=1,
-                                xref='x', x0=percentile_90, x1=percentile_90
-                            )
-                        ]
+            shapes=[
+                dict(
+                    type='line', yref='paper', y0=0, y1=1,
+                    xref='x', x0=percentile_50, x1=percentile_50
+                ),
+                dict(
+                    type='line', yref='paper', y0=0, y1=1,
+                    xref='x', x0=percentile_90, x1=percentile_90
+                )
+            ],
+            annotations=[
+                dict(
+                    x=np.log10(percentile_50), y=1000,
+                    text=f"50th percentile = {percentile_50}",
+                    xref='x', yref='y'
+                ),
+                dict(
+                    x=np.log10(percentile_90), y=2000,
+                    text=f"90th percentile = {percentile_90}",
+                    xref='x', yref='y'
+                )
+            ]
     )
     fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
 
@@ -118,7 +130,8 @@ def plot_charts(ci_data, test_data):
     logging.debug(ci_data_last_days.head())
     test_data_last_days = filter_last_n_days(test_data, 'report_date')
     logging.debug(test_data_last_days.head())
-    do_plot_charts(ci_data, test_data, title_suffix=" - Last 14 days", filename_suffix="14days")
+    do_plot_charts(ci_data_last_days, test_data_last_days,
+                        title_suffix=" - Last 14 days", filename_suffix="14days")
 
 def read_case_information():
     ci_file_name = ""
