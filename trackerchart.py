@@ -11,6 +11,7 @@ import logging
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +48,7 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
-def filter_last_n_days(data, date_column, days=14):
+def filter_latest(data, date_column, days):
     cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
     logging.debug(f"Filtering {date_column} cutoff f{cutoff_date}.")
     return data[data[date_column] > cutoff_date]
@@ -115,7 +116,14 @@ def plot_test_reports_comparison(ci_data, test_data,
     data_report_daily = ci_data['DateRepConf'].value_counts()
     logging.debug(data_report_daily)
 
-def do_plot_charts(ci_data, test_data, title_suffix="", filename_suffix=""):
+def do_plot_charts(ci_data, test_data, days=None):
+    title_suffix = ""
+    filename_suffix = ""
+    if days:
+        title_suffix = f" - Last {days} days"
+        filename_suffix = f"{days}days"
+        ci_data = filter_latest(ci_data, 'DateRepConf', days)
+        test_data = filter_latest(test_data, 'report_date', days)
     plot_reporting(ci_data, test_data, title_suffix=title_suffix,
                         filename_suffix=filename_suffix)
     plot_test(test_data, title_suffix=title_suffix,
@@ -125,13 +133,10 @@ def plot_charts(ci_data, test_data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     do_plot_charts(ci_data, test_data)
+    # Last 7 days seems premature but we need to to respond earlier
+    do_plot_charts(ci_data, test_data, 7)
     # Last 14 days seems good enough for recent data.
-    ci_data_last_days = filter_last_n_days(ci_data, 'DateRepConf')
-    logging.debug(ci_data_last_days.head())
-    test_data_last_days = filter_last_n_days(test_data, 'report_date')
-    logging.debug(test_data_last_days.head())
-    do_plot_charts(ci_data_last_days, test_data_last_days,
-                        title_suffix=" - Last 14 days", filename_suffix="14days")
+    do_plot_charts(ci_data, test_data, 14)
 
 def read_case_information():
     ci_file_name = ""
