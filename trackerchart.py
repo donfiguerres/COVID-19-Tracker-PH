@@ -164,6 +164,7 @@ def plot_charts(ci_data, test_data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     do_plot_charts(ci_data, test_data)
+    # TODO: refactor to do filtering down the line
     # Last 7 days seems premature but we need to to respond earlier
     do_plot_charts(ci_data, test_data, 7)
     # Last 14 days seems good enough for recent data.
