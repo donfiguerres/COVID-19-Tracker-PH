@@ -18,30 +18,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
 TEMPLATE = 'plotly_dark'
 
-def calc_processing_times(data):
-    """Calculate how many days it took from specimen collection to reporting.
-    The return is the input data frame that has the calculated values in a
-    column named 'SpecimenToRepConf'.
-    """
-    # Some incomplete data have no dates so we need to check first before
-    # making a computation.
-    data["SpecimenToRepConf"] = data.apply(lambda row : 
-                (row['DateRepConf'] - row['DateSpecimen']).days
-                if row['DateRepConf'] and row['DateSpecimen']
-                    and row['DateSpecimen'] < row['DateRepConf']
-                else np.NaN, axis=1)
-    data["SpecimenToRelease"] = data.apply(lambda row : 
-                (row['DateResultRelease'] - row['DateSpecimen']).days
-                if row['DateResultRelease'] and row['DateSpecimen']
-                    and row['DateSpecimen'] < row['DateResultRelease']
-                else np.NaN, axis=1)
-    data["ReleaseToRepConf"] = data.apply(lambda row : 
-                (row['DateRepConf'] - row['DateResultRelease']).days
-                if row['DateRepConf'] and row['DateResultRelease']
-                    and row['DateResultRelease'] < row['DateRepConf']
-                else np.NaN, axis=1)
-    logging.debug(data.head())
-    return data
 
 def filter_active_closed(data):
     active_data = data[data.RemovalType.isnull()]
@@ -170,6 +146,31 @@ def plot_charts(ci_data, test_data):
     # Last 14 days seems good enough for recent data.
     do_plot_charts(ci_data, test_data, 14)
 
+def calc_processing_times(data):
+    """Calculate how many days it took from specimen collection to reporting.
+    The return is the input data frame that has the calculated values in a
+    column named 'SpecimenToRepConf'.
+    """
+    # Some incomplete data have no dates so we need to check first before
+    # making a computation.
+    data["SpecimenToRepConf"] = data.apply(lambda row : 
+                (row['DateRepConf'] - row['DateSpecimen']).days
+                if row['DateRepConf'] and row['DateSpecimen']
+                    and row['DateSpecimen'] < row['DateRepConf']
+                else np.NaN, axis=1)
+    data["SpecimenToRelease"] = data.apply(lambda row : 
+                (row['DateResultRelease'] - row['DateSpecimen']).days
+                if row['DateResultRelease'] and row['DateSpecimen']
+                    and row['DateSpecimen'] < row['DateResultRelease']
+                else np.NaN, axis=1)
+    data["ReleaseToRepConf"] = data.apply(lambda row : 
+                (row['DateRepConf'] - row['DateResultRelease']).days
+                if row['DateRepConf'] and row['DateResultRelease']
+                    and row['DateResultRelease'] < row['DateRepConf']
+                else np.NaN, axis=1)
+    logging.debug(data.head())
+    return data
+
 def read_case_information():
     ci_file_name = ""
     for name in glob.glob(f"{SCRIPT_DIR}/data/*Case Information.csv"):
@@ -191,11 +192,10 @@ def read_testing_aggregates():
         break
     data = pd.read_csv(ci_file_name)
     data['report_date'] = pd.to_datetime(data['report_date'])
-    return data
+    return calc_processing_times(data)
 
 def plot():
     ci_data = read_case_information()
-    ci_data = calc_processing_times(ci_data)
     test_data = read_testing_aggregates()
     active_data, closed_data = filter_active_closed(ci_data)
     logging.debug(active_data.head())
