@@ -85,8 +85,21 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     )
     fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
 
-def plot_line_chart(data, title, x_axis, y_axis, filename):
+def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig = px.line(data, title=title, template=TEMPLATE, x=x_axis, y=y_axis)
+    fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
+
+def plot_trend_chart(data, y_axis, axis_name, title, filename):
+    ma_column = f'{y_axis}_MA7'
+    data[ma_column] = data[y_axis].rolling(7).mean()
+    fig = go.Figure()
+    fig.update_layout(title=title, template=TEMPLATE)
+    fig.add_trace(
+        go.Bar(x=data.index, y=data[y_axis], name="sum")
+    )
+    fig.add_trace(
+        go.Scatter(x=data.index, y=data[ma_column], name = "7-day MA")
+    )
     fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
 
 def plot_reporting(ci_data, test_data, title_suffix="", filename_suffix=""):
@@ -103,11 +116,29 @@ def plot_reporting(ci_data, test_data, title_suffix="", filename_suffix=""):
 def plot_test(test_data, title_suffix="", filename_suffix=""):
     data_test_daily_aggregated = test_data.groupby('report_date').sum()
     logging.debug(data_test_daily_aggregated)
-    plot_line_chart(data_test_daily_aggregated,
-                        f"Daily Ouptut Positive Individuals{title_suffix}",
-                        data_test_daily_aggregated.index,
+    plot_trend_chart(data_test_daily_aggregated,
                         'daily_output_positive_individuals',
+                        "daily positive individuals",
+                        f"Daily Ouptut Positive Individuals{title_suffix}",
                         f"test_daily_output_positive_individuals{filename_suffix}"
+    )
+    plot_trend_chart(data_test_daily_aggregated,
+                        'daily_output_unique_individuals',
+                        "daily unique individuals",
+                        f"Daily Ouptut Unique Individuals{title_suffix}",
+                        f"test_daily_output_unique_individuals{filename_suffix}"
+    )
+    plot_trend_chart(data_test_daily_aggregated,
+                        'cumulative_positive_individuals',
+                        "cumulative positive individuals",
+                        f"Cumulative Positive Individuals{title_suffix}",
+                        f"test_cumulative_positive_individuals{filename_suffix}"
+    )
+    plot_trend_chart(data_test_daily_aggregated,
+                        'cumulative_unique_individuals',
+                        "cumulative unique individuals",
+                        f"Daily Ouptut Unique Individuals{title_suffix}",
+                        f"test_cumulative_unique_individuals{filename_suffix}"
     )
 
 def plot_test_reports_comparison(ci_data, test_data,
