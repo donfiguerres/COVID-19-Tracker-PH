@@ -192,6 +192,12 @@ def read_testing_aggregates():
         break
     data = pd.read_csv(ci_file_name)
     data['report_date'] = pd.to_datetime(data['report_date'])
+    data['pct_positive_daily'] = data.apply(lambda row : 
+                row['daily_output_positive_individuals']/row['daily_output_unique_individuals']
+                    if row['daily_output_unique_individuals']
+                    else 0,
+                axis=1)
+    logging.debug(data.head())
     return data
 
 def plot():
