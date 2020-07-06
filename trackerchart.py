@@ -124,15 +124,12 @@ def plot_test_reports_comparison(ci_data, test_data,
     data_report_daily = ci_data['DateRepConf'].value_counts()
     logging.debug(data_report_daily)
 
-def do_plot_charts(ci_data, test_data, days=None):
-    title_suffix = ""
-    filename_suffix = ""
-    if days:
-        title_suffix = f" - Last {days} days"
-        filename_suffix = f"{days}days"
+def plot_reporting_delay(ci_data, days=None):
+    plot_reporting(ci_data)
+    for days in PERIOD_DAYS:
         ci_data = filter_latest(ci_data, days, date_column='DateRepConf')
-    plot_reporting(ci_data, title_suffix=title_suffix,
-                        filename_suffix=filename_suffix)
+        plot_reporting(ci_data, title_suffix=f" - Last {days} days",
+                        filename_suffix=f"{days}days")
 
 def plot_ci_agg(ci_data):
     onset_agg = ci_data.groupby('DateOnset').count()
@@ -146,13 +143,7 @@ def plot_charts(ci_data, test_data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     plot_ci_agg(ci_data)
-    do_plot_charts(ci_data, test_data)
-    # TODO: refactor to do filtering down the line
-    # Last 7 days seems premature but we need to to respond earlier
-    do_plot_charts(ci_data, test_data, 7)
-    # Last 14 days seems good enough for recent data.
-    do_plot_charts(ci_data, test_data, 14)
-    # need to separate the test data.
+    plot_reporting_delay(ci_data)
     plot_test(test_data)
 
 def calc_processing_times(data):
