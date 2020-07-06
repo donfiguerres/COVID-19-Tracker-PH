@@ -12,7 +12,46 @@ page.
 * numpy
 * plotly
 
+## How to Run
+### Create a Client Secret
+Create and download a OAth 2.0 client secret from the [Google APIs site](https://console.developers.google.com/).
+The website has a tutorial on how to create a client secret.
+
+Copy the client secret file to your project directory and rename the file as
+'client_secret.json'
+### Open the Files in the DOH Data Drop Google Drive Folder
+Open README file in the [DOH folder](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o).
+This link is also available at the [DOH Covid19 Tracker](https://ncovtracker.doh.gov.ph/).
+
+The README file will have a link to the latest Data Drop folder at the last page. Click on that link to open the latest Data Drop folder.
+
+Open all of the files in the Data Drop Folder.
+
+You need to do this step due to a limitation in the Google Drive API. See [Limitations](#limitations)
+below.
+
+### Run the Script
+Navigate to your project directory then run the 'update-tracker.py' script.
+
+    cd /path/to/COVID-19-Tracker-PH
+    python update-tracker.py
+
+### Errors
+Sometimes, the link in the PDF file is not annotated - meaning it is only a text
+and not a link - so PyPDF2 will not be able to find it. To get around that, you
+can use the --folder-id option of the script.
+
+    python update-tracker.py --folder-id=<folder-id-of-latest-datadrop>
+    #example
+    python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
+
 ## TODOs
 * Top LGUs (city/province)
 * Top Region
 * Testing per LGU and Region
+
+## Limitations
+You need to open each of the new files in the DOH datadrop before the script can
+download the Google Drive files for you. This is because the files need to be
+either explicitly shared to your account or needs to be opened first in order
+for them to be listed in your Drive. See this [Stackoverflow question](https://stackoverflow.com/questions/62414423/google-drive-api-list-files-in-a-shared-folder-that-are-i-have-not-accessed-ye).
