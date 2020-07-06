@@ -133,7 +133,7 @@ def plot_reporting_delay(ci_data, days=None):
 
 def plot_ci_agg(ci_data):
     onset_agg = ci_data.groupby('DateOnset').count()
-    logging.debug(onset_agg.head())
+    logging.debug(onset_agg)
     # CaseCode is unique to each case so we can use that to count.
     onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
     plot_trend_chart(onset_agg, 'CaseCode', 'Daily Confirmed Cases by Date Onset',
@@ -146,29 +146,33 @@ def plot_charts(ci_data, test_data):
     plot_reporting_delay(ci_data)
     plot_test(test_data)
 
-def calc_processing_times(data):
+def calc_case_info_data(data):
     """Calculate how many days it took from specimen collection to reporting.
     The return is the input data frame that has the calculated values in a
     column named 'SpecimenToRepConf'.
     """
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
-    data["SpecimenToRepConf"] = data.apply(lambda row : 
+    data['SpecimenToRepConf'] = data.apply(lambda row : 
                 (row['DateRepConf'] - row['DateSpecimen']).days
                 if row['DateRepConf'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateRepConf']
                 else np.NaN, axis=1)
-    data["SpecimenToRelease"] = data.apply(lambda row : 
+    data['SpecimenToRelease'] = data.apply(lambda row : 
                 (row['DateResultRelease'] - row['DateSpecimen']).days
                 if row['DateResultRelease'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateResultRelease']
                 else np.NaN, axis=1)
-    data["ReleaseToRepConf"] = data.apply(lambda row : 
+    data['ReleaseToRepConf'] = data.apply(lambda row : 
                 (row['DateRepConf'] - row['DateResultRelease']).days
                 if row['DateRepConf'] and row['DateResultRelease']
                     and row['DateResultRelease'] < row['DateRepConf']
                 else np.NaN, axis=1)
-    logging.debug(data.head())
+    data['proxy'] = data.apply(lambda row :
+                False if row['DateOnset'] else True, axis=1)
+    data['DateOnset'] = data.apply(lambda row :
+                row['DateSpecimen'] if row['proxy'] else row['DateOnset'], axis=1)
+    logging.debug(data)
     return data
 
 def read_case_information():
@@ -182,7 +186,7 @@ def read_case_information():
             'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
     for column in convert_columns:
         data[column] = pd.to_datetime(data[column])
-    return calc_processing_times(data)
+    return calc_case_info_data(data)
 
 def read_testing_aggregates():
     ci_file_name = ""
@@ -197,13 +201,13 @@ def read_testing_aggregates():
                     if row['daily_output_unique_individuals']
                     else 0,
                 axis=1)
-    logging.debug(data.head())
+    logging.debug(data)
     return data
 
 def plot():
     ci_data = read_case_information()
     test_data = read_testing_aggregates()
     active_data, closed_data = filter_active_closed(ci_data)
-    logging.debug(active_data.head())
-    logging.debug(closed_data.head())
+    logging.debug(active_data)
+    logging.debug(closed_data)
     plot_charts(ci_data, test_data)
