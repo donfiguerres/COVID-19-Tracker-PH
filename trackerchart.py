@@ -17,6 +17,7 @@ import plotly.graph_objects as go
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
 TEMPLATE = 'plotly_dark'
+PERIOD_DAYS = [7, 14]
 
 
 def filter_active_closed(data):
@@ -24,10 +25,18 @@ def filter_active_closed(data):
     closed_data = data[data.RemovalType.notnull()]
     return active_data, closed_data
 
-def filter_latest(data, date_column, days):
-    cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
-    logging.debug(f"Filtering {date_column} cutoff f{cutoff_date}.")
-    return data[data[date_column] > cutoff_date]
+def filter_latest(data, days, date_column=None):
+    if date_column:
+        cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
+        logging.debug(f"Filtering {date_column} cutoff f{cutoff_date}.")
+        return data[data[date_column] > cutoff_date]
+    else:
+        cutoff_date = data.index.max()- pd.Timedelta(days=days)
+        logging.debug(f"Filtering index cutoff f{cutoff_date}.")
+        return data[data.index > cutoff_date]
+
+def calc_moving_average(data, column, days=7):
+    return data[column].rolling(days).mean()
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
@@ -65,20 +74,19 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig = px.line(data, title=title, template=TEMPLATE, x=x_axis, y=y_axis)
     fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
 
-def plot_trend_chart(data, y_axis, axis_name, title, filename):
-    ma_column = f'{y_axis}_MA7'
-    data[ma_column] = data[y_axis].rolling(7).mean()
+def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
     fig = go.Figure()
     fig.update_layout(title=title, template=TEMPLATE)
     fig.add_trace(
-        go.Bar(x=data.index, y=data[y_axis], name="sum")
+        go.Bar(x=data.index, y=data[y_axis], name="count")
     )
-    fig.add_trace(
-        go.Scatter(x=data.index, y=data[ma_column], name = "7-day MA")
-    )
+    if ma_column:
+        fig.add_trace(
+            go.Scatter(x=data.index, y=data[ma_column], name="7-day MA")
+        )
     fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
 
-def plot_reporting(ci_data, test_data, title_suffix="", filename_suffix=""):
+def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'SpecimenToRepConf',
                         f"Specimen Collection to Reporting{title_suffix}",
                         suffix=filename_suffix)
@@ -89,33 +97,26 @@ def plot_reporting(ci_data, test_data, title_suffix="", filename_suffix=""):
                         f"Result Release to Reporting{title_suffix}",
                         suffix=filename_suffix)
 
-def plot_test(test_data, title_suffix="", filename_suffix=""):
-    data_test_daily_aggregated = test_data.groupby('report_date').sum()
-    logging.debug(data_test_daily_aggregated)
-    plot_trend_chart(data_test_daily_aggregated,
-                        'daily_output_positive_individuals',
-                        "daily positive individuals",
-                        f"Daily Ouptut Positive Individuals{title_suffix}",
-                        f"test_daily_output_positive_individuals{filename_suffix}"
-    )
-    plot_trend_chart(data_test_daily_aggregated,
-                        'daily_output_unique_individuals',
-                        "daily unique individuals",
-                        f"Daily Ouptut Unique Individuals{title_suffix}",
-                        f"test_daily_output_unique_individuals{filename_suffix}"
-    )
-    plot_trend_chart(data_test_daily_aggregated,
-                        'cumulative_positive_individuals',
-                        "cumulative positive individuals",
-                        f"Cumulative Positive Individuals{title_suffix}",
-                        f"test_cumulative_positive_individuals{filename_suffix}"
-    )
-    plot_trend_chart(data_test_daily_aggregated,
-                        'cumulative_unique_individuals',
-                        "cumulative unique individuals",
-                        f"Daily Ouptut Unique Individuals{title_suffix}",
-                        f"test_cumulative_unique_individuals{filename_suffix}"
-    )
+def plot_test_agg(daily_agg, columns, title_suffix="", filename_suffix=""):
+    for column in columns:
+        title = column.replace("_", " ")
+        plot_trend_chart(daily_agg,
+                column, f"{title}{title_suffix}",
+                f"{column}{filename_suffix}", ma_column=f'{column}_MA7'
+        )
+
+def plot_test(test_data):
+    daily_agg = test_data.groupby('report_date').sum()
+    logging.debug(daily_agg)
+    columns = ['daily_output_samples_tested', 'daily_output_unique_individuals',
+            'daily_output_positive_individuals', 'cumulative_samples_tested',
+            'cumulative_unique_individuals', 'cumulative_positive_individuals']
+    for column in columns:
+        daily_agg[f'{column}_MA7'] = calc_moving_average(daily_agg, column)
+    plot_test_agg(daily_agg, columns)
+    for days in PERIOD_DAYS:
+        filtered_daily_agg = filter_latest(daily_agg, days)
+        plot_test_agg(filtered_daily_agg, columns, f" - last {days} days", f"_{days}days")
 
 def plot_test_reports_comparison(ci_data, test_data,
                                     title_suffix="", filename_suffix=""):
@@ -129,11 +130,8 @@ def do_plot_charts(ci_data, test_data, days=None):
     if days:
         title_suffix = f" - Last {days} days"
         filename_suffix = f"{days}days"
-        ci_data = filter_latest(ci_data, 'DateRepConf', days)
-        test_data = filter_latest(test_data, 'report_date', days)
-    plot_reporting(ci_data, test_data, title_suffix=title_suffix,
-                        filename_suffix=filename_suffix)
-    plot_test(test_data, title_suffix=title_suffix,
+        ci_data = filter_latest(ci_data, days, date_column='DateRepConf')
+    plot_reporting(ci_data, title_suffix=title_suffix,
                         filename_suffix=filename_suffix)
 
 def plot_charts(ci_data, test_data):
@@ -145,6 +143,8 @@ def plot_charts(ci_data, test_data):
     do_plot_charts(ci_data, test_data, 7)
     # Last 14 days seems good enough for recent data.
     do_plot_charts(ci_data, test_data, 14)
+    # need to separate the test data.
+    plot_test(test_data)
 
 def calc_processing_times(data):
     """Calculate how many days it took from specimen collection to reporting.
@@ -182,7 +182,7 @@ def read_case_information():
             'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
     for column in convert_columns:
         data[column] = pd.to_datetime(data[column])
-    return data
+    return calc_processing_times(data)
 
 def read_testing_aggregates():
     ci_file_name = ""
@@ -192,7 +192,7 @@ def read_testing_aggregates():
         break
     data = pd.read_csv(ci_file_name)
     data['report_date'] = pd.to_datetime(data['report_date'])
-    return calc_processing_times(data)
+    return data
 
 def plot():
     ci_data = read_case_information()
