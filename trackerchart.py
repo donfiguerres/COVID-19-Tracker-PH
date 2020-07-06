@@ -134,9 +134,18 @@ def do_plot_charts(ci_data, test_data, days=None):
     plot_reporting(ci_data, title_suffix=title_suffix,
                         filename_suffix=filename_suffix)
 
+def plot_ci_agg(ci_data):
+    onset_agg = ci_data.groupby('DateOnset').count()
+    logging.debug(onset_agg.head())
+    # CaseCode is unique to each case so we can use that to count.
+    onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
+    plot_trend_chart(onset_agg, 'CaseCode', 'Daily Confirmed Cases by Date Onset',
+                'DateOnset', ma_column='DateOnset_MA7')
+
 def plot_charts(ci_data, test_data):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
+    plot_ci_agg(ci_data)
     do_plot_charts(ci_data, test_data)
     # TODO: refactor to do filtering down the line
     # Last 7 days seems premature but we need to to respond earlier
