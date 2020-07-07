@@ -122,7 +122,7 @@ def plot_test(test_data):
     ma_column_suffix = "_MA7"
     for column in daily_columns:
         daily_agg[f'{column}{ma_column_suffix}'] = calc_moving_average(daily_agg, column)
-    plot_test_agg(daily_agg, daily_columns)
+    plot_test_agg(daily_agg, daily_columns, ma_column_suffix=ma_column_suffix)
     for days in PERIOD_DAYS:
         filtered_daily_agg = filter_latest(daily_agg, days)
         plot_test_agg(filtered_daily_agg, daily_columns,
