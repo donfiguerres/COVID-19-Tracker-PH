@@ -157,15 +157,8 @@ def plot_ci_agg(ci_data):
     logging.debug(onset_agg)
     # CaseCode is unique to each case so we can use that to count.
     onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
-    plot_trend_chart(onset_agg, 'CaseCode', 'Daily Confirmed Cases by Date Onset',
+    plot_trend_chart(onset_agg, 'CaseCode', 'Daily Confirmed Cases by Date of Onset of Illness',
                 'DateOnset', ma_column='DateOnset_MA7')
-
-def plot_charts(ci_data, test_data):
-    if not os.path.exists(CHART_OUTPUT):
-        os.mkdir(CHART_OUTPUT)
-    plot_ci_agg(ci_data)
-    plot_reporting_delay(ci_data)
-    plot_test(test_data)
 
 def calc_case_info_data(data):
     """Calculate how many days it took from specimen collection to reporting.
@@ -228,4 +221,8 @@ def read_testing_aggregates():
 def plot():
     ci_data = read_case_information()
     test_data = read_testing_aggregates()
-    plot_charts(ci_data, test_data)
+    if not os.path.exists(CHART_OUTPUT):
+        os.mkdir(CHART_OUTPUT)
+    plot_ci_agg(ci_data)
+    plot_reporting_delay(ci_data)
+    plot_test(test_data)
