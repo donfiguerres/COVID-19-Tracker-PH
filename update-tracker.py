@@ -17,6 +17,8 @@ def _parse_args():
                     help="skip download of data")
     parser.add_argument("--folder-id", nargs='?',
                     help="specify the folder id of the latest datadrop")
+    parser.add_argument("--data-dir", nargs='?', default=datadrop.DATA_DIR,
+                    help="specify the directory of the data set")
     parser.add_argument("--loglevel", 
                     help="set log level")
     return parser.parse_args()
@@ -34,7 +36,7 @@ def main():
             datadrop.download(folder_id=args.folder_id)
         else:
             datadrop.download()
-    trackerchart.plot()
+    trackerchart.plot(args.data_dir)
     return 0
 
 
