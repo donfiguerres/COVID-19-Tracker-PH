@@ -97,26 +97,47 @@ def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
                         f"Result Release to Reporting{title_suffix}",
                         suffix=filename_suffix)
 
-def plot_test_agg(daily_agg, columns, title_suffix="", filename_suffix=""):
+def plot_test_agg(daily_agg, columns, ma_column_suffix="", title_suffix="",
+                filename_suffix=""):
     for column in columns:
         title = column.replace("_", " ")
-        plot_trend_chart(daily_agg,
-                column, f"{title}{title_suffix}",
-                f"{column}{filename_suffix}", ma_column=f'{column}_MA7'
-        )
+        if ma_column_suffix:
+            plot_trend_chart(daily_agg,
+                    column, f"{title}{title_suffix}",
+                    f"{column}{filename_suffix}",
+                    ma_column=f'{column}{ma_column_suffix}'
+            )
+        else:
+            plot_trend_chart(daily_agg,
+                    column, f"{title}{title_suffix}",
+                    f"{column}{filename_suffix}"
+            )
 
 def plot_test(test_data):
     daily_agg = test_data.groupby('report_date').sum()
     logging.debug(daily_agg)
-    columns = ['daily_output_samples_tested', 'daily_output_unique_individuals',
-            'daily_output_positive_individuals', 'cumulative_samples_tested',
-            'cumulative_unique_individuals', 'cumulative_positive_individuals']
-    for column in columns:
-        daily_agg[f'{column}_MA7'] = calc_moving_average(daily_agg, column)
-    plot_test_agg(daily_agg, columns)
+    daily_columns = ['daily_output_samples_tested',
+                    'daily_output_unique_individuals',
+                'daily_output_positive_individuals', ]
+    ma_column_suffix = "_MA7"
+    for column in daily_columns:
+        daily_agg[f'{column}{ma_column_suffix}'] = calc_moving_average(daily_agg, column)
+    plot_test_agg(daily_agg, daily_columns)
     for days in PERIOD_DAYS:
         filtered_daily_agg = filter_latest(daily_agg, days)
-        plot_test_agg(filtered_daily_agg, columns, f" - last {days} days", f"_{days}days")
+        plot_test_agg(filtered_daily_agg, daily_columns,
+                        ma_column_suffix=ma_column_suffix,
+                        title_suffix=f" - last {days} days",
+                        filename_suffix=f"_{days}days")
+    cumulative_columns = ['cumulative_samples_tested',
+                        'cumulative_unique_individuals',
+                        'cumulative_positive_individuals']
+    plot_test_agg(daily_agg, cumulative_columns)
+    for days in PERIOD_DAYS:
+        filtered_daily_agg = filter_latest(daily_agg, days)
+        plot_test_agg(filtered_daily_agg, cumulative_columns,
+                        title_suffix=f" - last {days} days",
+                        filename_suffix=f"_{days}days")
 
 def plot_test_reports_comparison(ci_data, test_data,
                                     title_suffix="", filename_suffix=""):
@@ -169,7 +190,7 @@ def calc_case_info_data(data):
                     and row['DateResultRelease'] < row['DateRepConf']
                 else np.NaN, axis=1)
     data['proxy'] = data.apply(lambda row :
-                False if row['DateOnset'] else True, axis=1)
+                True if row['DateOnset'] == pd.NaT else True, axis=1)
     data['DateOnset'] = data.apply(lambda row :
                 row['DateSpecimen'] if row['proxy'] else row['DateOnset'], axis=1)
     logging.debug(data)
@@ -207,7 +228,4 @@ def read_testing_aggregates():
 def plot():
     ci_data = read_case_information()
     test_data = read_testing_aggregates()
-    active_data, closed_data = filter_active_closed(ci_data)
-    logging.debug(active_data)
-    logging.debug(closed_data)
     plot_charts(ci_data, test_data)
