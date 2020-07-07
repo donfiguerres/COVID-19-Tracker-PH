@@ -235,7 +235,7 @@ def read_testing_aggregates(data_dir):
 
 def plot(data_dir):
     ci_data = read_case_information(data_dir)
-    test_data = read_testing_aggregates()
+    test_data = read_testing_aggregates(data_dir)
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     plot_ci_agg(ci_data)
