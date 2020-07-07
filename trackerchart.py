@@ -86,6 +86,15 @@ def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
         )
     fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
 
+def plot_stacked_trend_chart(data, y_axis, color, title, filename, ma_column=None):
+    fig = px.bar(data, y=y_axis, color=color, barmode='stack', template=TEMPLATE,
+                    title=title, orientation='v')
+    if ma_column:
+        fig.add_trace(
+            go.Scatter(x=data.index, y=data[ma_column], name="7-day MA")
+        )
+    fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
+
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'SpecimenToRepConf',
                         f"Specimen Collection to Reporting{title_suffix}",
@@ -160,6 +169,12 @@ def plot_ci_agg(ci_data):
     plot_trend_chart(onset_agg, 'CaseCode', 'Daily Confirmed Cases by Date of Onset of Illness',
                 'DateOnset', ma_column='DateOnset_MA7')
 
+def plot_ci_agg_by_region(ci_data):
+    onset_agg = ci_data.groupby(['DateOnset', 'RegionRes']).count().reset_index('RegionRes')
+    onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
+    plot_stacked_trend_chart(onset_agg, 'CaseCode', 'RegionRes', 'Daily Confirmed Cases by Date of Onset of Illness',
+                'DateOnsetByRegion', ma_column='DateOnset_MA7')
+
 def calc_case_info_data(data):
     """Calculate how many days it took from specimen collection to reporting.
     The return is the input data frame that has the calculated values in a
@@ -189,9 +204,9 @@ def calc_case_info_data(data):
     logging.debug(data)
     return data
 
-def read_case_information():
+def read_case_information(data_dir):
     ci_file_name = ""
-    for name in glob.glob(f"{SCRIPT_DIR}/data/*Case Information.csv"):
+    for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Case Information.csv"):
         ci_file_name = name
         # We expect to have only one file.
         break
@@ -202,9 +217,9 @@ def read_case_information():
         data[column] = pd.to_datetime(data[column])
     return calc_case_info_data(data)
 
-def read_testing_aggregates():
+def read_testing_aggregates(data_dir):
     ci_file_name = ""
-    for name in glob.glob(f"{SCRIPT_DIR}/data/*Testing Aggregates.csv"):
+    for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Testing Aggregates.csv"):
         ci_file_name = name
         # We expect to have only one file.
         break
@@ -218,11 +233,12 @@ def read_testing_aggregates():
     logging.debug(data)
     return data
 
-def plot():
-    ci_data = read_case_information()
-    test_data = read_testing_aggregates()
+def plot(data_dir):
+    ci_data = read_case_information(data_dir)
+    #test_data = read_testing_aggregates()
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
-    plot_ci_agg(ci_data)
-    plot_reporting_delay(ci_data)
-    plot_test(test_data)
+    #plot_ci_agg(ci_data)
+    plot_ci_agg_by_region(ci_data)
+    #plot_reporting_delay(ci_data)
+    #plot_test(test_data)
