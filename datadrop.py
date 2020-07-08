@@ -79,7 +79,7 @@ def trim_data_file_name(name):
     """"Remove date in name for easier tracking in the repo."""
     return re.sub(r"(DOH COVID Data Drop_ \d{8} - )", r"", name)
 
-def trim_excel_file_name(name):
+def trim_oddball_file_name(name):
     """"Remove date in name for easier tracking in the repo."""
     return re.sub(r" \d{8}", r"", name)
 
@@ -128,14 +128,16 @@ def download_data_files(drive_service, folder_id):
     if not os.path.exists(DATA_DIR):
         os.mkdir(DATA_DIR)
     items = list_data_files(drive_service, folder_id)
+    # These do not follow the naming convention of the rest of the files.
+    oddballs = ["DOH Data Drop - Changelog.xlsx", "DOH Data Drop.xlsx"]
     for item in items:
         file_name = item['name']
         if "READ ME" in file_name:
             file_name = trim_readme_name(file_name)
-        elif ".csv" in file_name:
+        elif any(x in file_name for x in oddballs):
+            file_name = trim_oddball_file_name(file_name)
+        else:
             file_name = trim_data_file_name(file_name)
-        elif ".xlsx" in file_name:
-            file_name = trim_excel_file_name(file_name)
         download_path = os.path.join(DATA_DIR, file_name)
         download_gdrive_file(drive_service, item['id'], download_path)
 
