@@ -180,6 +180,7 @@ def calc_case_info_data(data):
     The return is the input data frame that has the calculated values in a
     column named 'SpecimenToRepConf'.
     """
+    logging.info("Adding Calculations...")
     # Some incomplete data have no dates so we need to check first before
     # making a computation.
     data['SpecimenToRepConf'] = data.apply(lambda row : 
@@ -205,6 +206,7 @@ def calc_case_info_data(data):
     return data
 
 def read_case_information(data_dir):
+    logging.info("Reading Case Information...")
     ci_file_name = ""
     for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Case Information.csv"):
         ci_file_name = name
@@ -214,10 +216,13 @@ def read_case_information(data_dir):
     convert_columns = ['DateSpecimen', 'DateRepConf', 'DateResultRelease',
             'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
     for column in convert_columns:
-        data[column] = pd.to_datetime(data[column])
+        logging.debug(f"Converting column {column} to datetime...")
+        # Some of the data are invalid.
+        data[column] = pd.to_datetime(data[column], errors='coerce')
     return calc_case_info_data(data)
 
 def read_testing_aggregates(data_dir):
+    logging.info("Reading Testing Aggregates...")
     ci_file_name = ""
     for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Testing Aggregates.csv"):
         ci_file_name = name
