@@ -86,14 +86,13 @@ def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
         )
     fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
 
-def plot_stacked_trend_chart(data, x, y, color, title, filename, plot_ma=False):
+def plot_stacked_trend_chart(data, x, y, title, filename, color=None, plot_ma=False):
     agg = data.groupby([x, color]).count().reset_index(color)
     fig = px.bar(agg, y=y, color=color, barmode='stack', template=TEMPLATE,
                     title=title)
     if plot_ma:
         agg_ma = data.groupby([x]).count()
-        ma = calc_moving_average(agg_ma, y)
-        agg_ma[f'{x}_MA7'] = ma
+        agg_ma[f'{x}_MA7'] = calc_moving_average(agg_ma, y)
         fig.add_trace(
             go.Scatter(x=agg_ma.index, y=agg_ma[f'{x}_MA7'], name="7-day MA")
         )
@@ -174,10 +173,9 @@ def plot_ci_agg(ci_data):
                 'DateOnset', ma_column='DateOnset_MA7')
 
 def plot_ci_agg_by_region(ci_data):
-    #onset_agg = ci_data.groupby(['DateOnset', 'RegionRes']).count().reset_index('RegionRes')
-    #onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
-    plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode', 'RegionRes', 'Daily Confirmed Cases by Date of Onset of Illness',
-                'DateOnsetByRegion', plot_ma=True)
+    plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode', 
+                'Daily Confirmed Cases by Date of Onset of Illness',
+                'DateOnsetByRegion', color='RegionRes', plot_ma=True)
 
 def calc_case_info_data(data):
     """Calculate how many days it took from specimen collection to reporting.
