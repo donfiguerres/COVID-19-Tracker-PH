@@ -53,5 +53,5 @@ can use the --folder-id option of the script.
 ## Limitations
 You need to open each of the new files in the DOH datadrop before the script can
 download the Google Drive files for you. This is because the files need to be
-either explicitly shared to your account or needs to be opened first in order
+either explicitly shared to your account or need to be opened first in order
 for them to be listed in your Drive. See this [Stackoverflow question](https://stackoverflow.com/questions/62414423/google-drive-api-list-files-in-a-shared-folder-that-are-i-have-not-accessed-ye).
