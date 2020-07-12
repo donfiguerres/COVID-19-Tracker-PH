@@ -4,7 +4,7 @@ This script downloads the data from the [DOH Data Drop](https://drive.google.com
 and generates the charts used in the [COVID-19 Tracker PH](https://donfiguerres.github.io/COVID-19-PH/COVID-19-Tracker-PH.html)
 page.
 
-## Prerequisites
+## Dependencies
 * google-api-client
 * google-auth-oathlib
 * pypdf2
