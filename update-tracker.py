@@ -43,6 +43,7 @@ def main():
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except Exception:
+    except Exception as e:
+        logging.error(e)
         logging.error(traceback.format_exc())
         sys.exit(1)
