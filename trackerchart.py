@@ -32,11 +32,11 @@ def filter_active_closed(data):
 def filter_latest(data, days, date_column=None):
     if date_column:
         cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
-        logging.debug(f"Filtering {date_column} cutoff f{cutoff_date}.")
+        logging.debug(f"Filtering {date_column} cutoff {cutoff_date}.")
         return data[data[date_column] > cutoff_date]
     else:
         cutoff_date = data.index.max()- pd.Timedelta(days=days)
-        logging.debug(f"Filtering index cutoff f{cutoff_date}.")
+        logging.debug(f"Filtering index cutoff {cutoff_date}.")
         return data[data.index > cutoff_date]
 
 def calc_moving_average(data, column, days=7):
