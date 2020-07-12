@@ -20,6 +20,10 @@ TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [7, 14]
 
 
+def write_image(fig, filename):
+    fig.update_layout(width=1200, template=TEMPLATE)
+    fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
+
 def filter_active_closed(data):
     active_data = data[data.RemovalType.isnull()]
     closed_data = data[data.RemovalType.notnull()]
@@ -43,7 +47,7 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     logging.debug(desc)
     percentile_50 = desc['50%']
     percentile_90 = desc['90%']
-    fig = px.histogram(data, x=xaxis, log_x=True, template=TEMPLATE)
+    fig = px.histogram(data, x=xaxis, log_x=True)
     fig.update_layout(xaxis_title=xaxis_title,
             shapes=[
                 dict(
@@ -68,15 +72,15 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
                 )
             ]
     )
-    fig.write_image(f"{CHART_OUTPUT}/{xaxis}{suffix}.png")
+    write_image(fig, f"{xaxis}{suffix}")
 
 def plot_line_chart(data, x_axis, y_axis, title, filename):
-    fig = px.line(data, title=title, template=TEMPLATE, x=x_axis, y=y_axis)
-    fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
+    fig = px.line(data, title=title, x=x_axis, y=y_axis)
+    fig.write_image(fig, f"{filename}")
 
 def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
     fig = go.Figure()
-    fig.update_layout(title=title, template=TEMPLATE)
+    fig.update_layout(title=title)
     fig.add_trace(
         go.Bar(x=data.index, y=data[y_axis], name="count")
     )
@@ -84,19 +88,18 @@ def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
         fig.add_trace(
             go.Scatter(x=data.index, y=data[ma_column], name="7-day MA")
         )
-    fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
+    write_image(fig, f"{filename}")
 
 def plot_stacked_trend_chart(data, x, y, title, filename, color=None, plot_ma=False):
     agg = data.groupby([x, color]).count().reset_index(color)
-    fig = px.bar(agg, y=y, color=color, barmode='stack', template=TEMPLATE,
-                    title=title)
+    fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
     if plot_ma:
         agg_ma = data.groupby([x]).count()
         agg_ma[f'{x}_MA7'] = calc_moving_average(agg_ma, y)
         fig.add_trace(
             go.Scatter(x=agg_ma.index, y=agg_ma[f'{x}_MA7'], name="7-day MA")
         )
-    fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
+    write_image(fig, f"{filename}")
 
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'SpecimenToRepConf',
