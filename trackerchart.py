@@ -177,12 +177,8 @@ def plot_ci_agg(ci_data):
                 'DateOnsetByRegion', color='Region', plot_ma=True)
 
 def calc_case_info_data(data):
-    """Calculate how many days it took from specimen collection to reporting.
-    The return is the input data frame that has the calculated values in a
-    column named 'SpecimenToRepConf'.
-    """
-    logging.info("Adding Calculations...")
-    # Some incomplete data have no dates so we need to check first before
+    """Calculate data needed for the plots."""
+    # Some incomplete entries have no dates so we need to check first before
     # making a computation.
     data['SpecimenToRepConf'] = data.apply(lambda row : 
                 (row['DateRepConf'] - row['DateSpecimen']).days
