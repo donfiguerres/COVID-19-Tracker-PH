@@ -17,7 +17,7 @@ import plotly.graph_objects as go
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
 TEMPLATE = 'plotly_dark'
-PERIOD_DAYS = [7, 14]
+PERIOD_DAYS = [14, 30]
 
 
 def write_image(fig, filename):
@@ -90,7 +90,8 @@ def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
         )
     write_image(fig, f"{filename}")
 
-def plot_stacked_trend_chart(data, x, y, title, filename, color=None, plot_ma=False):
+def plot_stacked_trend_chart(data, x, y, title, filename, color=None, plot_ma=False,
+            overlay=None):
     agg = data.groupby([x, color]).count().reset_index(color)
     fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
     if plot_ma:
