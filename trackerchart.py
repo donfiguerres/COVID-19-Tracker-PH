@@ -173,7 +173,7 @@ def plot_ci_agg(ci_data):
                 'DateOnset', color='CaseType', plot_ma=True)
     plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode', 
                 'Daily Confirmed Cases by Date of Onset of Illness',
-                'DateOnsetByRegion', color='RegionRes', plot_ma=True)
+                'DateOnsetByRegion', color='Region', plot_ma=True)
 
 def calc_case_info_data(data):
     """Calculate how many days it took from specimen collection to reporting.
@@ -202,12 +202,17 @@ def calc_case_info_data(data):
                 True if row['DateOnset'] == pd.NaT else True, axis=1)
     data['DateOnset'] = data.apply(lambda row :
                 row['DateSpecimen'] if row['proxy'] else row['DateOnset'], axis=1)
+    # Set CaseType to identify newly added cases from latest data.
     max_date_repconf = data.DateRepConf.max()
     logging.debug(f"Max DateRepConf is {max_date_repconf}")
     data['CaseType'] = data.apply(lambda row :
                 'Incomplete' if not row['DateRepConf'] else (
                     'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'
                 ), axis=1)
+    # Set top regions for more readable charts.
+    top_regions = data['RegionRes'].value_counts().nlargest(10)
+    data['Region'] = data.apply(lambda row :
+                row['RegionRes'] if row['RegionRes'] in top_regions else 'Others', axis=1)
     logging.debug(data)
     return data
 
