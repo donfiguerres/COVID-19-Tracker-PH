@@ -86,12 +86,16 @@ def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
         )
     fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
 
-def plot_stacked_trend_chart(data, y_axis, color, title, filename, ma_column=None):
-    fig = px.bar(data, y=y_axis, color=color, barmode='stack', template=TEMPLATE,
-                    title=title, orientation='v')
-    if ma_column:
+def plot_stacked_trend_chart(data, x, y, color, title, filename, plot_ma=False):
+    agg = data.groupby([x, color]).count().reset_index(color)
+    fig = px.bar(agg, y=y, color=color, barmode='stack', template=TEMPLATE,
+                    title=title)
+    if plot_ma:
+        agg_ma = data.groupby([x]).count()
+        ma = calc_moving_average(agg_ma, y)
+        agg_ma[f'{x}_MA7'] = ma
         fig.add_trace(
-            go.Scatter(x=data.index, y=data[ma_column], name="7-day MA")
+            go.Scatter(x=agg_ma.index, y=agg_ma[f'{x}_MA7'], name="7-day MA")
         )
     fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
 
@@ -170,10 +174,10 @@ def plot_ci_agg(ci_data):
                 'DateOnset', ma_column='DateOnset_MA7')
 
 def plot_ci_agg_by_region(ci_data):
-    onset_agg = ci_data.groupby(['DateOnset', 'RegionRes']).count().reset_index('RegionRes')
-    onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
-    plot_stacked_trend_chart(onset_agg, 'CaseCode', 'RegionRes', 'Daily Confirmed Cases by Date of Onset of Illness',
-                'DateOnsetByRegion', ma_column='DateOnset_MA7')
+    #onset_agg = ci_data.groupby(['DateOnset', 'RegionRes']).count().reset_index('RegionRes')
+    #onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
+    plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode', 'RegionRes', 'Daily Confirmed Cases by Date of Onset of Illness',
+                'DateOnsetByRegion', plot_ma=True)
 
 def calc_case_info_data(data):
     """Calculate how many days it took from specimen collection to reporting.
@@ -202,6 +206,12 @@ def calc_case_info_data(data):
                 True if row['DateOnset'] == pd.NaT else True, axis=1)
     data['DateOnset'] = data.apply(lambda row :
                 row['DateSpecimen'] if row['proxy'] else row['DateOnset'], axis=1)
+    max_date_repconf = data.DateRepConf.max()
+    logging.debug(f"Max DateRepConf is {max_date_repconf}")
+    data['NewCase'] = data.apply(lambda row :
+                False if not type(row['DateRepConf']) is datetime else (
+                    True if row['DateRepConf'] == max_date_repconf else False
+                ), axis=1)
     logging.debug(data)
     return data
 
@@ -214,7 +224,9 @@ def read_case_information(data_dir):
         break
     data = pd.read_csv(ci_file_name)
     convert_columns = ['DateSpecimen', 'DateRepConf', 'DateResultRelease',
-            'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
+    #        'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
+    # There is no DateRepRem column in the 2020-07-10 data.
+            'DateOnset', 'DateRecover', 'DateDied']
     for column in convert_columns:
         logging.debug(f"Converting column {column} to datetime...")
         # Some of the data are invalid.
