@@ -165,14 +165,9 @@ def plot_reporting_delay(ci_data, days=None):
                         filename_suffix=f"{days}days")
 
 def plot_ci_agg(ci_data):
-    onset_agg = ci_data.groupby('DateOnset').count()
-    logging.debug(onset_agg)
-    # CaseCode is unique to each case so we can use that to count.
-    onset_agg['DateOnset_MA7'] = calc_moving_average(onset_agg, 'CaseCode')
-    plot_trend_chart(onset_agg, 'CaseCode', 'Daily Confirmed Cases by Date of Onset of Illness',
-                'DateOnset', ma_column='DateOnset_MA7')
-
-def plot_ci_agg_by_region(ci_data):
+    plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode',
+                'Daily Confirmed Cases by Date of Onset of Illnes',
+                'DateOnset', color='CaseType', plot_ma=True)
     plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode', 
                 'Daily Confirmed Cases by Date of Onset of Illness',
                 'DateOnsetByRegion', color='RegionRes', plot_ma=True)
@@ -206,9 +201,9 @@ def calc_case_info_data(data):
                 row['DateSpecimen'] if row['proxy'] else row['DateOnset'], axis=1)
     max_date_repconf = data.DateRepConf.max()
     logging.debug(f"Max DateRepConf is {max_date_repconf}")
-    data['NewCase'] = data.apply(lambda row :
-                False if not type(row['DateRepConf']) is datetime else (
-                    True if row['DateRepConf'] == max_date_repconf else False
+    data['CaseType'] = data.apply(lambda row :
+                'Incomplete' if not row['DateRepConf'] else (
+                    'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'
                 ), axis=1)
     logging.debug(data)
     return data
@@ -254,6 +249,5 @@ def plot(data_dir):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     plot_ci_agg(ci_data)
-    plot_ci_agg_by_region(ci_data)
     plot_reporting_delay(ci_data)
     plot_test(test_data)
