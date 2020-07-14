@@ -1,8 +1,11 @@
 # COVID-19 Tracker Philippines
 
-This script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
-and generates the charts used in the [COVID-19 Tracker PH](https://donfiguerres.github.io/COVID-19-PH/COVID-19-Tracker-PH.html)
-page.
+
+This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.doh.gov.ph/covid19tracker) maintained by the [Department of Health](https://www.doh.gov.ph/). The data set used in this tracker are pulled from DOH's [data drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o).
+
+**Disclaimer: I am not affiliated with the DOH or any government agency. This is my own personal project.**
+
+
 
 ## Dependencies
 * google-api-client
@@ -11,6 +14,11 @@ page.
 * pandas
 * numpy
 * plotly
+
+## Overview
+The update-tracke.py script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
+and generates the charts used in the [COVID-19 Tracker PH](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
+page.
 
 ## How to Run
 ### Create a Client Secret
@@ -55,3 +63,9 @@ You need to open each of the new files in the DOH datadrop before the script can
 download the Google Drive files for you. This is because the files need to be
 either explicitly shared to your account or need to be opened first in order
 for them to be listed in your Drive. See this [Stackoverflow question](https://stackoverflow.com/questions/62414423/google-drive-api-list-files-in-a-shared-folder-that-are-i-have-not-accessed-ye).
+
+## Other Useful Trackers
+* [covid19stats.ph](https://covid19stats.ph/)
+* [covid19ph](https://covid19ph.com/)
+* [Baguio Covid19 Tracker](http://endcov19.baguio.gov.ph/)
+* [Our World in Data](https://ourworldindata.org/coronavirus-data-explorer)
