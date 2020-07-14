@@ -22,9 +22,8 @@
 
 
 ## Reporting
+<iframe src="charts/SpecimenToRepConf14days.html" width="900" height="500" frameborder="0"></iframe>
+
 <iframe src="charts/SpecimenToRelease14days.html" width="900" height="500" frameborder="0"></iframe>
 
 <iframe src="charts/ReleaseToRepConf14days.html" width="900" height="500" frameborder="0"></iframe>
-
-<iframe src="charts/SpecimenToRepConf14days.html" width="900" height="500" frameborder="0"></iframe>
-
