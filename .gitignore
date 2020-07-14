@@ -126,5 +126,5 @@ client_secret.json
 token.pickle
 
 # project directories
-charts
-data
+/charts
+/data
