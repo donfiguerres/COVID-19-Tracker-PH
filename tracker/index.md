@@ -4,13 +4,8 @@ This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.do
 
 **Disclaimer: I am not affiliated with the DOH or any government agency. This is my own personal project.**
 
-Update script: [COVID-19-Tracker-PH@GitHub](https://github.com/donfiguerres/COVID-19-Tracker-PH)
+GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-Tracker-PH)
 
-## Other Useful Trackers
-* [covid19stats.ph](https://covid19stats.ph/)
-* [covid19ph](https://covid19ph.com/)
-* [Baguio Covid19 Tracker](http://endcov19.baguio.gov.ph/)
-* [Our World in Data](https://ourworldindata.org/coronavirus-data-explorer)
 
 ## Links
 
@@ -18,31 +13,32 @@ Update script: [COVID-19-Tracker-PH@GitHub](https://github.com/donfiguerres/COVI
 * [Last 30 Days](Last-30-Days.md)
 
 ## Confirmed Cases
-![DateOnset](images/DateOnset.png)
+<iframe src="charts/DateOnset.html" width=900 height=500></iframe>
 
 ### Confirmed Cases by Region
-![DateOnsetByRegion](images/DateOnsetByRegion.png)
+<iframe src="charts/DateOnsetByRegion.html" width=900 height=500></iframe>
 
 ## Testing
 
 ### Daily
-![test_daily_output_positive_individuals](images/daily_output_positive_individuals.png)
+<iframe src="charts/daily_output_positive_individuals.html" width=900 height=500></iframe>
 
-![test_daily_output_unique_individuals](images/daily_output_unique_individuals.png)
+<iframe src="charts/daily_output_unique_individuals.html" width=900 height=500></iframe>
 
-![test_daily_output_samples_tested](images/daily_output_samples_tested.png)
+<iframe src="charts/daily_output_samples_tested.html" width=900 height=500></iframe>
+
 
 ### Cumulative
-![cumulative_positive_individuals](images/cumulative_positive_individuals.png)
+<iframe src="charts/cumulative_positive_individuals.html" width=900 height=500></iframe>
 
-![cumulative_unique_individuals](images/cumulative_unique_individuals.png)
+<iframe src="charts/cumulative_unique_individuals.html" width=900 height=500></iframe>
 
-![cumulative_samples_tested](images/cumulative_samples_tested.png)
+<iframe src="charts/cumulative_samples_tested.html" width=900 height=500></iframe>
 
 
 ## Reporting
-![SpecimenToRelease](images/SpecimenToRelease.png)
+<iframe src="charts/SpecimenToRepConf.html" width=900 height=500></iframe>
 
-![ReleaseToRepConf](images/ReleaseToRepConf.png)
+<iframe src="charts/SpecimenToRelease.html" width=900 height=500></iframe>
 
-![SpecimenToRepConf](images/SpecimenToRepConf.png)
+<iframe src="charts/ReleaseToRepConf.html" width=900 height=500></iframe>
