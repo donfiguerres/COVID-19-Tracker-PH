@@ -20,7 +20,6 @@ and generates the charts used in the [COVID-19 Tracker PH](https://donfiguerres.
 page.
 
 Go to [tracker](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
-<iframe src="tracker/charts/DateOnset.html" width="900" height="500" frameborder="0"></iframe>
 
 ## How to Run
 ### Create a Client Secret
