@@ -6,7 +6,6 @@ This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.do
 **Disclaimer: I am not affiliated with the DOH or any government agency. This is my own personal project.**
 
 
-
 ## Dependencies
 * google-api-client
 * google-auth-oathlib
@@ -16,9 +15,12 @@ This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.do
 * plotly
 
 ## Overview
-The update-tracke.py script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
+The update-tracker.py script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
 and generates the charts used in the [COVID-19 Tracker PH](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
 page.
+
+Go to [tracker](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
+<iframe src="charts/DateOnset.html" width="900" height="500" frameborder="0"></iframe>
 
 ## How to Run
 ### Create a Client Secret
