@@ -13,7 +13,7 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 * [Last 30 Days](Last-30-Days.md)
 
 ## Confirmed Cases
-<iframe src="/charts/DateOnset.html" width=900 height=500></iframe>
+<iframe src="https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker/charts/DateOnset.html" width=900 height=500></iframe>
 
 ### Confirmed Cases by Region
 <iframe src="charts/DateOnsetByRegion.html" width=900 height=500></iframe>
