@@ -13,32 +13,32 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 * [Last 30 Days](Last-30-Days.md)
 
 ## Confirmed Cases
-<iframe src="https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker/charts/DateOnset.html" width=900 height=500>&nbsp;</iframe>
+<iframe src="charts/DateOnset.html" width="900" height="500" frameborder="0"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="charts/DateOnsetByRegion.html" width=900 height=500>&nbsp;</iframe>
+<iframe src="charts/DateOnsetByRegion.html" width="900" height="500" frameborder="0"></iframe>
 
 ## Testing
 
 ### Daily
 <iframe src="charts/daily_output_positive_individuals.html" width="900" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/daily_output_unique_individuals.html" width=900 height=500></iframe>
+<iframe src="charts/daily_output_unique_individuals.html" width="900" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/daily_output_samples_tested.html" width=900 height=500></iframe>
+<iframe src="charts/daily_output_samples_tested.html" width="900" height="500" frameborder="0"></iframe>
 
 
 ### Cumulative
-<iframe src="charts/cumulative_positive_individuals.html" width=900 height=500></iframe>
+<iframe src="charts/cumulative_positive_individuals.html" width="900" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/cumulative_unique_individuals.html" width=900 height=500></iframe>
+<iframe src="charts/cumulative_unique_individuals.html" width="900" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/cumulative_samples_tested.html" width=900 height=500></iframe>
+<iframe src="charts/cumulative_samples_tested.html" width="900" height="500" frameborder="0"></iframe>
 
 
 ## Reporting
-<iframe src="charts/SpecimenToRepConf.html" width=900 height=500></iframe>
+<iframe src="charts/SpecimenToRepConf.html" width="900" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/SpecimenToRelease.html" width=900 height=500></iframe>
+<iframe src="charts/SpecimenToRelease.html" width="900" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/ReleaseToRepConf.html" width=900 height=500></iframe>
+<iframe src="charts/ReleaseToRepConf.html" width="900" height="500" frameborder="0"></iframe>
