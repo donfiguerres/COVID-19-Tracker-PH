@@ -77,7 +77,7 @@ def trim_readme_name(name):
 
 def trim_data_file_name(name):
     """"Remove date in name for easier tracking in the repo."""
-    return re.sub(r"(DOH COVID Data Drop_ \d{8} - )", r"", name)
+    return re.sub(r"(.*DOH COVID Data Drop_ \d{8} - )", r"", name)
 
 def trim_oddball_file_name(name):
     """"Remove date in name for easier tracking in the repo."""
@@ -131,15 +131,21 @@ def download_data_files(drive_service, folder_id):
     # These do not follow the naming convention of the rest of the files.
     oddballs = ["DOH Data Drop - Changelog.xlsx", "DOH Data Drop.xlsx"]
     for item in items:
-        file_name = item['name']
-        if "READ ME" in file_name:
-            file_name = trim_readme_name(file_name)
-        elif any(x in file_name for x in oddballs):
-            file_name = trim_oddball_file_name(file_name)
+        item_file_name = item['name']
+        if "READ ME" in item_file_name:
+            file_name = trim_readme_name(item_file_name)
+        elif any(x in item_file_name for x in oddballs):
+            file_name = trim_oddball_file_name(item_file_name)
         else:
-            file_name = trim_data_file_name(file_name)
+            file_name = trim_data_file_name(item_file_name)
         download_path = os.path.join(DATA_DIR, file_name)
-        download_gdrive_file(drive_service, item['id'], download_path)
+        try:
+            download_gdrive_file(drive_service, item['id'], download_path)
+        except errors.HttpError as e:
+            if "Changelog" in item_file_name:
+                logging.warn(f"Failed to download {item_file_name}")
+            else:
+                raise e
 
 def extract_datadrop_link(filename):
     pdf = PyPDF2.PdfFileReader(filename)
