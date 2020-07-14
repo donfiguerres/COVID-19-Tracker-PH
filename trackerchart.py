@@ -20,9 +20,9 @@ TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 
 
-def write_image(fig, filename):
-    fig.update_layout(width=1200, template=TEMPLATE)
-    fig.write_image(f"{CHART_OUTPUT}/{filename}.png")
+def write_chart(fig, filename):
+    fig.update_layout(width=800, template=TEMPLATE)
+    fig.write_html(f"{CHART_OUTPUT}/{filename}.html")
 
 def filter_active_closed(data):
     active_data = data[data.RemovalType.isnull()]
@@ -72,7 +72,7 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
                 )
             ]
     )
-    write_image(fig, f"{xaxis}{suffix}")
+    write_chart(fig, f"{xaxis}{suffix}")
 
 def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig = px.line(data, title=title, x=x_axis, y=y_axis)
@@ -88,7 +88,7 @@ def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
         fig.add_trace(
             go.Scatter(x=data.index, y=data[ma_column], name="7-day MA")
         )
-    write_image(fig, f"{filename}")
+    write_chart(fig, f"{filename}")
 
 def plot_stacked_trend_chart(data, x, y, title, filename, color=None, plot_ma=False,
             overlay=None):
@@ -100,7 +100,7 @@ def plot_stacked_trend_chart(data, x, y, title, filename, color=None, plot_ma=Fa
         fig.add_trace(
             go.Scatter(x=agg_ma.index, y=agg_ma[f'{x}_MA7'], name="7-day MA")
         )
-    write_image(fig, f"{filename}")
+    write_chart(fig, f"{filename}")
 
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'SpecimenToRepConf',
