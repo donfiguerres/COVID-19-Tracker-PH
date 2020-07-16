@@ -164,7 +164,7 @@ def plot_reporting_delay(ci_data, days=None):
         plot_reporting(ci_data, title_suffix=f" - Last {days} days",
                         filename_suffix=f"{days}days")
 
-def do_plot_ci_agg(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
+def do_plot_confirmed_cases(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
     plot_stacked_trend_chart(ci_data, x, y,
                 f"Daily Confirmed Cases by Date of Onset of Illnes{title_suffix}",
@@ -173,18 +173,21 @@ def do_plot_ci_agg(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
                 f"Daily Confirmed Cases by Date of Onset of Illness{title_suffix}",
                 f"DateOnsetByRegion{filename_suffix}", color='Region', overlays=[ma_line])
 
-def plot_ci_agg(ci_data):
+def plot_confirmed_cases(ci_data):
     x = 'DateOnset'
     y = 'CaseCode'
     ci_agg = ci_data.groupby([x]).count()
     ci_agg[f'{x}_MA7'] = calc_moving_average(ci_agg, y)
-    do_plot_ci_agg(ci_data, ci_agg, x, y)
+    do_plot_confirmed_cases(ci_data, ci_agg, x, y)
     for days in PERIOD_DAYS:
         filtered_ci_data = filter_latest(ci_data, days, x)
         filtered_ci_agg = filter_latest(ci_agg, days)
-        do_plot_ci_agg(filtered_ci_data, filtered_ci_agg, x, y,
+        do_plot_confirmed_cases(filtered_ci_data, filtered_ci_agg, x, y,
                 title_suffix=f" - Last {days} days",
                 filename_suffix=f"{days}days")
+
+def plot_ci_agg(ci_data):
+    plot_confirmed_cases(ci_data)
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
