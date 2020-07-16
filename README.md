@@ -62,6 +62,8 @@ can use the --folder-id option of the script.
 * Recovery Time
 * Period from Infection to Death (what's the proper term for this?)
 * More descriptions on how to interpret the charts
+* R0 and projection
+* Summary table
 
 ## Limitations
 You need to open each of the new files in the DOH datadrop before the script can
