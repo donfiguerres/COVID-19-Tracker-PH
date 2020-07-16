@@ -15,7 +15,7 @@ import plotly.graph_objects as go
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
+CHART_OUTPUT = os.path.join(SCRIPT_DIR, "tracker", "charts")
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 
@@ -90,16 +90,12 @@ def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
         )
     write_chart(fig, f"{filename}")
 
-def plot_stacked_trend_chart(data, x, y, title, filename, color=None, plot_ma=False,
-            overlay=None):
+def plot_stacked_trend_chart(data, x, y, title, filename, color=None,
+        overlays=[]):
     agg = data.groupby([x, color]).count().reset_index(color)
     fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
-    if plot_ma:
-        agg_ma = data.groupby([x]).count()
-        agg_ma[f'{x}_MA7'] = calc_moving_average(agg_ma, y)
-        fig.add_trace(
-            go.Scatter(x=agg_ma.index, y=agg_ma[f'{x}_MA7'], name="7-day MA")
-        )
+    for trace in overlays:
+        fig.add_trace(trace)
     write_chart(fig, f"{filename}")
 
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
@@ -169,12 +165,17 @@ def plot_reporting_delay(ci_data, days=None):
                         filename_suffix=f"{days}days")
 
 def plot_ci_agg(ci_data):
-    plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode',
+    x = 'DateOnset'
+    y = 'CaseCode'
+    agg_ma = ci_data.groupby([x]).count()
+    agg_ma[f'{x}_MA7'] = calc_moving_average(agg_ma, y)
+    ma_line = go.Scatter(x=agg_ma.index, y=agg_ma[f'{x}_MA7'], name="7-day MA")
+    plot_stacked_trend_chart(ci_data, x, y,
                 'Daily Confirmed Cases by Date of Onset of Illnes',
-                'DateOnset', color='CaseType', plot_ma=True)
-    plot_stacked_trend_chart(ci_data, 'DateOnset', 'CaseCode', 
+                'DateOnset', color='CaseType', overlays=[ma_line])
+    plot_stacked_trend_chart(ci_data, x, y, 
                 'Daily Confirmed Cases by Date of Onset of Illness',
-                'DateOnsetByRegion', color='Region', plot_ma=True)
+                'DateOnsetByRegion', color='Region', overlays=[ma_line])
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
@@ -254,5 +255,6 @@ def plot(data_dir):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     plot_ci_agg(ci_data)
+    return
     plot_reporting_delay(ci_data)
     plot_test(test_data)
