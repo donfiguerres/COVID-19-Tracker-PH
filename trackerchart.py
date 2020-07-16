@@ -164,7 +164,7 @@ def plot_reporting_delay(ci_data, days=None):
         plot_reporting(ci_data, title_suffix=f" - Last {days} days",
                         filename_suffix=f"{days}days")
 
-def plot_ci_agg(ci_data):
+def do_plot_ci_agg(ci_data, ci_agg):
     x = 'DateOnset'
     y = 'CaseCode'
     agg_ma = ci_data.groupby([x]).count()
@@ -176,6 +176,13 @@ def plot_ci_agg(ci_data):
     plot_stacked_trend_chart(ci_data, x, y, 
                 'Daily Confirmed Cases by Date of Onset of Illness',
                 'DateOnsetByRegion', color='Region', overlays=[ma_line])
+
+def plot_ci_agg(ci_data):
+    x = 'DateOnset'
+    y = 'CaseCode'
+    ci_agg = ci_data.groupby([x]).count()
+    ci_agg[f'{x}_MA7'] = calc_moving_average(ci_agg, y)
+    do_plot_ci_agg(ci_data, ci_agg)
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
@@ -255,6 +262,5 @@ def plot(data_dir):
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     plot_ci_agg(ci_data)
-    return
     plot_reporting_delay(ci_data)
     plot_test(test_data)
