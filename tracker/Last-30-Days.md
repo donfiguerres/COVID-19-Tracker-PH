@@ -11,6 +11,9 @@
 ## Recovery
 <iframe src="charts/DailyRecoveryByRegion30days.html" width="900" height="500" frameborder="0"></iframe>
 
+## Death
+<iframe src="charts/DailyDeathByRegion30days.html" width="900" height="500" frameborder="0"></iframe>
+
 ## Testing
 
 ### Daily
