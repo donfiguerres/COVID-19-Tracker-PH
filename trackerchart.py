@@ -29,9 +29,6 @@ def filter_active_closed(ci_data):
     closed = ci_data[ci_data.RemovalType.notnull()]
     return active, closed
 
-def filter_recovered(ci_data):
-    return ci_data[ci_data.RemovalType == "RECOVERED"]
-
 def filter_latest(data, days, date_column=None):
     if date_column:
         cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
@@ -189,6 +186,7 @@ def plot_confirmed_cases(ci_data):
                 title_suffix=f" - Last {days} days",
                 filename_suffix=f"{days}days")
 
+# TODO: refactor these into reusable functions
 def do_plot_recovery(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
     plot_stacked_trend_chart(ci_data, x, y, 
@@ -208,11 +206,32 @@ def plot_recovery(recovered_data):
                 title_suffix=f" - Last {days} days",
                 filename_suffix=f"{days}days")
 
+def do_plot_died(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
+    ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
+    plot_stacked_trend_chart(ci_data, x, y, 
+                f"Daily Death {title_suffix}",
+                f"DailyDeathByRegion{filename_suffix}", color='Region', overlays=[ma_line])
+
+def plot_died(died_data):
+    x = 'DateDied'
+    y = 'CaseCode'
+    agg = died_data.groupby([x]).count()
+    agg[f'{x}_MA7'] = calc_moving_average(agg, y)
+    do_plot_died(died_data, agg, x, y)
+    for days in PERIOD_DAYS:
+        filtered_ci_data = filter_latest(died_data, days, x)
+        filtered_ci_agg = filter_latest(agg, days)
+        do_plot_died(filtered_ci_data, filtered_ci_agg, x, y,
+                title_suffix=f" - Last {days} days",
+                filename_suffix=f"{days}days")
+
 def plot_ci(ci_data):
     plot_confirmed_cases(ci_data)
     active, closed = filter_active_closed(ci_data)
-    recovered = filter_recovered(closed)
+    recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_recovery(recovered)
+    died = ci_data[ci_data.HealthStatus == 'DIED']
+    plot_died(died)
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
