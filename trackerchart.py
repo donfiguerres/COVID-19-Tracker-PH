@@ -164,25 +164,27 @@ def plot_reporting_delay(ci_data, days=None):
         plot_reporting(ci_data, title_suffix=f" - Last {days} days",
                         filename_suffix=f"{days}days")
 
-def do_plot_ci_agg(ci_data, ci_agg):
-    x = 'DateOnset'
-    y = 'CaseCode'
-    agg_ma = ci_data.groupby([x]).count()
-    agg_ma[f'{x}_MA7'] = calc_moving_average(agg_ma, y)
-    ma_line = go.Scatter(x=agg_ma.index, y=agg_ma[f'{x}_MA7'], name="7-day MA")
+def do_plot_ci_agg(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
+    ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
     plot_stacked_trend_chart(ci_data, x, y,
-                'Daily Confirmed Cases by Date of Onset of Illnes',
-                'DateOnset', color='CaseType', overlays=[ma_line])
+                f"Daily Confirmed Cases by Date of Onset of Illnes{title_suffix}",
+                f"DateOnset{filename_suffix}", color='CaseRepType', overlays=[ma_line])
     plot_stacked_trend_chart(ci_data, x, y, 
-                'Daily Confirmed Cases by Date of Onset of Illness',
-                'DateOnsetByRegion', color='Region', overlays=[ma_line])
+                f"Daily Confirmed Cases by Date of Onset of Illness{title_suffix}",
+                f"DateOnsetByRegion{filename_suffix}", color='Region', overlays=[ma_line])
 
 def plot_ci_agg(ci_data):
     x = 'DateOnset'
     y = 'CaseCode'
     ci_agg = ci_data.groupby([x]).count()
     ci_agg[f'{x}_MA7'] = calc_moving_average(ci_agg, y)
-    do_plot_ci_agg(ci_data, ci_agg)
+    do_plot_ci_agg(ci_data, ci_agg, x, y)
+    for days in PERIOD_DAYS:
+        filtered_ci_data = filter_latest(ci_data, days, x)
+        filtered_ci_agg = filter_latest(ci_agg, days)
+        do_plot_ci_agg(filtered_ci_data, filtered_ci_agg, x, y,
+                title_suffix=f" - Last {days} days",
+                filename_suffix=f"{days}days")
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
@@ -207,10 +209,10 @@ def calc_case_info_data(data):
                 True if row['DateOnset'] == pd.NaT else True, axis=1)
     data['DateOnset'] = data.apply(lambda row :
                 row['DateSpecimen'] if row['proxy'] else row['DateOnset'], axis=1)
-    # Set CaseType to identify newly added cases from latest data.
+    # Set CaseRepType to identify newly reported cases.
     max_date_repconf = data.DateRepConf.max()
     logging.debug(f"Max DateRepConf is {max_date_repconf}")
-    data['CaseType'] = data.apply(lambda row :
+    data['CaseRepType'] = data.apply(lambda row :
                 'Incomplete' if not row['DateRepConf'] else (
                     'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'
                 ), axis=1)
