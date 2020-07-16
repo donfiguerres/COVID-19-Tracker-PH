@@ -21,6 +21,9 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 ## Recovery
 <iframe src="charts/DailyRecoveryByRegion.html" width="900" height="500" frameborder="0"></iframe>
 
+## Death
+<iframe src="charts/DailyDeathByRegion.html" width="900" height="500" frameborder="0"></iframe>
+
 ## Testing
 
 ### Daily
