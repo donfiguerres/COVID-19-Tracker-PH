@@ -2,6 +2,15 @@
 
 [main page](COVID-19-Tracker-PH.md)
 
+## Confirmed Cases
+<iframe src="charts/DateOnset14days.html" width="900" height="500" frameborder="0"></iframe>
+
+### Confirmed Cases by Region
+<iframe src="charts/DateOnsetByRegion14days.html" width="900" height="500" frameborder="0"></iframe>
+
+## Recovery
+<iframe src="charts/DailyRecoveryByRegion14days.html" width="900" height="500" frameborder="0"></iframe>
+
 ## Testing
 
 ### Daily
