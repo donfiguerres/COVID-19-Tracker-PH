@@ -24,10 +24,13 @@ def write_chart(fig, filename):
     fig.update_layout(width=800, template=TEMPLATE)
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html")
 
-def filter_active_closed(data):
-    active_data = data[data.RemovalType.isnull()]
-    closed_data = data[data.RemovalType.notnull()]
-    return active_data, closed_data
+def filter_active_closed(ci_data):
+    active = ci_data[ci_data.RemovalType.isnull()]
+    closed = ci_data[ci_data.RemovalType.notnull()]
+    return active, closed
+
+def filter_recovered(ci_data):
+    return ci_data[ci_data.RemovalType == "RECOVERED"]
 
 def filter_latest(data, days, date_column=None):
     if date_column:
@@ -186,8 +189,30 @@ def plot_confirmed_cases(ci_data):
                 title_suffix=f" - Last {days} days",
                 filename_suffix=f"{days}days")
 
-def plot_ci_agg(ci_data):
+def do_plot_recovery(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
+    ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
+    plot_stacked_trend_chart(ci_data, x, y, 
+                f"Daily Recovery {title_suffix}",
+                f"DailyRecoveryByRegion{filename_suffix}", color='Region', overlays=[ma_line])
+
+def plot_recovery(recovered_data):
+    x = 'DateRecover'
+    y = 'CaseCode'
+    agg = recovered_data.groupby([x]).count()
+    agg[f'{x}_MA7'] = calc_moving_average(agg, y)
+    do_plot_recovery(recovered_data, agg, x, y)
+    for days in PERIOD_DAYS:
+        filtered_ci_data = filter_latest(recovered_data, days, x)
+        filtered_ci_agg = filter_latest(agg, days)
+        do_plot_recovery(filtered_ci_data, filtered_ci_agg, x, y,
+                title_suffix=f" - Last {days} days",
+                filename_suffix=f"{days}days")
+
+def plot_ci(ci_data):
     plot_confirmed_cases(ci_data)
+    active, closed = filter_active_closed(ci_data)
+    recovered = filter_recovered(closed)
+    plot_recovery(recovered)
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
@@ -266,6 +291,6 @@ def plot(data_dir):
     test_data = read_testing_aggregates(data_dir)
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
-    plot_ci_agg(ci_data)
+    plot_ci(ci_data)
     plot_reporting_delay(ci_data)
     plot_test(test_data)
