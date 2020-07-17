@@ -13,38 +13,38 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 * [Last 30 Days](Last-30-Days.md)
 
 ## Confirmed Cases
-<iframe src="charts/DateOnsetCaseRepType.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnsetCaseRepType.html" width="1300" height="500" frameborder="0"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="charts/DateOnsetRegion.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnsetRegion.html" width="1300" height="500" frameborder="0"></iframe>
 
 ## Recovery
-<iframe src="charts/DateRecoverRegion.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateRecoverRegion.html" width="1300" height="500" frameborder="0"></iframe>
 
 ## Death
-<iframe src="charts/DateDiedRegion.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateDiedRegion.html" width="1300" height="500" frameborder="0"></iframe>
 
 ## Testing
 
 ### Daily
-<iframe src="charts/daily_output_positive_individuals.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/daily_output_positive_individuals.html" width="1300" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/daily_output_unique_individuals.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/daily_output_unique_individuals.html" width="1300" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/daily_output_samples_tested.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/daily_output_samples_tested.html" width="1300" height="500" frameborder="0"></iframe>
 
 
 ### Cumulative
-<iframe src="charts/cumulative_positive_individuals.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/cumulative_positive_individuals.html" width="1300" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/cumulative_unique_individuals.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/cumulative_unique_individuals.html" width="1300" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/cumulative_samples_tested.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/cumulative_samples_tested.html" width="1300" height="500" frameborder="0"></iframe>
 
 
 ## Reporting
-<iframe src="charts/SpecimenToRepConf.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/SpecimenToRepConf.html" width="1300" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/SpecimenToRelease.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/SpecimenToRelease.html" width="1300" height="500" frameborder="0"></iframe>
 
-<iframe src="charts/ReleaseToRepConf.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/ReleaseToRepConf.html" width="1300" height="500" frameborder="0"></iframe>
