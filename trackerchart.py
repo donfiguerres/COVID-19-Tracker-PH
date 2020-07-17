@@ -18,6 +18,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
+MA_SUFFIX = '_MA7'
+MA_NAME = "7-day MA" 
 
 
 def write_chart(fig, filename):
@@ -78,21 +80,15 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig = px.line(data, title=title, x=x_axis, y=y_axis)
     fig.write_image(fig, f"{filename}")
 
-def plot_trend_chart(data, y_axis, title, filename, ma_column=None):
-    fig = go.Figure()
-    fig.update_layout(title=title)
-    fig.add_trace(
-        go.Bar(x=data.index, y=data[y_axis], name="count")
-    )
-    if ma_column:
-        fig.add_trace(
-            go.Scatter(x=data.index, y=data[ma_column], name="7-day MA")
-        )
-    write_chart(fig, f"{filename}")
-
-def plot_stacked_trend_chart(data, x, y, title, filename, color=None,
-        overlays=[]):
-    agg = data.groupby([x, color]).count().reset_index(color)
+def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
+        filename=None, color=None, overlays=[]):
+    logging.debug(f"Plotting {filename}")
+    if x is None:
+        x = data.index
+    if color:
+        agg = getattr(data.groupby([x, color]), agg_func)().reset_index(color)
+    else:
+        agg = getattr(data.groupby(x), agg_func)()
     fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
     for trace in overlays:
         fig.add_trace(trace)
@@ -109,21 +105,22 @@ def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
                         f"Result Release to Reporting{title_suffix}",
                         suffix=filename_suffix)
 
-def plot_test_agg(daily_agg, columns, ma_column_suffix="", title_suffix="",
+def plot_test_agg(test_data, daily_agg, columns, ma_column_suffix="", title_suffix="",
                 filename_suffix=""):
     for column in columns:
         title = column.replace("_", " ")
         if ma_column_suffix:
-            plot_trend_chart(daily_agg,
-                    column, f"{title}{title_suffix}",
-                    f"{column}{filename_suffix}",
-                    ma_column=f'{column}{ma_column_suffix}'
-            )
+            ma_line = go.Scatter(x=daily_agg.index,
+                        y=daily_agg[f'{column}{MA_SUFFIX}'], name=MA_NAME)
+            plot_trend_chart(test_data, agg_func='sum', x='report_date',
+                        y=column,
+                        title=f"{column}{title_suffix}",
+                        filename=f"{column}{filename_suffix}", overlays=[ma_line])
         else:
-            plot_trend_chart(daily_agg,
-                    column, f"{title}{title_suffix}",
-                    f"{column}{filename_suffix}"
-            )
+            plot_trend_chart(daily_agg, agg_func='sum', x='report_date',
+                        y=column,
+                        title=f"{column}{title_suffix}",
+                        filename=f"{column}{filename_suffix}")
 
 def plot_test(test_data):
     daily_agg = test_data.groupby('report_date').sum()
@@ -131,23 +128,22 @@ def plot_test(test_data):
     daily_columns = ['daily_output_samples_tested',
                     'daily_output_unique_individuals',
                 'daily_output_positive_individuals', ]
-    ma_column_suffix = "_MA7"
     for column in daily_columns:
-        daily_agg[f'{column}{ma_column_suffix}'] = calc_moving_average(daily_agg, column)
-    plot_test_agg(daily_agg, daily_columns, ma_column_suffix=ma_column_suffix)
+        daily_agg[f'{column}{MA_SUFFIX}'] = calc_moving_average(daily_agg, column)
+    plot_test_agg(test_data, daily_agg, daily_columns, ma_column_suffix=MA_SUFFIX)
     for days in PERIOD_DAYS:
         filtered_daily_agg = filter_latest(daily_agg, days)
-        plot_test_agg(filtered_daily_agg, daily_columns,
-                        ma_column_suffix=ma_column_suffix,
+        plot_test_agg(test_data, filtered_daily_agg, daily_columns,
+                        ma_column_suffix=MA_SUFFIX,
                         title_suffix=f" - last {days} days",
                         filename_suffix=f"_{days}days")
     cumulative_columns = ['cumulative_samples_tested',
                         'cumulative_unique_individuals',
                         'cumulative_positive_individuals']
-    plot_test_agg(daily_agg, cumulative_columns)
+    plot_test_agg(test_data, daily_agg, cumulative_columns)
     for days in PERIOD_DAYS:
         filtered_daily_agg = filter_latest(daily_agg, days)
-        plot_test_agg(filtered_daily_agg, cumulative_columns,
+        plot_test_agg(test_data, filtered_daily_agg, cumulative_columns,
                         title_suffix=f" - last {days} days",
                         filename_suffix=f"_{days}days")
 
@@ -165,19 +161,20 @@ def plot_reporting_delay(ci_data, days=None):
                         filename_suffix=f"{days}days")
 
 def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[]):
-    ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
+    ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}{MA_SUFFIX}'], name=MA_NAME)
     if colors:
         for color in colors:
-            plot_stacked_trend_chart(ci_data, x, y, title, f"{filename}{color}",
-                    color=color, overlays=[ma_line])
+            plot_trend_chart(ci_data, x=x, y=y, title=title,
+                    filename=f"{filename}{color}", color=color,
+                    overlays=[ma_line])
     else:
-        plot_stacked_trend_chart(ci_data, x, y, title, f"{filename}{color}",
-                overlays=[ma_line])
+        plot_trend_chart(ci_data, x=x, y=y, title=title,
+                filename=f"{filename}{color}", overlays=[ma_line])
 
 def plot_case_trend(ci_data, x, title, filename, colors=[]):
     y = 'CaseCode'
     agg = ci_data.groupby([x]).count()
-    agg[f'{x}_MA7'] = calc_moving_average(agg, y)
+    agg[f'{x}{MA_SUFFIX}'] = calc_moving_average(agg, y)
     do_plot_case_trend(ci_data, agg, x, y, title, filename, colors=colors)
     for days in PERIOD_DAYS:
         filtered_ci_data = filter_latest(ci_data, days, x)
@@ -238,7 +235,7 @@ def calc_case_info_data(data):
     return data
 
 def read_case_information(data_dir):
-    logging.info("Reading Case Information...")
+    logging.info("Reading Case Information")
     ci_file_name = ""
     for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Case Information.csv"):
         ci_file_name = name
@@ -250,13 +247,13 @@ def read_case_information(data_dir):
     # There is no DateRepRem column in the 2020-07-10 data.
             'DateOnset', 'DateRecover', 'DateDied']
     for column in convert_columns:
-        logging.debug(f"Converting column {column} to datetime...")
+        logging.debug(f"Converting column {column} to datetime")
         # Some of the data are invalid.
         data[column] = pd.to_datetime(data[column], errors='coerce')
     return calc_case_info_data(data)
 
 def read_testing_aggregates(data_dir):
-    logging.info("Reading Testing Aggregates...")
+    logging.info("Reading Testing Aggregates")
     ci_file_name = ""
     for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Testing Aggregates.csv"):
         ci_file_name = name
@@ -277,6 +274,6 @@ def plot(data_dir):
     test_data = read_testing_aggregates(data_dir)
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
-    plot_ci(ci_data)
-    plot_reporting_delay(ci_data)
+    #plot_ci(ci_data)
+    #plot_reporting_delay(ci_data)
     plot_test(test_data)
