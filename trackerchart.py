@@ -82,7 +82,7 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
 
 def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
         filename=None, color=None, overlays=[]):
-    logging.debug(f"Plotting {filename}")
+    logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
     if color:
@@ -105,47 +105,45 @@ def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
                         f"Result Release to Reporting{title_suffix}",
                         suffix=filename_suffix)
 
-def plot_test_agg(test_data, daily_agg, columns, ma_column_suffix="", title_suffix="",
-                filename_suffix=""):
-    for column in columns:
-        title = column.replace("_", " ")
-        if ma_column_suffix:
-            ma_line = go.Scatter(x=daily_agg.index,
-                        y=daily_agg[f'{column}{MA_SUFFIX}'], name=MA_NAME)
-            plot_trend_chart(test_data, agg_func='sum', x='report_date',
-                        y=column,
-                        title=f"{column}{title_suffix}",
-                        filename=f"{column}{filename_suffix}", overlays=[ma_line])
-        else:
-            plot_trend_chart(daily_agg, agg_func='sum', x='report_date',
-                        y=column,
-                        title=f"{column}{title_suffix}",
-                        filename=f"{column}{filename_suffix}")
-
 def plot_test(test_data):
+    # daily
     daily_agg = test_data.groupby('report_date').sum()
-    logging.debug(daily_agg)
     daily_columns = ['daily_output_samples_tested',
                     'daily_output_unique_individuals',
                 'daily_output_positive_individuals', ]
     for column in daily_columns:
         daily_agg[f'{column}{MA_SUFFIX}'] = calc_moving_average(daily_agg, column)
-    plot_test_agg(test_data, daily_agg, daily_columns, ma_column_suffix=MA_SUFFIX)
+        ma_line = go.Scatter(x=daily_agg.index,
+                        y=daily_agg[f'{column}{MA_SUFFIX}'], name=MA_NAME)
+        title = column.replace("_", " ")
+        plot_trend_chart(test_data, agg_func='sum', x='report_date',
+                y=column, title=f"{column}",
+                filename=f"{column}", overlays=[ma_line])
     for days in PERIOD_DAYS:
+        filtered_test_data = filter_latest(test_data, days, 'report_date')
         filtered_daily_agg = filter_latest(daily_agg, days)
-        plot_test_agg(test_data, filtered_daily_agg, daily_columns,
-                        ma_column_suffix=MA_SUFFIX,
-                        title_suffix=f" - last {days} days",
-                        filename_suffix=f"_{days}days")
+        for column in daily_columns:
+            ma_line = go.Scatter(x=filtered_daily_agg.index,
+                        y=filtered_daily_agg[f'{column}{MA_SUFFIX}'], name=MA_NAME)
+            title = column.replace("_", " ")
+            plot_trend_chart(filtered_test_data, agg_func='sum', x='report_date',
+                y=column, title=f"{column} - last {days} days",
+                filename=f"{column}_{days}days", overlays=[ma_line])
+    # cumulative
     cumulative_columns = ['cumulative_samples_tested',
                         'cumulative_unique_individuals',
                         'cumulative_positive_individuals']
-    plot_test_agg(test_data, daily_agg, cumulative_columns)
+    for column in cumulative_columns:
+        title = column.replace("_", " ")
+        plot_trend_chart(test_data, agg_func='sum', x='report_date',
+                y=column, title=f"{column}",
+                filename=f"{column}")
     for days in PERIOD_DAYS:
-        filtered_daily_agg = filter_latest(daily_agg, days)
-        plot_test_agg(test_data, filtered_daily_agg, cumulative_columns,
-                        title_suffix=f" - last {days} days",
-                        filename_suffix=f"_{days}days")
+        filtered_test_data = filter_latest(test_data, days, 'report_date')
+        for column in cumulative_columns:
+            plot_trend_chart(filtered_test_data, agg_func='sum', x='report_date',
+                y=column, title=f"{column} - last {days} days",
+                filename=f"{column}_{days}days")
 
 def plot_test_reports_comparison(ci_data, test_data,
                                     title_suffix="", filename_suffix=""):
