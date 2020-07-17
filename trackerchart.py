@@ -23,7 +23,7 @@ MA_NAME = "7-day MA"
 
 
 def write_chart(fig, filename):
-    fig.update_layout(width=800, template=TEMPLATE)
+    fig.update_layout(width=1200, template=TEMPLATE)
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html")
 
 def filter_active_closed(ci_data):
@@ -115,11 +115,12 @@ def do_plot_test(test_data, x, columns, agg=None, title_suffix="",
             plot_trend_chart(test_data, agg_func='sum', x=x,
                         y=column, title=f"{column}{title_suffix}",
                         filename=f"{column}{filename_suffix}",
+                        color='facility', 
                         overlays=[ma_line])
         else:
             plot_trend_chart(test_data, agg_func='sum', x=x,
                     y=column, title=f"{column}{title_suffix}",
-                    filename=f"{column}{filename_suffix}")
+                    filename=f"{column}{filename_suffix}", color='facility')
 
 def plot_test(test_data):
     # daily
@@ -253,6 +254,20 @@ def read_case_information(data_dir):
         data[column] = pd.to_datetime(data[column], errors='coerce')
     return calc_case_info_data(data)
 
+def calc_testing_aggregates_data(data):
+    """Calculate data needed for the plots.""" 
+    data['report_date'] = pd.to_datetime(data['report_date'])
+    data['pct_positive_daily'] = data.apply(lambda row : 
+                row['daily_output_positive_individuals']/row['daily_output_unique_individuals']
+                    if row['daily_output_unique_individuals']
+                    else 0,
+                axis=1)
+    top_facility = data['facility_name'].value_counts().nlargest(10)
+    data['facility'] = data.apply(lambda row :
+                row['facility_name'] if row['facility_name'] in top_facility else 'Others', axis=1)
+    logging.debug(data)
+    return data
+
 def read_testing_aggregates(data_dir):
     logging.info("Reading Testing Aggregates")
     ci_file_name = ""
@@ -261,14 +276,7 @@ def read_testing_aggregates(data_dir):
         # We expect to have only one file.
         break
     data = pd.read_csv(ci_file_name)
-    data['report_date'] = pd.to_datetime(data['report_date'])
-    data['pct_positive_daily'] = data.apply(lambda row : 
-                row['daily_output_positive_individuals']/row['daily_output_unique_individuals']
-                    if row['daily_output_unique_individuals']
-                    else 0,
-                axis=1)
-    logging.debug(data)
-    return data
+    return calc_testing_aggregates_data(data)
 
 def plot(data_dir):
     ci_data = read_case_information(data_dir)
