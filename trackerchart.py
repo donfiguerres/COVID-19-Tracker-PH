@@ -275,6 +275,6 @@ def plot(data_dir):
     test_data = read_testing_aggregates(data_dir)
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
-    #plot_ci(ci_data)
-    #plot_reporting_delay(ci_data)
+    plot_ci(ci_data)
+    plot_reporting_delay(ci_data)
     plot_test(test_data)
