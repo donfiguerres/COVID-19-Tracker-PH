@@ -13,16 +13,16 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 * [Last 30 Days](Last-30-Days.md)
 
 ## Confirmed Cases
-<iframe src="charts/DateOnset.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnsetCaseRepType.html" width="900" height="500" frameborder="0"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="charts/DateOnsetByRegion.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnsetRegion.html" width="900" height="500" frameborder="0"></iframe>
 
 ## Recovery
-<iframe src="charts/DailyRecoveryByRegion.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateRecoverRegion.html" width="900" height="500" frameborder="0"></iframe>
 
 ## Death
-<iframe src="charts/DailyDeathByRegion.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateDiedRegion.html" width="900" height="500" frameborder="0"></iframe>
 
 ## Testing
 
