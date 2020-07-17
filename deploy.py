@@ -14,5 +14,5 @@ def deploy(source):
     dest = os.path.join(TRACKER_DIR, "charts")
     for filename in os.listdir(source):
         fullpath = os.path.join(source, filename)
-        logging.info(f"Copying {filename}...")
+        logging.info(f"Copying {filename}")
         shutil.copy(fullpath, dest)
