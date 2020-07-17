@@ -164,74 +164,41 @@ def plot_reporting_delay(ci_data, days=None):
         plot_reporting(ci_data, title_suffix=f" - Last {days} days",
                         filename_suffix=f"{days}days")
 
-def do_plot_confirmed_cases(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
+def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[]):
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
-    plot_stacked_trend_chart(ci_data, x, y,
-                f"Daily Confirmed Cases by Date of Onset of Illnes{title_suffix}",
-                f"DateOnset{filename_suffix}", color='CaseRepType', overlays=[ma_line])
-    plot_stacked_trend_chart(ci_data, x, y, 
-                f"Daily Confirmed Cases by Date of Onset of Illness{title_suffix}",
-                f"DateOnsetByRegion{filename_suffix}", color='Region', overlays=[ma_line])
+    if colors:
+        for color in colors:
+            plot_stacked_trend_chart(ci_data, x, y, title, f"{filename}{color}",
+                    color=color, overlays=[ma_line])
+    else:
+        plot_stacked_trend_chart(ci_data, x, y, title, f"{filename}{color}",
+                overlays=[ma_line])
 
-def plot_confirmed_cases(ci_data):
-    x = 'DateOnset'
+def plot_case_trend(ci_data, x, title, filename, colors=[]):
     y = 'CaseCode'
-    ci_agg = ci_data.groupby([x]).count()
-    ci_agg[f'{x}_MA7'] = calc_moving_average(ci_agg, y)
-    do_plot_confirmed_cases(ci_data, ci_agg, x, y)
+    agg = ci_data.groupby([x]).count()
+    agg[f'{x}_MA7'] = calc_moving_average(agg, y)
+    do_plot_case_trend(ci_data, agg, x, y, title, filename, colors=colors)
     for days in PERIOD_DAYS:
         filtered_ci_data = filter_latest(ci_data, days, x)
-        filtered_ci_agg = filter_latest(ci_agg, days)
-        do_plot_confirmed_cases(filtered_ci_data, filtered_ci_agg, x, y,
-                title_suffix=f" - Last {days} days",
-                filename_suffix=f"{days}days")
-
-# TODO: refactor these into reusable functions
-def do_plot_recovery(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
-    ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
-    plot_stacked_trend_chart(ci_data, x, y, 
-                f"Daily Recovery {title_suffix}",
-                f"DailyRecoveryByRegion{filename_suffix}", color='Region', overlays=[ma_line])
-
-def plot_recovery(recovered_data):
-    x = 'DateRecover'
-    y = 'CaseCode'
-    agg = recovered_data.groupby([x]).count()
-    agg[f'{x}_MA7'] = calc_moving_average(agg, y)
-    do_plot_recovery(recovered_data, agg, x, y)
-    for days in PERIOD_DAYS:
-        filtered_ci_data = filter_latest(recovered_data, days, x)
         filtered_ci_agg = filter_latest(agg, days)
-        do_plot_recovery(filtered_ci_data, filtered_ci_agg, x, y,
-                title_suffix=f" - Last {days} days",
-                filename_suffix=f"{days}days")
-
-def do_plot_died(ci_data, ci_agg, x, y, title_suffix="", filename_suffix=""):
-    ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}_MA7'], name="7-day MA")
-    plot_stacked_trend_chart(ci_data, x, y, 
-                f"Daily Death {title_suffix}",
-                f"DailyDeathByRegion{filename_suffix}", color='Region', overlays=[ma_line])
-
-def plot_died(died_data):
-    x = 'DateDied'
-    y = 'CaseCode'
-    agg = died_data.groupby([x]).count()
-    agg[f'{x}_MA7'] = calc_moving_average(agg, y)
-    do_plot_died(died_data, agg, x, y)
-    for days in PERIOD_DAYS:
-        filtered_ci_data = filter_latest(died_data, days, x)
-        filtered_ci_agg = filter_latest(agg, days)
-        do_plot_died(filtered_ci_data, filtered_ci_agg, x, y,
-                title_suffix=f" - Last {days} days",
-                filename_suffix=f"{days}days")
+        do_plot_case_trend(filtered_ci_data, filtered_ci_agg, x, y,
+                title=f"{title} - Last {days} days",
+                filename=f"{filename}{days}days", colors=colors)
 
 def plot_ci(ci_data):
-    plot_confirmed_cases(ci_data)
+    plot_case_trend(ci_data, 'DateOnset',
+            "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
+            colors=['CaseRepType', 'Region'])
     active, closed = filter_active_closed(ci_data)
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
-    plot_recovery(recovered)
+    plot_case_trend(recovered, 'DateRecover',
+            "Daily Recovery", "DateRecover",
+            colors=['Region'])
     died = ci_data[ci_data.HealthStatus == 'DIED']
-    plot_died(died)
+    plot_case_trend(died, 'DateDied',
+            "Daily Death", "DateDied",
+            colors=['Region'])
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
