@@ -3,16 +3,16 @@
 [main page](COVID-19-Tracker-PH.md)
 
 ## Confirmed Cases
-<iframe src="charts/DateOnset30days.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnset30daysCaseRepType.html" width="900" height="500" frameborder="0"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="charts/DateOnsetByRegion30days.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnset30daysRegion.html" width="900" height="500" frameborder="0"></iframe>
 
 ## Recovery
-<iframe src="charts/DailyRecoveryByRegion30days.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateRecover30daysRegion.html" width="900" height="500" frameborder="0"></iframe>
 
 ## Death
-<iframe src="charts/DailyDeathByRegion30days.html" width="900" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateDied30daysRegion.html" width="900" height="500" frameborder="0"></iframe>
 
 ## Testing
 
