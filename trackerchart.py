@@ -23,7 +23,7 @@ MA_NAME = "7-day MA"
 
 
 def write_chart(fig, filename):
-    fig.update_layout(width=1200, template=TEMPLATE)
+    fig.update_layout(width=900, template=TEMPLATE)
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html")
 
 def filter_active_closed(ci_data):
