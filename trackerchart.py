@@ -115,12 +115,12 @@ def do_plot_test(test_data, x, columns, agg=None, title_suffix="",
             plot_trend_chart(test_data, agg_func='sum', x=x,
                         y=column, title=f"{column}{title_suffix}",
                         filename=f"{column}{filename_suffix}",
-                        color='facility', 
+                        color='REGION', 
                         overlays=[ma_line])
         else:
             plot_trend_chart(test_data, agg_func='sum', x=x,
                     y=column, title=f"{column}{title_suffix}",
-                    filename=f"{column}{filename_suffix}", color='facility')
+                    filename=f"{column}{filename_suffix}", color='REGION')
 
 def plot_test(test_data):
     # daily
@@ -188,7 +188,7 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
 def plot_ci(ci_data):
     plot_case_trend(ci_data, 'DateOnset',
             "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
-            colors=['CaseRepType', 'Region'])
+            colors=['CaseRepType', 'RegionRes'])
     active, closed = filter_active_closed(ci_data)
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
@@ -265,6 +265,9 @@ def calc_testing_aggregates_data(data):
     top_facility = data['facility_name'].value_counts().nlargest(10)
     data['facility'] = data.apply(lambda row :
                 row['facility_name'] if row['facility_name'] in top_facility else 'Others', axis=1)
+    logging.info("Reading test facilty data")
+    test_facilty =  pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
+    data = pd.merge(data, test_facilty, on='facility_name', how='left')
     logging.debug(data)
     return data
 

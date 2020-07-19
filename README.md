@@ -57,7 +57,7 @@ can use the --folder-id option of the script.
 ## TODOs
 * Top LGUs (city/province)
 * Top Region
-* Testing per LGU and Region
+* Testing ang Confirmation Gap
 * Death and Recovery Reporting
 * Recovery Time
 * Period from Infection to Death (what's the proper term for this?)
