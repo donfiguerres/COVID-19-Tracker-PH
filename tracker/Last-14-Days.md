@@ -6,13 +6,13 @@
 <iframe src="charts/DateOnset14daysCaseRepType.html" width="1000" height="500" frameborder="0"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="charts/DateOnset14daysRegion.html" width="1000" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnset14daysRegionRes.html" width="1000" height="500" frameborder="0"></iframe>
 
 ## Recovery
-<iframe src="charts/DateRecover14daysRegion.html" width="1000" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateRecover14daysRegionRes.html" width="1000" height="500" frameborder="0"></iframe>
 
 ## Death
-<iframe src="charts/DateDied14daysRegion.html" width="1000" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateDied14daysRegionRes.html" width="1000" height="500" frameborder="0"></iframe>
 
 ## Testing
 
