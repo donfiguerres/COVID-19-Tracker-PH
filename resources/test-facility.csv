@@ -1,4 +1,4 @@
-#,REGION,PROVINCE,MUNICIPALITY / CITY,NAME OF FACILITY,TESTING AGGREGATES FACILITY NAME,OWNERSHIP (PUBLIC / PRIVATE),TYPE OF TESTING,CONTACT NUMBER,LICENSE VALIDITY
+#,REGION,PROVINCE,MUNICIPALITY / CITY,NAME OF FACILITY,facility_name,OWNERSHIP (PUBLIC / PRIVATE),TYPE OF TESTING,CONTACT NUMBER,LICENSE VALIDITY
 1,NCR,Metro Manila,Quezon City,AFRIMS - Collaborative Molecular Laboratory,Victoriano Luna - AFRIMS,PUBLIC,rRT PCR,,04/11/2020 - 12/31/2020
 2,NCR,Metro Manila,Muntilupa City,Asian Hospital and Medical Center,Asian Hospital and Medical Center,PRIVATE,rRT PCR,(02) 8771-9000,05/11/2020 - 12/31/2020
 3,NCR,Metro Manila,City of Manila,Chinese General Hospital,Chinese General Hospital,PRIVATE,rRT PCR,(02) 8711-4141,04/15/2020 - 12/31/2020
@@ -54,7 +54,7 @@
 52,Region 4A,Batangas,Batangas City,Batangas Medical Center,Batangas Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(043) 740 8303 - 07,06/18/2020 - 12/31/2020
 53,Region 4A,Laguna,Sta. Rosa,Qualimed Hospital Sta. Rosa,Qualimed Hospital Sta. Rosa,PRIVATE,rRT PCR,,06/22/2020 - 12/31/2020
 54,Region 4A,Laguna,San Pablo City,San Pablo District Hospital,San Pablo District Hospital,PUBLIC,rRT PCR,(049) 562 4135,06/27/2020 - 12/31/2020
-55,Region 4A,Laguna,Los Baños,UPLB Covid-19 Molecular Laboratory,UPLB Covid-19 Molecular Laboratory,PUBLIC,rRT PCR,,06/27/2020 - 12/31/2020
+55,Region 4A,Laguna,Los BaÃ±os,UPLB Covid-19 Molecular Laboratory,UPLB Covid-19 Molecular Laboratory,PUBLIC,rRT PCR,,06/27/2020 - 12/31/2020
 56,Region 4A,Batangas,Batangas City,PRC- Batangas Chapter Molecular Laboratory,PRC- Batangas Chapter Molecular Laboratory,PRIVATE,rRT PCR,,07/06/2020 - 12/31/2020
 57,Region 4B,Palawan,Puerto Princesa,Ospital ng Palawan,Ospital ng Palawan GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(048) 434.8339; (048) 434.2148; (048) 433.2621,05/12/2020 - 08/12/2020
 58,Region 4B,Oriental Mindoro,Calapan,Oriental Mindoro Provincial Hospital,Oriental Mindoro Provincial Hospital GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,06/08/2020 - 12/31/2020
