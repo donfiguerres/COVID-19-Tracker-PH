@@ -193,11 +193,11 @@ def plot_ci(ci_data):
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
             "Daily Recovery", "DateRecover",
-            colors=['Region'])
+            colors=['RegionRes'])
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
             "Daily Death", "DateDied",
-            colors=['Region'])
+            colors=['RegionRes'])
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
