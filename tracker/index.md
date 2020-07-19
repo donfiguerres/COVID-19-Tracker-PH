@@ -2,8 +2,6 @@
 
 This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.doh.gov.ph/covid19tracker) maintained by the [Department of Health](https://www.doh.gov.ph/). The data set used in this tracker are pulled from DOH's [data drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o).
 
-**Disclaimer: I am not affiliated with the DOH or any government agency. This is my own personal project.**
-
 GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-Tracker-PH)
 
 
@@ -16,13 +14,13 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 <iframe src="charts/DateOnsetCaseRepType.html" width="1000" height="500" frameborder="0"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="charts/DateOnsetRegion.html" width="1000" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateOnsetRegionRes.html" width="1000" height="500" frameborder="0"></iframe>
 
 ## Recovery
-<iframe src="charts/DateRecoverRegion.html" width="1000" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateRecoverRegionRes.html" width="1000" height="500" frameborder="0"></iframe>
 
 ## Death
-<iframe src="charts/DateDiedRegion.html" width="1000" height="500" frameborder="0"></iframe>
+<iframe src="charts/DateDiedRegionRes.html" width="1000" height="500" frameborder="0"></iframe>
 
 ## Testing
 
