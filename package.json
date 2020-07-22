@@ -2,8 +2,10 @@
   "name": "chalk",
   "scripts": {
     "setup": "bin/setup",
-    "local": "bundle exec jekyll serve --drafts",
-    "publish": "bin/deploy"
+    "serve": "bundle exec jekyll serve --drafts",
+    "publish": "bin/deploy",
+    "deploy-web": "python deploy.py --web",
+    "deploy-gh-pages": "python deploy.py --gh-pages"
   },
   "dependencies": {
     "jquery": "^3.2.1",
