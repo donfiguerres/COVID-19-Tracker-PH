@@ -129,7 +129,6 @@ client_secret.json
 token.pickle
 
 # project artifacts
-/charts
 /data
 !.keep
 *.sass-cache
