@@ -17,38 +17,38 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 * [Last 30 Days](Last-30-Days.md)
 
 ## Confirmed Cases
-<iframe src="charts/DateOnsetCaseRepType.html"></iframe>
+<iframe src="/tracker/charts/DateOnsetCaseRepType.html"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="charts/DateOnsetRegionRes.html"></iframe>
+<iframe src="/tracker/charts/DateOnsetRegionRes.html"></iframe>
 
 ## Recovery
-<iframe src="charts/DateRecoverRegionRes.html"></iframe>
+<iframe src="/tracker/charts/DateRecoverRegionRes.html"></iframe>
 
 ## Death
-<iframe src="charts/DateDiedRegionRes.html"></iframe>
+<iframe src="/tracker/charts/DateDiedRegionRes.html"></iframe>
 
 ## Testing
 
 ### Daily
-<iframe src="charts/daily_output_positive_individuals.html"></iframe>
+<iframe src="/tracker/charts/daily_output_positive_individuals.html"></iframe>
 
-<iframe src="charts/daily_output_unique_individuals.html"></iframe>
+<iframe src="/tracker/charts/daily_output_unique_individuals.html"></iframe>
 
-<iframe src="charts/daily_output_samples_tested.html"></iframe>
+<iframe src="/tracker/charts/daily_output_samples_tested.html"></iframe>
 
 
 ### Cumulative
-<iframe src="charts/cumulative_positive_individuals.html"></iframe>
+<iframe src="/tracker/charts/cumulative_positive_individuals.html"></iframe>
 
-<iframe src="charts/cumulative_unique_individuals.html"></iframe>
+<iframe src="/tracker/charts/cumulative_unique_individuals.html"></iframe>
 
-<iframe src="charts/cumulative_samples_tested.html"></iframe>
+<iframe src="/tracker/charts/cumulative_samples_tested.html"></iframe>
 
 
 ## Reporting
-<iframe src="charts/SpecimenToRepConf.html"></iframe>
+<iframe src="/tracker/charts/SpecimenToRepConf.html"></iframe>
 
-<iframe src="charts/SpecimenToRelease.html"></iframe>
+<iframe src="/tracker/charts/SpecimenToRelease.html"></iframe>
 
-<iframe src="charts/ReleaseToRepConf.html"></iframe>
+<iframe src="/tracker/charts/ReleaseToRepConf.html"></iframe>
