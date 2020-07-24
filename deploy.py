@@ -11,6 +11,8 @@ TRACKER_DIR = CHART_OUTPUT = os.path.join(SCRIPT_DIR, "tracker")
 
 
 def deploy(source):
+    # TODO: deploy to webserver.
+    return
     dest = os.path.join(TRACKER_DIR, "charts")
     for filename in os.listdir(source):
         fullpath = os.path.join(source, filename)
