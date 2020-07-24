@@ -27,9 +27,16 @@
             </a>
           </div>
 
-          {% if site.discus_identifier %}
+          {% if site.disqus_identifier %}
             <div id="disqus_thread" class="article-comments"></div>
-            <script src="https://{{ site.discus_identifier }}.disqus.com/embed.js" async defer></script>
+            <script>
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://{{ site.disqus_identifier }}.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+              })();
+            </script>
             <noscript>Please enable JavaScript to view the comments.</noscript>
           {% endif %}
         </article>
