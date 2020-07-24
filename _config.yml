@@ -9,7 +9,7 @@ url: https://donfiguerres.github.io/COVID-19-Tracker-PH
 # Optional settings
 
 about_enabled: true # Change to true if you wish to show an icon in the navigation that redirects to the about page
-discus_identifier: chalk-1 # Add your Disqus identifier
+disqus_identifier: http-covid-19-tracker-ph-epizy-com # Add your Disqus identifier
 ga_analytics: UA-173210131-1 # Add your GA Tracking Id
 local_fonts: false # Change to true if you wish to use local fonts
 rss_enabled: false # Change to false if not
