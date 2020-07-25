@@ -3,7 +3,7 @@
   "scripts": {
     "setup": "bin/setup",
     "serve": "bundle exec jekyll serve --drafts",
-    "publish": "bin/deploy",
+    "build": "bundle exec jekyll build",
     "deploy-web": "python deploy.py --web",
     "deploy-gh-pages": "python deploy.py --gh-pages"
   },
