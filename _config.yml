@@ -82,6 +82,8 @@ exclude:
   - data
   - resources
   - testdata
+  - token.pickle
+  - client_secret.json
 plugins:
   - jekyll-assets
   - jekyll-paginate
