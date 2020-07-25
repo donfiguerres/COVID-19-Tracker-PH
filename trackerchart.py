@@ -24,7 +24,7 @@ MA_NAME = "7-day MA"
 
 def write_chart(fig, filename):
     fig.update_layout(width=900, template=TEMPLATE)
-    fig.write_html(f"{CHART_OUTPUT}/{filename}.html")
+    fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn')
 
 def filter_active_closed(ci_data):
     active = ci_data[ci_data.RemovalType.isnull()]
