@@ -22,6 +22,9 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 ### Confirmed Cases by Region
 <iframe src="{{ site.baseurl }}/tracker/charts/DateOnsetRegionRes.html"></iframe>
 
+### Top City/Municipality
+<iframe src="{{ site.baseurl }}/tracker/charts/CityMunRes.html"></iframe>
+
 ## Recovery
 <iframe src="{{ site.baseurl }}/tracker/charts/DateRecoverRegionRes.html"></iframe>
 
