@@ -14,6 +14,9 @@ description: "Open source COVID-19 tracker for the Philippines"
 ### Confirmed Cases by Region
 <iframe src="{{ site.baseurl }}/tracker/charts/DateOnset14daysRegionRes.html"></iframe>
 
+### Top City/Municipality
+<iframe src="{{ site.baseurl }}/tracker/charts/CityMunRes14days.html"></iframe>
+
 ## Recovery
 <iframe src="{{ site.baseurl }}/tracker/charts/DateRecover14daysRegionRes.html"></iframe>
 
