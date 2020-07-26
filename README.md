@@ -54,6 +54,11 @@ can use the --folder-id option of the script.
     #example
     python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
 
+## Ongoing Tasks
+* Migration to another web server or creating a mirror. This is because the
+html charts are taking up a huge space in the repository for each update. This
+is not sustainable.
+
 ## TODOs
 * Top LGUs (city/province)
 * Top Region
@@ -64,6 +69,8 @@ can use the --folder-id option of the script.
 * More descriptions on how to interpret the charts
 * R0 and projection
 * Summary table
+* Hospital daily report - occupancy
+* Hospital weekly report - PPE inventory
 
 ## Limitations
 You need to open each of the new files in the DOH datadrop before the script can
