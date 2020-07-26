@@ -1,6 +1,6 @@
 ---
 layout: post 
-date: 2020-07-26 00:30
+date: 2020-07-27 00:30
 title: "The COVID-19 Gets a New Theme"
 description: "The COVID-19 Tracker is now using the Chalk Theme."
 categories: blog
@@ -21,3 +21,6 @@ write_html method would include the their whole js library which is around 3MB.
 I changed the include_plotlyjs option to 'cdn'. This will load the publicly
 available copy of their library from the internet instead of being included in
 each chart.
+
+# Top LGU
+Horizontal bar chart for top city/municipality is now available.
