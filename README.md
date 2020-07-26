@@ -75,7 +75,7 @@ is not sustainable.
 ### Theme
 * Organize post tags.
 * Create own icon.
-* Chage about image.
+* Change about image.
 
 ## Limitations
 You need to open each of the new files in the DOH datadrop before the script can
