@@ -5,7 +5,7 @@ description: "Open source COVID-19 tracker for the Philippines"
 ---
 
 <div class="about {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-  <img src="{% asset 'about.jpg' @path %}" alt="About header image" />
+  <img src="{{ site.url }}{% asset 'about.jpg' @path %}" alt="About header image" />
   <h1>About the COVID-19 Tracker PH Project</h1>
   <p>
     The <a href="{{ 'about' | relative_url }}" title="About">COVID-19 Tracker PH Project</a>
