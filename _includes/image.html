@@ -1,0 +1,7 @@
+<a href="{{ site.url }}{% asset '{{ include.path-detail }}' @path %}">
+  <img src="{{ site.url }}{% asset '{{ include.path }}' @path %}" alt="{{ include.alt }}" class="zooming"
+    data-rjs="{{ site.url }}{% asset '{{ include.path-detail }}' @path %}"
+    data-zooming-width="{{ assets[include.path-detail].dimensions.width }}"
+    data-zooming-height="{{ assets[include.path-detail].dimensions.height }}"
+  />
+</a>
