@@ -94,6 +94,18 @@ def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
         fig.add_trace(trace)
     write_chart(fig, f"{filename}")
 
+def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
+        filename=None, color=None):
+    logging.info(f"Plotting {filename}")
+    nlargest = 10
+    if color:
+        agg = getattr(data.groupby([y, color]), agg_func)().reset_index(color)
+    else:
+        agg = getattr(data.groupby(y), agg_func)()
+    fig = px.bar(agg, x=x, color=color, barmode='stack', title=f"{title}")
+    fig.update_layout(yaxis={'categoryorder':'total ascending'})
+    write_chart(fig, f"{filename}")
+
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'SpecimenToRepConf',
                         f"Specimen Collection to Reporting{title_suffix}",
@@ -185,6 +197,20 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
                 title=f"{title} - Last {days} days",
                 filename=f"{filename}{days}days", colors=colors)
 
+def plot_per_lgu(ci_data):
+    y = 'CityMunRes'
+    x = 'CaseCode'
+    color = 'HealthStatus'
+    title = "Top 10 City/Municipality"
+    top = ci_data.groupby(y).count()[x].nlargest(10).reset_index()[y]
+    top_filtered = ci_data[ci_data[y].isin(top)]
+    plot_horizontal_bar(top_filtered, x=x, y=y, color=color, title=title, filename=y)
+    for days in PERIOD_DAYS:
+        filtered_latest = filter_latest(top_filtered, days, 'DateOnset')
+        plot_horizontal_bar(filtered_latest, x=x, y=y, color=color,
+                title=f"{title} - Last {days} days by Date of Onset of Illness",
+                filename=f"{y}{days}days")
+
 def plot_ci(ci_data):
     plot_case_trend(ci_data, 'DateOnset',
             "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
@@ -198,6 +224,7 @@ def plot_ci(ci_data):
     plot_case_trend(died, 'DateDied',
             "Daily Death", "DateDied",
             colors=['RegionRes'])
+    plot_per_lgu(ci_data)
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
@@ -227,12 +254,8 @@ def calc_case_info_data(data):
     logging.debug(f"Max DateRepConf is {max_date_repconf}")
     data['CaseRepType'] = data.apply(lambda row :
                 'Incomplete' if not row['DateRepConf'] else (
-                    'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'
-                ), axis=1)
-    # Set top regions for more readable charts.
-    top_regions = data['RegionRes'].value_counts().nlargest(10)
-    data['Region'] = data.apply(lambda row :
-                row['RegionRes'] if row['RegionRes'] in top_regions else 'Others', axis=1)
+                    'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'),
+                axis=1)
     logging.debug(data)
     return data
 
