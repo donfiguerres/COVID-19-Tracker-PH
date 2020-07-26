@@ -60,6 +60,7 @@ html charts are taking up a huge space in the repository for each update. This
 is not sustainable.
 
 ## TODOs
+### Plots
 * Top LGUs (city/province)
 * Top Region
 * Testing ang Confirmation Gap
@@ -71,6 +72,10 @@ is not sustainable.
 * Summary table
 * Hospital daily report - occupancy
 * Hospital weekly report - PPE inventory
+### Theme
+* Organize post tags.
+* Create own icon.
+* Chage about image.
 
 ## Limitations
 You need to open each of the new files in the DOH datadrop before the script can
