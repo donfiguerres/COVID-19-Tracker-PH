@@ -61,7 +61,6 @@ is not sustainable.
 
 ## TODOs
 ### Plots
-* Top LGUs (city/province)
 * Top Region
 * Testing ang Confirmation Gap
 * Death and Recovery Reporting
