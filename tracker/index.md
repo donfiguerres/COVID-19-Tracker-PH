@@ -17,38 +17,38 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 * [Last 30 Days](Last-30-Days)
 
 ## Confirmed Cases
-<iframe src="/tracker/charts/DateOnsetCaseRepType.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/DateOnsetCaseRepType.html"></iframe>
 
 ### Confirmed Cases by Region
-<iframe src="/tracker/charts/DateOnsetRegionRes.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/DateOnsetRegionRes.html"></iframe>
 
 ## Recovery
-<iframe src="/tracker/charts/DateRecoverRegionRes.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/DateRecoverRegionRes.html"></iframe>
 
 ## Death
-<iframe src="/tracker/charts/DateDiedRegionRes.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/DateDiedRegionRes.html"></iframe>
 
 ## Testing
 
 ### Daily
-<iframe src="/tracker/charts/daily_output_positive_individuals.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/daily_output_positive_individuals.html"></iframe>
 
-<iframe src="/tracker/charts/daily_output_unique_individuals.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/daily_output_unique_individuals.html"></iframe>
 
-<iframe src="/tracker/charts/daily_output_samples_tested.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/daily_output_samples_tested.html"></iframe>
 
 
 ### Cumulative
-<iframe src="/tracker/charts/cumulative_positive_individuals.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/cumulative_positive_individuals.html"></iframe>
 
-<iframe src="/tracker/charts/cumulative_unique_individuals.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/cumulative_unique_individuals.html"></iframe>
 
-<iframe src="/tracker/charts/cumulative_samples_tested.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/cumulative_samples_tested.html"></iframe>
 
 
 ## Reporting
-<iframe src="/tracker/charts/SpecimenToRepConf.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/SpecimenToRepConf.html"></iframe>
 
-<iframe src="/tracker/charts/SpecimenToRelease.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/SpecimenToRelease.html"></iframe>
 
-<iframe src="/tracker/charts/ReleaseToRepConf.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/ReleaseToRepConf.html"></iframe>
