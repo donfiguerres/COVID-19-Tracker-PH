@@ -72,6 +72,7 @@ is not sustainable.
 * Summary table
 * Hospital daily report - occupancy
 * Hospital weekly report - PPE inventory
+* Age group comparison (total, closed and active cases)
 ### Theme
 * Organize post tags.
 * Create own icon.
