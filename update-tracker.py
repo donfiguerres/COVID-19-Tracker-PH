@@ -9,7 +9,6 @@ import argparse
 
 import datadrop
 import trackerchart
-import deploy
 
 
 def _parse_args():
@@ -40,8 +39,6 @@ def main():
         else:
             datadrop.download()
     trackerchart.plot(args.data_dir)
-    if args.deploy:
-        deploy.deploy(trackerchart.CHART_OUTPUT)
     return 0
 
 
