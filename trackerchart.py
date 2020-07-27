@@ -215,16 +215,16 @@ def plot_per_lgu(ci_data):
 def plot_ci(ci_data):
     plot_case_trend(ci_data, 'DateOnset',
             "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
-            colors=['CaseRepType', 'RegionRes'])
+            colors=['CaseRepType', 'Region'])
     active, closed = filter_active_closed(ci_data)
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
             "Daily Recovery", "DateRecover",
-            colors=['RegionRes'])
+            colors=['Region'])
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
             "Daily Death", "DateDied",
-            colors=['RegionRes'])
+            colors=['Region'])
     plot_per_lgu(ci_data)
 
 def calc_case_info_data(data):
@@ -257,6 +257,10 @@ def calc_case_info_data(data):
                 'Incomplete' if not row['DateRepConf'] else (
                     'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'),
                 axis=1)
+    # Trim Region names for shorter margins
+    data['Region'] = data.apply(lambda row :
+                'Unkown' if pd.isnull(row['RegionRes']) else (
+                    row['RegionRes']).split(':')[0], axis=1)
     logging.debug(data)
     return data
 
