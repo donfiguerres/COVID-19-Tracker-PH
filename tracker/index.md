@@ -23,7 +23,7 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 
 ### Confirmed Cases by Region
 <div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/DateOnsetRegionRes.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/DateOnsetRegion.html"></iframe>
 </div>
 
 ### Top City/Municipality
@@ -33,12 +33,12 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 
 ## Recovery
 <div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/DateRecoverRegionRes.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/DateRecoverRegion.html"></iframe>
 </div>
 
 ## Death
 <div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/DateDiedRegionRes.html"></iframe>
+<iframe src="{{ site.baseurl }}/tracker/charts/DateDiedRegion.html"></iframe>
 </div>
 
 ## Testing
