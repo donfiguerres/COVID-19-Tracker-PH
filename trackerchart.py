@@ -23,7 +23,8 @@ MA_NAME = "7-day MA"
 
 
 def write_chart(fig, filename):
-    fig.update_layout(width=900, template=TEMPLATE)
+    fig.update_layout(template=TEMPLATE)
+    fig.update_yaxes(automargin=True)
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn')
 
 def filter_active_closed(ci_data):
