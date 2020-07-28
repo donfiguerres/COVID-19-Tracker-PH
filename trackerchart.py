@@ -20,6 +20,8 @@ TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 MA_SUFFIX = '_MA7'
 MA_NAME = "7-day MA" 
+REGION = 'Region'
+CASE_REP_TYPE = 'CaseRepType'
 
 
 def write_chart(fig, filename):
@@ -212,6 +214,47 @@ def plot_per_lgu(ci_data):
                 title=f"{title} - Last {days} days by Date of Onset of Illness",
                 filename=f"{y}{days}days")
 
+def plot_summary(ci_data, test_data):
+    # Styling should integrate well with the currently used theme - Chalk.
+    font = dict(color='white', size=16)
+    header_fill = '#161616'
+    cels_fill = '#1A1A1A'
+    line_color = '#8C8C8C'
+    header = dict(values=['Statistic', 'Cumulative', 'Last Reported'], font=font,
+                    height=40, fill_color=cels_fill, line_color=line_color)
+    rows = ['Confirmed Cases', 'Samples Tested', 'Individuals Tested',
+                'Positive Individuals', 'Positivity Rate']
+    # Using the format key for for the cells will apply the formatting to all of
+    # the columns and we don't want that applied to the first column so we need
+    # to do the formatting for now
+    format_num = lambda num: f'{num:,}'
+    # confirmed cases
+    total_confirmed = format_num(ci_data['CaseCode'].count())
+    new_confirmed = format_num(ci_data[ci_data[CASE_REP_TYPE] == 'New Case']['CaseCode'].count())
+    # test aggregates
+    latest_test_data = filter_latest(test_data, 1, date_column='report_date')
+    samples_tested = format_num(test_data['daily_output_samples_tested'].sum())
+    latest_samples_tested = format_num(latest_test_data['daily_output_samples_tested'].sum())
+    individuals_tested = test_data['daily_output_unique_individuals'].sum()
+    individuals_tested_str = format_num(individuals_tested)
+    latest_individuals_tested = latest_test_data['daily_output_unique_individuals'].sum()
+    latest_individuals_tested_str = format_num(latest_individuals_tested)
+    positive_individuals = test_data['daily_output_positive_individuals'].sum()
+    positive_individuals_str = format_num(positive_individuals)
+    latest_positive_individuals = latest_test_data['daily_output_positive_individuals'].sum()
+    latest_positive_individuals_str = format_num(latest_positive_individuals)
+    positivity_rate = str(round((positive_individuals / individuals_tested), 2) * 100) + "%"
+    latest_positivity_rate = str(round((latest_positive_individuals / latest_individuals_tested), 2) * 100) + "%"
+    # create table
+    cumulative = [total_confirmed, samples_tested, individuals_tested_str, 
+                    positive_individuals_str, positivity_rate]
+    last_reported = [new_confirmed, latest_samples_tested, latest_individuals_tested_str,
+                    latest_positive_individuals_str, latest_positivity_rate]
+    cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
+                    fill_color=cels_fill, line_color=line_color)
+    fig = go.Figure(data=[go.Table(header=header, cells=cells)])
+    write_chart(fig, "summary")
+
 def plot_ci(ci_data):
     plot_case_trend(ci_data, 'DateOnset',
             "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
@@ -314,6 +357,7 @@ def plot(data_dir):
     test_data = read_testing_aggregates(data_dir)
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
+    plot_summary(ci_data, test_data)
     plot_ci(ci_data)
     plot_reporting_delay(ci_data)
     plot_test(test_data)
