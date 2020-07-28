@@ -16,6 +16,13 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 * [Last 14 Days](Last-14-Days)
 * [Last 30 Days](Last-30-Days)
 
+## Summary
+
+<div class="embed-responsive embed-chart">
+<iframe src="{{ site.baseurl }}/tracker/charts/summary.html"></iframe>
+</div>
+
+
 ## Confirmed Cases
 <div class="embed-responsive embed-chart">
 <iframe src="{{ site.baseurl }}/tracker/charts/DateOnsetCaseRepType.html"></iframe>
