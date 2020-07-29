@@ -256,16 +256,19 @@ def plot_summary(ci_data, test_data):
     header_fill = '#161616'
     cells_fill = '#1A1A1A'
     line_color = '#8C8C8C'
-    header = dict(values=['Statistic', 'Cumulative', 'Last Reported'], font=font,
+    date_format = "%Y-%m-%d"
+    header = dict(values=['Statistic', 'Cumulative', 'Last Daily Report'], font=font,
                     height=40, fill_color=header_fill, line_color=line_color)
-    rows = ['Confirmed Cases', 'Case Doubling Time (days)', 'Growth Rate (%)', 
-            'Samples Tested', 'Individuals Tested', 'Positive Individuals',
-            'Positivity Rate (%)']
+    rows = ['Last Case Reported','Confirmed Cases', 'Case Doubling Time (days)',
+            'Case Growth Rate (%)', 
+            'Last Test Report', 'Samples Tested', 'Individuals Tested',
+            'Positive Individuals', 'Positivity Rate (%)']
     # Using the format key for for the cells will apply the formatting to all of
     # the columns and we don't want that applied to the first column so we need
     # to do the formatting for now
     format_num = lambda num: f'{num:,}'
     # confirmed cases
+    last_case_reported = ci_data['DateRepConf'].max().strftime(date_format)
     total_confirmed = format_num(ci_data['CaseCode'].count())
     new_confirmed = format_num(ci_data[ci_data[CASE_REP_TYPE] == 'New Case']['CaseCode'].count())
     ci_agg = ci_data.groupby('DateOnset').count()
@@ -273,6 +276,8 @@ def plot_summary(ci_data, test_data):
     cumsum = ci_agg_filtered['CaseCode'].cumsum()
     case_doubling_time = doubling_time(cumsum)[-1]
     case_growth_rate = round(growth_rate(case_doubling_time) * 100, 2)
+    # test
+    last_test_report = test_data['report_date'].max().strftime(date_format)
     latest_test_data = filter_latest(test_data, 1, date_column='report_date')
     samples = int(test_data['daily_output_samples_tested'].sum())
     samples_str = format_num(samples)
@@ -289,11 +294,11 @@ def plot_summary(ci_data, test_data):
     positivity_rate = round((positive / individuals) * 100, 2)
     latest_positivity_rate = round((latest_positive / latest_individuals) * 100, 2)
     # create table
-    cumulative = [total_confirmed, round(case_doubling_time, 2), case_growth_rate,
-                    samples_str, individuals_str, positive_str, positivity_rate]
-    last_reported = [new_confirmed, "", "", latest_samples_str,
-                    latest_individuals_str, latest_positive_str,
-                    latest_positivity_rate]
+    cumulative = ["-", total_confirmed, round(case_doubling_time, 2), case_growth_rate,
+                    "-", samples_str, individuals_str, positive_str, positivity_rate]
+    last_reported = [last_case_reported, new_confirmed, "-", "-",
+                    last_test_report, latest_samples_str, latest_individuals_str,
+                    latest_positive_str, latest_positivity_rate]
     cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
                     fill_color=cells_fill, line_color=line_color)
     fig = go.Figure(data=[go.Table(header=header, cells=cells)])
