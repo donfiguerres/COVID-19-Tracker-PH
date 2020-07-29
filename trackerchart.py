@@ -10,6 +10,7 @@ import logging
 
 import pandas as pd
 import numpy as np
+from scipy.interpolate import interp1d
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -34,18 +35,38 @@ def filter_active_closed(ci_data):
     closed = ci_data[ci_data.RemovalType.notnull()]
     return active, closed
 
-def filter_latest(data, days, date_column=None):
+def filter_latest(data, days, date_column=None, return_latest=True):
+    """ Filter data by the days indicated in the days parameter.
+    If date_column is None, the index is used as the date column.
+    The default behavior is to return the latest data. If return_latest is
+    False, the latest data is filtered out instead.
+    """
     if date_column:
         cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
         logging.debug(f"Filtering {date_column} cutoff {cutoff_date}.")
-        return data[data[date_column] > cutoff_date]
+        if return_latest:
+            return data[data[date_column] > cutoff_date]
+        return data[data[date_column] < cutoff_date]
     else:
         cutoff_date = data.index.max()- pd.Timedelta(days=days)
         logging.debug(f"Filtering index cutoff {cutoff_date}.")
-        return data[data.index > cutoff_date]
+        if return_latest:
+            return data[data.index > cutoff_date]
+        return data[data.index < cutoff_date]
 
-def calc_moving_average(data, column, days=7):
+def moving_average(data, column, days=7):
     return data[column].rolling(days).mean()
+
+def doubling_time(series):
+    y = series.to_numpy()
+    x = np.arange(y.shape[0])
+    f = interp1d(y, x, fill_value="extrapolate")
+    y_half = y / 2.0
+    x_interp = f(y_half)
+    return x - x_interp
+
+def growth_rate(doubling_time):
+    return np.log(2) / doubling_time
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
@@ -145,7 +166,7 @@ def plot_test(test_data):
                     'daily_output_unique_individuals',
                 'daily_output_positive_individuals', ]
     for column in daily_columns:
-        daily_agg[f'{column}{MA_SUFFIX}'] = calc_moving_average(daily_agg, column)
+        daily_agg[f'{column}{MA_SUFFIX}'] = moving_average(daily_agg, column)
     do_plot_test(test_data, x, daily_columns, agg=daily_agg)
     for days in PERIOD_DAYS:
         filtered_test_data = filter_latest(test_data, days, x)
@@ -191,7 +212,7 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[]):
 def plot_case_trend(ci_data, x, title, filename, colors=[]):
     y = 'CaseCode'
     agg = ci_data.groupby([x]).count()
-    agg[f'{x}{MA_SUFFIX}'] = calc_moving_average(agg, y)
+    agg[f'{x}{MA_SUFFIX}'] = moving_average(agg, y)
     do_plot_case_trend(ci_data, agg, x, y, title, filename, colors=colors)
     for days in PERIOD_DAYS:
         filtered_ci_data = filter_latest(ci_data, days, x)
@@ -214,47 +235,6 @@ def plot_per_lgu(ci_data):
                 title=f"{title} - Last {days} days by Date of Onset of Illness",
                 filename=f"{y}{days}days")
 
-def plot_summary(ci_data, test_data):
-    # Styling should integrate well with the currently used theme - Chalk.
-    font = dict(color='white', size=16)
-    header_fill = '#161616'
-    cels_fill = '#1A1A1A'
-    line_color = '#8C8C8C'
-    header = dict(values=['Statistic', 'Cumulative', 'Last Reported'], font=font,
-                    height=40, fill_color=cels_fill, line_color=line_color)
-    rows = ['Confirmed Cases', 'Samples Tested', 'Individuals Tested',
-                'Positive Individuals', 'Positivity Rate']
-    # Using the format key for for the cells will apply the formatting to all of
-    # the columns and we don't want that applied to the first column so we need
-    # to do the formatting for now
-    format_num = lambda num: f'{num:,}'
-    # confirmed cases
-    total_confirmed = format_num(ci_data['CaseCode'].count())
-    new_confirmed = format_num(ci_data[ci_data[CASE_REP_TYPE] == 'New Case']['CaseCode'].count())
-    # test aggregates
-    latest_test_data = filter_latest(test_data, 1, date_column='report_date')
-    samples_tested = format_num(test_data['daily_output_samples_tested'].sum())
-    latest_samples_tested = format_num(latest_test_data['daily_output_samples_tested'].sum())
-    individuals_tested = test_data['daily_output_unique_individuals'].sum()
-    individuals_tested_str = format_num(individuals_tested)
-    latest_individuals_tested = latest_test_data['daily_output_unique_individuals'].sum()
-    latest_individuals_tested_str = format_num(latest_individuals_tested)
-    positive_individuals = test_data['daily_output_positive_individuals'].sum()
-    positive_individuals_str = format_num(positive_individuals)
-    latest_positive_individuals = latest_test_data['daily_output_positive_individuals'].sum()
-    latest_positive_individuals_str = format_num(latest_positive_individuals)
-    positivity_rate = str(round((positive_individuals / individuals_tested), 2) * 100) + "%"
-    latest_positivity_rate = str(round((latest_positive_individuals / latest_individuals_tested), 2) * 100) + "%"
-    # create table
-    cumulative = [total_confirmed, samples_tested, individuals_tested_str, 
-                    positive_individuals_str, positivity_rate]
-    last_reported = [new_confirmed, latest_samples_tested, latest_individuals_tested_str,
-                    latest_positive_individuals_str, latest_positivity_rate]
-    cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
-                    fill_color=cels_fill, line_color=line_color)
-    fig = go.Figure(data=[go.Table(header=header, cells=cells)])
-    write_chart(fig, "summary")
-
 def plot_ci(ci_data):
     plot_case_trend(ci_data, 'DateOnset',
             "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
@@ -269,6 +249,55 @@ def plot_ci(ci_data):
             "Daily Death", "DateDied",
             colors=['Region'])
     plot_per_lgu(ci_data)
+
+def plot_summary(ci_data, test_data):
+    # Styling should integrate well with the currently used theme - Chalk.
+    font = dict(color='white', size=16)
+    header_fill = '#161616'
+    cells_fill = '#1A1A1A'
+    line_color = '#8C8C8C'
+    header = dict(values=['Statistic', 'Cumulative', 'Last Reported'], font=font,
+                    height=40, fill_color=header_fill, line_color=line_color)
+    rows = ['Confirmed Cases', 'Case Doubling Time (days)', 'Growth Rate (%)', 
+            'Samples Tested', 'Individuals Tested', 'Positive Individuals',
+            'Positivity Rate (%)']
+    # Using the format key for for the cells will apply the formatting to all of
+    # the columns and we don't want that applied to the first column so we need
+    # to do the formatting for now
+    format_num = lambda num: f'{num:,}'
+    # confirmed cases
+    total_confirmed = format_num(ci_data['CaseCode'].count())
+    new_confirmed = format_num(ci_data[ci_data[CASE_REP_TYPE] == 'New Case']['CaseCode'].count())
+    ci_agg = ci_data.groupby('DateOnset').count()
+    ci_agg_filtered = filter_latest(ci_agg, 14, return_latest=False)
+    cumsum = ci_agg_filtered['CaseCode'].cumsum()
+    case_doubling_time = doubling_time(cumsum)[-1]
+    case_growth_rate = round(growth_rate(case_doubling_time) * 100, 2)
+    latest_test_data = filter_latest(test_data, 1, date_column='report_date')
+    samples = int(test_data['daily_output_samples_tested'].sum())
+    samples_str = format_num(samples)
+    latest_samples = int(latest_test_data['daily_output_samples_tested'].sum())
+    latest_samples_str = format_num(latest_samples)
+    individuals = int(test_data['daily_output_unique_individuals'].sum())
+    individuals_str = format_num(individuals)
+    latest_individuals = int(latest_test_data['daily_output_unique_individuals'].sum())
+    latest_individuals_str = format_num(latest_individuals)
+    positive = int(test_data['daily_output_positive_individuals'].sum())
+    positive_str = format_num(positive)
+    latest_positive = int(latest_test_data['daily_output_positive_individuals'].sum())
+    latest_positive_str = format_num(latest_positive)
+    positivity_rate = round((positive / individuals) * 100, 2)
+    latest_positivity_rate = round((latest_positive / latest_individuals) * 100, 2)
+    # create table
+    cumulative = [total_confirmed, round(case_doubling_time, 2), case_growth_rate,
+                    samples_str, individuals_str, positive_str, positivity_rate]
+    last_reported = [new_confirmed, "", "", latest_samples_str,
+                    latest_individuals_str, latest_positive_str,
+                    latest_positivity_rate]
+    cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
+                    fill_color=cells_fill, line_color=line_color)
+    fig = go.Figure(data=[go.Table(header=header, cells=cells)])
+    write_chart(fig, "summary")
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
