@@ -173,7 +173,7 @@ def plot_test(test_data):
         filtered_daily_agg = filter_latest(daily_agg, days)
         do_plot_test(filtered_test_data, x, daily_columns, agg=filtered_daily_agg,
                 title_suffix=f" - last {days} days",
-                filename_suffix=f"_{days}days")
+                filename_suffix=f"{days}days")
     # cumulative
     cumulative_columns = ['cumulative_samples_tested',
                         'cumulative_unique_individuals',
@@ -183,7 +183,7 @@ def plot_test(test_data):
         filtered_test_data = filter_latest(test_data, days, x)
         do_plot_test(filtered_test_data, x, cumulative_columns,
                 title_suffix=f" - last {days} days",
-                filename_suffix=f"_{days}days")
+                filename_suffix=f"{days}days")
 
 def plot_test_reports_comparison(ci_data, test_data,
                                     title_suffix="", filename_suffix=""):
