@@ -6,13 +6,22 @@ This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.do
 **Disclaimer: I am not affiliated with the DOH or any government agency. This is my own personal project.**
 
 
-## Dependencies
+## Requirements
+### Python
 * google-api-client
 * google-auth-oathlib
 * pypdf2
 * pandas
 * numpy
 * plotly
+
+### Ruby
+* bundle
+* gems
+* jekyll
+
+### Node.js
+* npm
 
 ## Overview
 The update-tracker.py script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
@@ -51,7 +60,7 @@ and not a link - so PyPDF2 will not be able to find it. To get around that, you
 can use the --folder-id option of the script.
 
     python update-tracker.py --folder-id=<folder-id-of-latest-datadrop>
-    #example
+    # example
     python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
 
 ## Ongoing Tasks
@@ -68,14 +77,19 @@ is not sustainable.
 * Period from Infection to Death (what's the proper term for this?)
 * More descriptions on how to interpret the charts
 * R0 and projection
-* Summary table
 * Hospital daily report - occupancy
 * Hospital weekly report - PPE inventory
 * Age group comparison (total, closed and active cases)
+
 ### Theme
 * Organize post tags.
 * Create own icon.
 * Change about image.
+
+### Others
+* Modify gh-pages commit script to fit into current setup.
+* git repo cleanup.
+
 
 ## Limitations
 You need to open each of the new files in the DOH datadrop before the script can
