@@ -114,6 +114,10 @@ def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
     else:
         agg = getattr(data.groupby(x), agg_func)()
     fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
+    fig.update_layout(legend=dict(
+                        xanchor="left", x=0.01,
+                        yanchor="top", y=0.99
+                         ))
     for trace in overlays:
         fig.add_trace(trace)
     write_chart(fig, f"{filename}")
@@ -251,22 +255,11 @@ def plot_ci(ci_data):
     plot_per_lgu(ci_data)
 
 def plot_summary(ci_data, test_data):
-    # Styling should integrate well with the currently used theme - Chalk.
-    font = dict(color='white', size=16)
-    header_fill = '#161616'
-    cells_fill = '#1A1A1A'
-    line_color = '#8C8C8C'
-    date_format = "%Y-%m-%d"
-    header = dict(values=['Statistic', 'Cumulative', 'Last Daily Report'], font=font,
-                    height=40, fill_color=header_fill, line_color=line_color)
-    rows = ['Last Case Reported','Confirmed Cases', 'Case Doubling Time (days)',
-            'Case Growth Rate (%)', 
-            'Last Test Report', 'Samples Tested', 'Individuals Tested',
-            'Positive Individuals', 'Positivity Rate (%)']
     # Using the format key for for the cells will apply the formatting to all of
     # the columns and we don't want that applied to the first column so we need
     # to do the formatting for now
     format_num = lambda num: f'{num:,}'
+    date_format = "%Y-%m-%d"
     # confirmed cases
     last_case_reported = ci_data['DateRepConf'].max().strftime(date_format)
     total_confirmed = format_num(ci_data['CaseCode'].count())
@@ -293,12 +286,31 @@ def plot_summary(ci_data, test_data):
     latest_positive_str = format_num(latest_positive)
     positivity_rate = round((positive / individuals) * 100, 2)
     latest_positivity_rate = round((latest_positive / latest_individuals) * 100, 2)
+    test_agg = test_data.groupby('report_date').sum()
+    positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
+    positive_growth_rate = round(growth_rate(positive_doubling_time) * 100, 2)
     # create table
-    cumulative = ["-", total_confirmed, round(case_doubling_time, 2), case_growth_rate,
-                    "-", samples_str, individuals_str, positive_str, positivity_rate]
-    last_reported = [last_case_reported, new_confirmed, "-", "-",
+    # Styling should integrate well with the currently used theme - Chalk.
+    font = dict(color='white', size=16)
+    header_fill = '#161616'
+    cells_fill = '#1A1A1A'
+    line_color = '#8C8C8C'
+    header = dict(values=['Statistic', 'Cumulative', 'Last Daily Report'], font=font,
+                    height=40, fill_color=header_fill, line_color=line_color)
+    rows = ["Last Case Reported","Confirmed Cases", "Case Doubling Time (days)",
+            "Case Growth Rate (%)", 
+            "Last Test Report", "Samples Tested", "Individuals Tested",
+            "Positive Individuals", "Positivity Rate (%)",
+            "Positive Individuals Doubling Time (days)",
+            "Positive Individuals Growth Rate (%)"]
+    cumulative = ["-", total_confirmed, "-", "-", "-",
+                    samples_str, individuals_str, positive_str, positivity_rate,
+                    "-", "-"]
+    last_reported = [last_case_reported, new_confirmed, round(case_doubling_time, 2),
+                    case_growth_rate,
                     last_test_report, latest_samples_str, latest_individuals_str,
-                    latest_positive_str, latest_positivity_rate]
+                    latest_positive_str, latest_positivity_rate,
+                    round(positive_doubling_time, 2), positive_growth_rate]
     cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
                     fill_color=cells_fill, line_color=line_color)
     fig = go.Figure(data=[go.Table(header=header, cells=cells)])
@@ -367,9 +379,6 @@ def calc_testing_aggregates_data(data):
                     if row['daily_output_unique_individuals']
                     else 0,
                 axis=1)
-    top_facility = data['facility_name'].value_counts().nlargest(10)
-    data['facility'] = data.apply(lambda row :
-                row['facility_name'] if row['facility_name'] in top_facility else 'Others', axis=1)
     logging.info("Reading test facilty data")
     test_facilty =  pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
     data = pd.merge(data, test_facilty, on='facility_name', how='left')
