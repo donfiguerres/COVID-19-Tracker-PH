@@ -7,4 +7,5 @@ period: 14days
 
 # COVID-19 Tracker Philippines - Last 14 Days
 
-[main page](COVID-19-Tracker-PH.md)
+## Links
+* [tracker main page]({{ site.baseurl }}/tracker/)
