@@ -543,14 +543,14 @@ img {
 .grid {
   display: block;
   padding: 0;
-  margin: 0 -20px;
+  margin: 0 -10px;
   font-size: 0;
   text-align: left; }
 
 .grid-cell {
   display: inline-block;
   width: 100%;
-  padding: 0 20px;
+  padding: 0 10px;
   margin: 0;
   font-size: 16px;
   text-align: left;
@@ -861,11 +861,13 @@ img {
 @media all and (max-width: 767px) {
   .embed-chart {
     padding-bottom: 75%;
-    margin-bottom: 10px; } }
+    margin-bottom: 10px;
+    min-height: 80vh; } }
 @media all and (max-width: 520px) {
   .embed-chart {
     padding-bottom: 100%;
-    margin-bottom: 1px; } }
+    margin-bottom: 1px;
+    min-height: 100vh; } }
 .header-nav {
   display: block;
   padding: 75px 0 20px;
