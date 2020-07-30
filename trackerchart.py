@@ -114,10 +114,6 @@ def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
     else:
         agg = getattr(data.groupby(x), agg_func)()
     fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
-    fig.update_layout(legend=dict(
-                        xanchor="left", x=0.01,
-                        yanchor="top", y=0.99
-                         ))
     for trace in overlays:
         fig.add_trace(trace)
     write_chart(fig, f"{filename}")
