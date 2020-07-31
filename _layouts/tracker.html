@@ -7,70 +7,45 @@ layout: default
 
 
 <h2>Confirmed Cases</h2>
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/DateOnset{{ page.period }}CaseRepType.html"></iframe>
-</div>
+{% include charts/DateOnset{{ page.period }}CaseRepType.html %}
 
 <h3>Confirmed Cases by Region</h3>
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/DateOnset{{ page.period }}Region.html"></iframe>
-</div>
+{% include charts/DateOnset{{ page.period }}Region.html %}
 
 <h3>Top City/Municipality</h3>
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/CityMunRes{{ page.period }}.html"></iframe>
-</div>
+{% include charts/CityMunRes{{ page.period }}.html %}
 
 <h2>Recovery</h2>
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/DateRecover{{ page.period }}Region.html"></iframe>
-</div>
+{% include charts/DateRecover{{ page.period }}Region.html %}
 
 <h2>Death</h2>
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/DateDied{{ page.period }}Region.html"></iframe>
-</div>
+{% include charts/DateDied{{ page.period }}Region.html %}
+
 
 <h2>Testing</h2>
 
 <h3>Daily</h3>
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/daily_output_positive_individuals{{ page.period }}.html"></iframe>
-</div>
+{% include charts/daily_output_positive_individuals{{ page.period }}.html %}
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/daily_output_unique_individuals{{ page.period }}.html"></iframe>
-</div>
+{% include charts/daily_output_unique_individuals{{ page.period }}.html %}
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/daily_output_samples_tested{{ page.period }}.html"></iframe>
-</div>
+{% include charts/daily_output_samples_tested{{ page.period }}.html %}
 
 
 <h3>Cumulative</h3>
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/cumulative_positive_individuals{{ page.period }}.html"></iframe>
-</div>
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/cumulative_unique_individuals{{ page.period }}.html"></iframe>
-</div>
+{% include charts/cumulative_positive_individuals{{ page.period }}.html %}
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/cumulative_samples_tested{{ page.period }}.html"></iframe>
-</div>
+{% include charts/cumulative_unique_individuals{{ page.period }}.html %}
+
+{% include charts/cumulative_samples_tested{{ page.period }}.html %}
 
 
 <h2>Reporting</h2>
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/SpecimenToRepConf{{ page.period }}.html"></iframe>
-</div>
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/SpecimenToRelease{{ page.period }}.html"></iframe>
-</div>
+{% include charts/SpecimenToRepConf{{ page.period }}.html %}
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/ReleaseToRepConf{{ page.period }}.html"></iframe>
-</div>
+{% include charts/SpecimenToRelease{{ page.period }}.html %}
+
+{% include charts/ReleaseToRepConf{{ page.period }}.html %}
