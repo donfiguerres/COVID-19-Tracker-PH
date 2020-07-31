@@ -24,7 +24,4 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 Note: Case Doubling Time and Growth rate are measured at 14 days before the 
 last daily report.
 
-<div class="embed-responsive embed-chart">
-<iframe src="{{ site.baseurl }}/tracker/charts/summary.html"></iframe>
-</div>
-
+{% include charts/summary.html %}
