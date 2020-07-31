@@ -16,7 +16,7 @@ import plotly.graph_objects as go
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CHART_OUTPUT = os.path.join(SCRIPT_DIR, "tracker", "charts")
+CHART_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "charts")
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 MA_SUFFIX = '_MA7'
@@ -28,7 +28,8 @@ CASE_REP_TYPE = 'CaseRepType'
 def write_chart(fig, filename):
     fig.update_layout(template=TEMPLATE)
     fig.update_yaxes(automargin=True)
-    fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn')
+    fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
+                        full_html=False)
 
 def filter_active_closed(ci_data):
     active = ci_data[ci_data.RemovalType.isnull()]
