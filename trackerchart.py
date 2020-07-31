@@ -27,7 +27,7 @@ CASE_REP_TYPE = 'CaseRepType'
 
 def write_chart(fig, filename):
     fig.update_layout(template=TEMPLATE)
-    fig.update_yaxes(automargin=True)
+    fig.update_layout(margin=dict(l=5, r=5, b=5, t=30))
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
                         full_html=False)
 

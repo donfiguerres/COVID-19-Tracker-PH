@@ -7,45 +7,72 @@ layout: default
 
 
 <h2>Confirmed Cases</h2>
+<div class="embed-responsive embed-chart">
 {% include charts/DateOnset{{ page.period }}CaseRepType.html %}
+</div>
 
 <h3>Confirmed Cases by Region</h3>
+<div class="embed-responsive embed-chart">
 {% include charts/DateOnset{{ page.period }}Region.html %}
+</div>
 
 <h3>Top City/Municipality</h3>
+<div class="embed-responsive embed-chart">
 {% include charts/CityMunRes{{ page.period }}.html %}
+</div>
 
 <h2>Recovery</h2>
+<div class="embed-responsive embed-chart">
 {% include charts/DateRecover{{ page.period }}Region.html %}
+</div>
 
 <h2>Death</h2>
+<div class="embed-responsive embed-chart">
 {% include charts/DateDied{{ page.period }}Region.html %}
-
+</div>
 
 <h2>Testing</h2>
 
 <h3>Daily</h3>
 
+<div class="embed-responsive embed-chart">
 {% include charts/daily_output_positive_individuals{{ page.period }}.html %}
+</div>
 
+<div class="embed-responsive embed-chart">
 {% include charts/daily_output_unique_individuals{{ page.period }}.html %}
+</div>
 
+<div class="embed-responsive embed-chart">
 {% include charts/daily_output_samples_tested{{ page.period }}.html %}
+</div>
 
 
 <h3>Cumulative</h3>
 
+<div class="embed-responsive embed-chart">
 {% include charts/cumulative_positive_individuals{{ page.period }}.html %}
+</div>
 
+<div class="embed-responsive embed-chart">
 {% include charts/cumulative_unique_individuals{{ page.period }}.html %}
+</div>
 
+<div class="embed-responsive embed-chart">
 {% include charts/cumulative_samples_tested{{ page.period }}.html %}
-
+</div>
 
 <h2>Reporting</h2>
 
+<div class="embed-responsive embed-chart">
 {% include charts/SpecimenToRepConf{{ page.period }}.html %}
+</div>
 
+<div class="embed-responsive embed-chart">
 {% include charts/SpecimenToRelease{{ page.period }}.html %}
+</div>
 
+
+<div class="embed-responsive embed-chart">
 {% include charts/ReleaseToRepConf{{ page.period }}.html %}
+</div>
