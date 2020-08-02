@@ -345,7 +345,7 @@ def calc_case_info_data(data):
                 axis=1)
     # Trim Region names for shorter margins
     data['Region'] = data.apply(lambda row :
-                'Unkown' if pd.isnull(row['RegionRes']) else (
+                'No Data' if pd.isnull(row['RegionRes']) else (
                     row['RegionRes']).split(':')[0], axis=1)
     logging.debug(data)
     return data
