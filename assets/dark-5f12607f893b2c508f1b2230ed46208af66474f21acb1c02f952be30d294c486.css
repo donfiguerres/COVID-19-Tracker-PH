@@ -856,18 +856,17 @@ img {
   padding-bottom: 56.25%; }
 
 .embed-chart {
-  padding-bottom: 56.25%; }
+  padding-bottom: 56.25%;
+  max-height: 90vh; }
 
 @media all and (max-width: 767px) {
   .embed-chart {
     padding-bottom: 75%;
-    margin-bottom: 10px;
-    min-height: 80vh; } }
+    margin-bottom: 10px; } }
 @media all and (max-width: 520px) {
   .embed-chart {
     padding-bottom: 100%;
-    margin-bottom: 1px;
-    min-height: 100vh; } }
+    margin-bottom: 1px; } }
 .header-nav {
   display: block;
   padding: 75px 0 20px;
