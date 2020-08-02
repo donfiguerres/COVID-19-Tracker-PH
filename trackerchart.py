@@ -265,7 +265,6 @@ def plot_summary(ci_data, test_data):
     ci_agg_filtered = filter_latest(ci_agg, 14, return_latest=False)
     cumsum = ci_agg_filtered['CaseCode'].cumsum()
     case_doubling_time = doubling_time(cumsum)[-1]
-    case_growth_rate = round(growth_rate(case_doubling_time) * 100, 2)
     # test
     last_test_report = test_data['report_date'].max().strftime(date_format)
     latest_test_data = filter_latest(test_data, 1, date_column='report_date')
@@ -285,7 +284,6 @@ def plot_summary(ci_data, test_data):
     latest_positivity_rate = round((latest_positive / latest_individuals) * 100, 2)
     test_agg = test_data.groupby('report_date').sum()
     positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
-    positive_growth_rate = round(growth_rate(positive_doubling_time) * 100, 2)
     # create table
     # Styling should integrate well with the currently used theme - Chalk.
     font = dict(color='white', size=16)
@@ -295,19 +293,16 @@ def plot_summary(ci_data, test_data):
     header = dict(values=['Statistic', 'Cumulative', 'Last Daily Report'], font=font,
                     height=40, fill_color=header_fill, line_color=line_color)
     rows = ["Last Case Reported","Confirmed Cases", "Case Doubling Time (days)",
-            "Case Growth Rate (%)", 
             "Last Test Report", "Samples Tested", "Individuals Tested",
             "Positive Individuals", "Positivity Rate (%)",
-            "Positive Individuals Doubling Time (days)",
-            "Positive Individuals Growth Rate (%)"]
-    cumulative = ["-", total_confirmed, "-", "-", "-",
+            "Positive Individuals Doubling Time (days)"]
+    cumulative = ["-", total_confirmed, "-", "-", 
                     samples_str, individuals_str, positive_str, positivity_rate,
-                    "-", "-"]
+                    "-"]
     last_reported = [last_case_reported, new_confirmed, round(case_doubling_time, 2),
-                    case_growth_rate,
                     last_test_report, latest_samples_str, latest_individuals_str,
                     latest_positive_str, latest_positivity_rate,
-                    round(positive_doubling_time, 2), positive_growth_rate]
+                    round(positive_doubling_time, 2)]
     cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
                     fill_color=cells_fill, line_color=line_color)
     fig = go.Figure(data=[go.Table(header=header, cells=cells)])
