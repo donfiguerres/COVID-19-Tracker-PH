@@ -7,6 +7,14 @@
     <atom:link href="https://donfiguerres.github.io/COVID-19-Tracker-PH/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>New Onset and Recovery Proxy Charts</title>
+        <description>New charts to visualize date proxies and analysis of the 38k recoveries tagged by DOH.</description>
+        <pubDate>Mon, 03 Aug 2020 02:00:00 +0800</pubDate>
+        <link>https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/08/03/new-onset-and-recovery-proxy-charts/</link>
+        <guid isPermaLink="true">https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/08/03/new-onset-and-recovery-proxy-charts/</guid>
+      </item>
+    
+      <item>
         <title>The COVID-19 Gets a New Theme</title>
         <description>The COVID-19 Tracker is now using the Chalk Theme.</description>
         <pubDate>Mon, 27 Jul 2020 00:30:00 +0800</pubDate>
