@@ -23,6 +23,8 @@ MA_SUFFIX = '_MA7'
 MA_NAME = "7-day MA" 
 REGION = 'Region'
 CASE_REP_TYPE = 'CaseRepType'
+ONSET_PROXY = 'OnsetProxy'
+RECOVER_PROXY = 'RecoverProxy'
 
 
 def write_chart(fig, filename):
@@ -239,12 +241,11 @@ def plot_per_lgu(ci_data):
 def plot_ci(ci_data):
     plot_case_trend(ci_data, 'DateOnset',
             "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
-            colors=['CaseRepType', 'Region'])
-    active, closed = filter_active_closed(ci_data)
+            colors=['CaseRepType', 'Region', ONSET_PROXY])
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
             "Daily Recovery", "DateRecover",
-            colors=['Region'])
+            colors=['Region', RECOVER_PROXY])
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
             "Daily Death", "DateDied",
@@ -310,6 +311,7 @@ def plot_summary(ci_data, test_data):
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
+    max_date_repconf = data.DateRepConf.max()
     # Some incomplete entries have no dates so we need to check first before
     # making a computation.
     data['SpecimenToRepConf'] = data.apply(lambda row : 
@@ -327,13 +329,23 @@ def calc_case_info_data(data):
                 if row['DateRepConf'] and row['DateResultRelease']
                     and row['DateResultRelease'] < row['DateRepConf']
                 else np.NaN, axis=1)
-    data['proxy'] = data.apply(lambda row :
-                True if row['DateOnset'] == pd.NaT else True, axis=1)
+    data[ONSET_PROXY] = data.apply(lambda row :
+                'No Proxy' if not pd.isnull(row['DateOnset']) else (
+                    'DateSpecimen' if not pd.isnull(row['DateSpecimen']) else 'DateRepConf'
+                ), axis=1)
     data['DateOnset'] = data.apply(lambda row :
-                row['DateSpecimen'] if row['proxy'] else row['DateOnset'], axis=1)
+                row['DateOnset'] if row[ONSET_PROXY] == 'No Proxy' else row[row[ONSET_PROXY]],
+                axis=1)
+    data[RECOVER_PROXY] = data.apply(lambda row :
+                'No Proxy' if not pd.isnull(row['DateRecover']) else (
+                    'DateOnset+14' if row[ONSET_PROXY] == 'No Proxy' else (
+                        row[ONSET_PROXY]+'+14')
+                ), axis=1)
+    data['DateRecover'] = data.apply(lambda row :
+                row['DateRecover'] if row[RECOVER_PROXY] == 'No Proxy' else (
+                    row['DateOnset'] + timedelta(days=14) if row['DateOnset'] + timedelta(days=14) < max_date_repconf else max_date_repconf
+                ) , axis=1)
     # Set CaseRepType to identify newly reported cases.
-    max_date_repconf = data.DateRepConf.max()
-    logging.debug(f"Max DateRepConf is {max_date_repconf}")
     data['CaseRepType'] = data.apply(lambda row :
                 'Incomplete' if not row['DateRepConf'] else (
                     'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'),
