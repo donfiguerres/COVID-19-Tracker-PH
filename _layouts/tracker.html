@@ -21,10 +21,24 @@ layout: default
 {% include charts/CityMunRes{{ page.period }}.html %}
 </div>
 
+<h3>Proxy</h3>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/DateOnset{{ page.period }}OnsetProxy.html %}
+</div>
+
+
 <h2>Recovery</h2>
+
+<h3>Recovery by Region</h3>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include charts/DateRecover{{ page.period }}Region.html %}
 </div>
+
+<h3>Proxy</h3>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/DateRecover{{ page.period }}RecoverProxy.html %}
+</div>
+
 
 <h2>Death</h2>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
