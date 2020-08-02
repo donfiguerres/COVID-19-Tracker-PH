@@ -35,13 +35,13 @@
 
 .embed-chart {
   padding-bottom: 56.25%;
+  max-height: 90vh;
 }
 
 @include breakpoint(small) {
   .embed-chart {
     padding-bottom: 75%;
     margin-bottom: 10px;
-    min-height: 80vh;
   }
 }
 
@@ -49,6 +49,5 @@
   .embed-chart {
     padding-bottom: 100%;
     margin-bottom: 1px;
-    min-height: 100vh;
   }
 }
