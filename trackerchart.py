@@ -23,6 +23,7 @@ PERIOD_DAYS = [14, 30]
 MA_SUFFIX = '_MA7'
 MA_NAME = "7-day MA" 
 REGION = 'Region'
+CITY_MUN = 'CityMun'
 CASE_REP_TYPE = 'CaseRepType'
 ONSET_PROXY = 'OnsetProxy'
 RECOVER_PROXY = 'RecoverProxy'
@@ -226,7 +227,7 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
                 filename=f"{filename}{days}days", colors=colors)
 
 def plot_per_lgu(ci_data):
-    y = 'CityMunRes'
+    y = CITY_MUN
     x = 'CaseCode'
     color = 'HealthStatus'
     title = "Top 10 City/Municipality"
@@ -315,6 +316,7 @@ def calc_case_info_data(data):
     max_date_repconf = data.DateRepConf.max()
     # Some incomplete entries have no dates so we need to check first before
     # making a computation.
+    logging.info("Calculating specimen to reporting data")
     data['SpecimenToRepConf'] = data.apply(lambda row : 
                 (row['DateRepConf'] - row['DateSpecimen']).days
                 if row['DateRepConf'] and row['DateSpecimen']
@@ -330,6 +332,7 @@ def calc_case_info_data(data):
                 if row['DateRepConf'] and row['DateResultRelease']
                     and row['DateResultRelease'] < row['DateRepConf']
                 else np.NaN, axis=1)
+    logging.info("Setting date proxies")
     data[ONSET_PROXY] = data.apply(lambda row :
                 'No Proxy' if not pd.isnull(row['DateOnset']) else (
                     'DateSpecimen' if not pd.isnull(row['DateSpecimen']) else 'DateRepConf'
@@ -347,14 +350,20 @@ def calc_case_info_data(data):
                     row['DateOnset'] + timedelta(days=14) if row['DateOnset'] + timedelta(days=14) < max_date_repconf else max_date_repconf
                 ) , axis=1)
     # Set CaseRepType to identify newly reported cases.
+    logging.info("Setting case report type")
     data['CaseRepType'] = data.apply(lambda row :
                 'Incomplete' if not row['DateRepConf'] else (
                     'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'),
                 axis=1)
     # Trim Region names for shorter margins
+    logging.info("Setting region")
     data['Region'] = data.apply(lambda row :
                 'No Data' if pd.isnull(row['RegionRes']) else (
                     row['RegionRes']).split(':')[0], axis=1)
+    logging.info("Setting city/municipality")
+    data[CITY_MUN] = data.apply(lambda row :
+                'No Data' if pd.isnull(row['CityMunRes']) else row['CityMunRes'],
+                axis=1)
     logging.debug(data)
     return data
 
