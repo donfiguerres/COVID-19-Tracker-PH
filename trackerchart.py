@@ -7,6 +7,7 @@ import glob
 from datetime import datetime
 from datetime import timedelta
 import logging
+import shutil
 
 import pandas as pd
 import numpy as np
@@ -399,11 +400,15 @@ def read_testing_aggregates(data_dir):
     data = pd.read_csv(ci_file_name)
     return calc_testing_aggregates_data(data)
 
-def plot(data_dir):
+def plot(data_dir, rebuild=False):
     ci_data = read_case_information(data_dir)
     test_data = read_testing_aggregates(data_dir)
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
+    elif rebuild:
+        shutil.rmtree(CHART_OUTPUT)
+        os.mkdir(CHART_OUTPUT)
+    # else keep directory
     plot_summary(ci_data, test_data)
     plot_ci(ci_data)
     plot_reporting_delay(ci_data)
