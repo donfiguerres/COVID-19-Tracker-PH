@@ -19,6 +19,8 @@ def _parse_args():
                     help="specify the folder id of the latest datadrop")
     parser.add_argument("--data-dir", nargs='?', default=datadrop.DATA_DIR,
                     help="specify the directory of the data set")
+    parser.add_argument("--rebuild", action="store_true",
+                    help="rebuild chart directory")
     parser.add_argument("--deploy", action="store_true",
                     help="copy generated charts to the tracker directory")
     parser.add_argument("--loglevel", default="INFO",
@@ -38,7 +40,7 @@ def main():
             datadrop.download(folder_id=args.folder_id)
         else:
             datadrop.download()
-    trackerchart.plot(args.data_dir)
+    trackerchart.plot(args.data_dir, rebuild=args.rebuild)
     return 0
 
 
