@@ -241,7 +241,7 @@ def plot_per_lgu(ci_data):
 
 def plot_ci(ci_data):
     plot_case_trend(ci_data, 'DateOnset',
-            "Daily Confirmed Cases by Date of Onset of Illnes", "DateOnset",
+            "Daily Confirmed Cases by Date of Onset of Illness", "DateOnset",
             colors=['CaseRepType', 'Region', ONSET_PROXY])
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
