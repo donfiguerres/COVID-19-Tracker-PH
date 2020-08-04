@@ -4,13 +4,25 @@ title: "Open source COVID-19 tracker for the Philippines"
 description: "Chalk uses all the best tools and merges them into one premium blogging theme."
 ---
 
-<h1>The Tracker</h1>
+<h1>The COVID-19 Tracker Philippines Project</h1>
+
+<p>This serves as a supplementary tracker for the
+  <a href="https://www.doh.gov.ph/covid19tracker" title="DOH COVID-19 Tracker">COVID-19 Tracker</a>
+  maintained by the <a href="https://www.doh.gov.ph/" title="Department of Health">Department of Health</a>.
+  The data set used in this tracker are pulled from DOH's
+  <a href="https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o">data drop</a>.<br>
+  More details about this project are found in the <a href="{{ 'about' | relative_url }}">About</a>
+  page and the
+  <a href="https://github.com/donfiguerres/COVID-19-Tracker-PH">GitHub Project</a> page.
+</p>
+
+<h2>The Tracker</h2>
 <a href="tracker">Go To Tracker</a>
 <div class="embed-responsive embed-chart">
 {% include charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
-<h1>Blog Posts</h1>
+<h2>Blog Posts</h2>
 <ul class="article-list">
   {% for post in paginator.posts %}
     <li class="article-list-item {% if site.scrollappear_enabled %}scrollappear{% endif %}">
