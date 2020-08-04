@@ -32,11 +32,17 @@ Go to [tracker](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
 
 ## How to Run
 ### Create a Client Secret
-Create and download a OAth 2.0 client secret from the [Google APIs site](https://console.developers.google.com/).
-The website has a tutorial on how to create a client secret.
+Create and download a OAth 2.0 client secret from the
+[Google APIs site](https://console.developers.google.com/).
+Follow the
+[Quickstart Guide](https://developers.google.com/drive/api/v3/quickstart/python)
+to understand how the API works and follow the
+[Enable the Google Drive API Guide](https://developers.google.com/drive/api/v3/enable-drive-api)
+to create your client secret file.
 
 Copy the client secret file to your project directory and rename the file as
 'client_secret.json'
+
 ### Open the Files in the DOH Data Drop Google Drive Folder
 Open README file in the [DOH folder](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o).
 This link is also available at the [DOH Covid19 Tracker](https://ncovtracker.doh.gov.ph/).
