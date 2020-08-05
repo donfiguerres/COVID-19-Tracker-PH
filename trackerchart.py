@@ -23,7 +23,7 @@ PERIOD_DAYS = [14, 30]
 MA_SUFFIX = '_MA7'
 MA_NAME = "7-day MA" 
 REGION = 'Region'
-CITY_MUN = 'CityMun'
+CITY_MUN = 'CityMunRes'
 CASE_REP_TYPE = 'CaseRepType'
 ONSET_PROXY = 'OnsetProxy'
 RECOVER_PROXY = 'RecoverProxy'
@@ -226,11 +226,9 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
                 title=f"{title} - Last {days} days",
                 filename=f"{filename}{days}days", colors=colors)
 
-def plot_per_lgu(ci_data):
-    y = CITY_MUN
+def plot_per_area(ci_data, y, title):
     x = 'CaseCode'
     color = 'HealthStatus'
-    title = "Top 10 City/Municipality"
     top = ci_data.groupby(y).count()[x].nlargest(10).reset_index()[y]
     top_filtered = ci_data[ci_data[y].isin(top)]
     plot_horizontal_bar(top_filtered, x=x, y=y, color=color, title=title, filename=y)
@@ -252,7 +250,8 @@ def plot_ci(ci_data):
     plot_case_trend(died, 'DateDied',
             "Daily Death", "DateDied",
             colors=['Region'])
-    plot_per_lgu(ci_data)
+    for area in [CITY_MUN, REGION]:
+        plot_per_area(ci_data, area, "Top 10 "+area)
 
 def plot_summary(ci_data, test_data):
     # Using the format key for for the cells will apply the formatting to all of
@@ -360,10 +359,6 @@ def calc_case_info_data(data):
     data['Region'] = data.apply(lambda row :
                 'No Data' if pd.isnull(row['RegionRes']) else (
                     row['RegionRes']).split(':')[0], axis=1)
-    logging.info("Setting city/municipality")
-    data[CITY_MUN] = data.apply(lambda row :
-                'No Data' if pd.isnull(row['CityMunRes']) else row['CityMunRes'],
-                axis=1)
     logging.debug(data)
     return data
 
@@ -383,6 +378,11 @@ def read_case_information(data_dir):
         logging.debug(f"Converting column {column} to datetime")
         # Some of the data are invalid.
         data[column] = pd.to_datetime(data[column], errors='coerce')
+    logging.info("Filling empty data")
+    data[CITY_MUN].fillna('No Data', inplace=True)
+    data['ProvRes'].fillna('No Data', inplace=True)
+    data['Quarantined'].fillna('No Data', inplace=True)
+    data['Admitted'].fillna('No Data', inplace=True)
     return calc_case_info_data(data)
 
 def calc_testing_aggregates_data(data):

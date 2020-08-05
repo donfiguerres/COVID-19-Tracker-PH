@@ -16,9 +16,14 @@ layout: default
 {% include charts/DateOnset{{ page.period }}Region.html %}
 </div>
 
+<h3>Top Region</h3>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/Region{{ page.period }}.html %}
+</div>
+
 <h3>Top City/Municipality</h3>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/CityMun{{ page.period }}.html %}
+{% include charts/CityMunRes{{ page.period }}.html %}
 </div>
 
 <h3>Proxy</h3>
