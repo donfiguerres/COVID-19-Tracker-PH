@@ -355,7 +355,7 @@ def calc_case_info_data(data):
                 'Incomplete' if not row['DateRepConf'] else (
                     'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'),
                 axis=1)
-    # Trim Region names for shorter margins
+    # Trim Region names for shorter chart legends.
     logging.info("Setting region")
     data['Region'] = data.apply(lambda row :
                 'No Data' if pd.isnull(row['RegionRes']) else (
@@ -396,6 +396,7 @@ def calc_testing_aggregates_data(data):
     logging.info("Reading test facilty data")
     test_facilty =  pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
     data = pd.merge(data, test_facilty, on='facility_name', how='left')
+    data['REGION'].fillna('Unknown')
     logging.debug(data)
     return data
 
