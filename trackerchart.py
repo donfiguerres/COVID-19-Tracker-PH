@@ -67,8 +67,10 @@ def doubling_time(series):
     x_interp = f(y_half)
     return x - x_interp
 
-def growth_rate(doubling_time):
-    return np.log(2) / doubling_time
+def reproduction_number(doubling_time):
+    """Calculate reproduction number using simple model."""
+    # COVID-19 has an incubation period of up to 14 days.
+    return np.exp((np.log(2)/doubling_time) * 14)
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
