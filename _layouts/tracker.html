@@ -18,12 +18,12 @@ layout: default
 
 <h3>Top Region</h3>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/Region{{ page.period }}.html %}
+{% include charts/TopConfirmedCaseRegion{{ page.period }}.html %}
 </div>
 
 <h3>Top City/Municipality</h3>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/CityMunRes{{ page.period }}.html %}
+{% include charts/TopConfirmedCaseCityMunRes{{ page.period }}.html %}
 </div>
 
 <h3>Proxy</h3>
@@ -39,6 +39,16 @@ layout: default
 {% include charts/DateRecover{{ page.period }}Region.html %}
 </div>
 
+<h3>Top Region</h3>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/TopRecoveryRegion{{ page.period }}.html %}
+</div>
+
+<h3>Top City/Municipality</h3>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/TopRecoveryCityMunRes{{ page.period }}.html %}
+</div>
+
 <h3>Proxy</h3>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include charts/DateRecover{{ page.period }}RecoverProxy.html %}
@@ -49,6 +59,17 @@ layout: default
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include charts/DateDied{{ page.period }}Region.html %}
 </div>
+
+<h3>Top Region</h3>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/TopDeathRegion{{ page.period }}.html %}
+</div>
+
+<h3>Top City/Municipality</h3>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/TopDeathCityMunRes{{ page.period }}.html %}
+</div>
+
 
 <h2>Testing</h2>
 
