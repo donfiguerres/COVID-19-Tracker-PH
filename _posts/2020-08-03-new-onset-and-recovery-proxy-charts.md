@@ -12,7 +12,7 @@ New charts to visualize date of onset proxies and date of recovery proxies are
 now added to the tracker. This is to better understand the [38,075 tagged
 recoveries in a day last July 30, 2020](#doh-tagged-38k-recoveries).
 
-![Daily Recovery Proxies]({{ site.baseurl }}/images/2020-08-03/daily-recovery.png)
+![Daily Recovery Proxies]({{ "/images/2020-08-03/daily-recovery.png" | relative_url }})
 
 ### Improved Viewing Experience for Mobile
 Replaced iframes with includes to improve viewing experience for mobile devices.
