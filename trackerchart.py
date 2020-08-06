@@ -27,6 +27,8 @@ CITY_MUN = 'CityMunRes'
 CASE_REP_TYPE = 'CaseRepType'
 ONSET_PROXY = 'OnsetProxy'
 RECOVER_PROXY = 'RecoverProxy'
+CASE_STATUS = 'CaseStatus'
+DATE_CLOSED = 'DateClosed'
 
 
 def write_chart(fig, filename):
@@ -34,11 +36,6 @@ def write_chart(fig, filename):
     fig.update_layout(margin=dict(l=5, r=5, b=5, t=60))
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
                         full_html=False)
-
-def filter_active_closed(ci_data):
-    active = ci_data[ci_data.RemovalType.isnull()]
-    closed = ci_data[ci_data.RemovalType.notnull()]
-    return active, closed
 
 def filter_latest(data, days, date_column=None, return_latest=True):
     """ Filter data by the days indicated in the days parameter.
@@ -226,32 +223,56 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
                 title=f"{title} - Last {days} days",
                 filename=f"{filename}{days}days", colors=colors)
 
-def plot_per_area(ci_data, y, title):
+def plot_per_area(ci_data, y, filename, title, title_period_suffix="", color=None):
     x = 'CaseCode'
-    color = 'HealthStatus'
     top = ci_data.groupby(y).count()[x].nlargest(10).reset_index()[y]
     top_filtered = ci_data[ci_data[y].isin(top)]
-    plot_horizontal_bar(top_filtered, x=x, y=y, color=color, title=title, filename=y)
+    plot_horizontal_bar(top_filtered, x=x, y=y, color=color, title=title,
+                            filename=filename)
     for days in PERIOD_DAYS:
         filtered_latest = filter_latest(top_filtered, days, 'DateOnset')
         plot_horizontal_bar(filtered_latest, x=x, y=y, color=color,
-                title=f"{title} - Last {days} days by Date of Onset of Illness",
-                filename=f"{y}{days}days")
+                title=f"{title} - Last {days} days{title_period_suffix}",
+                filename=f"{filename}{days}days")
+
+def plot_active_cases(ci_data):
+    y = 'CaseCode'
+    active = None
+    closed = None
+    for name, group in ci_data.groupby([CASE_STATUS]):
+        if name == "ACTIVE":
+            active = group
+        elif name == "CLOSED":
+            closed = group
+        else:
+            logging.warning(f"Unkown group {name}")
+    active_agg = active.groupby(ONSET_PROXY).count()
+    # TODO: continue calculation of daily active cases using proxy
 
 def plot_ci(ci_data):
+    # confirmed cases
     plot_case_trend(ci_data, 'DateOnset',
             "Daily Confirmed Cases by Date of Onset of Illness", "DateOnset",
-            colors=['CaseRepType', 'Region', ONSET_PROXY])
+            colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY])
+    for area in [CITY_MUN, REGION]:
+        plot_per_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
+                        " by Date of Onset of Illness", color="HealthStatus")
+    # active cases
+    #plot_active_cases(ci_data)
+    # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
             "Daily Recovery", "DateRecover",
             colors=['Region', RECOVER_PROXY])
+    for area in [CITY_MUN, REGION]:
+        plot_per_area(recovered, area, f"TopRecovery{area}", "Top 10 "+area)
+    # death
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
             "Daily Death", "DateDied",
             colors=['Region'])
     for area in [CITY_MUN, REGION]:
-        plot_per_area(ci_data, area, "Top 10 "+area)
+        plot_per_area(died, area, f"TopDeath{area}", "Top 10 "+area)
 
 def plot_summary(ci_data, test_data):
     # Using the format key for for the cells will apply the formatting to all of
@@ -262,6 +283,7 @@ def plot_summary(ci_data, test_data):
     # confirmed cases
     last_case_reported = ci_data['DateRepConf'].max().strftime(date_format)
     total_confirmed = format_num(ci_data['CaseCode'].count())
+    total_active = format_num(ci_data[ci_data[CASE_STATUS] == 'ACTIVE']['CaseCode'].count())
     new_confirmed = format_num(ci_data[ci_data[CASE_REP_TYPE] == 'New Case']['CaseCode'].count())
     ci_agg = ci_data.groupby('DateOnset').count()
     ci_agg_filtered = filter_latest(ci_agg, 14, return_latest=False)
@@ -292,16 +314,19 @@ def plot_summary(ci_data, test_data):
     header_fill = '#161616'
     cells_fill = '#1A1A1A'
     line_color = '#8C8C8C'
-    header = dict(values=['Statistic', 'Cumulative', 'Last Daily Report'], font=font,
-                    height=40, fill_color=header_fill, line_color=line_color)
-    rows = ["Last Case Reported","Confirmed Cases", "Case Doubling Time (days)",
+    header = dict(values=['Statistic', 'Cumulative', 'Last Daily Report'],
+                    font=font, height=40, fill_color=header_fill,
+                    line_color=line_color)
+    rows = ["Last Case Reported","Confirmed Cases", "Total Active Cases",
+            "Case Doubling Time (days)",
             "Last Test Report", "Samples Tested", "Individuals Tested",
             "Positive Individuals", "Positivity Rate (%)",
             "Positive Individuals Doubling Time (days)"]
-    cumulative = ["-", total_confirmed, "-", "-", 
+    cumulative = ["-", total_confirmed, total_active, "-", "-", 
                     samples_str, individuals_str, positive_str, positivity_rate,
                     "-"]
-    last_reported = [last_case_reported, new_confirmed, round(case_doubling_time, 2),
+    last_reported = [last_case_reported, new_confirmed, "-",
+                    round(case_doubling_time, 2),
                     last_test_report, latest_samples_str, latest_individuals_str,
                     latest_positive_str, latest_positivity_rate,
                     round(positive_doubling_time, 2)]
@@ -348,11 +373,16 @@ def calc_case_info_data(data):
                 row['DateRecover'] if row[RECOVER_PROXY] == 'No Proxy' else (
                     row['DateOnset'] + timedelta(days=14) if row['DateOnset'] + timedelta(days=14) < max_date_repconf else max_date_repconf
                 ) , axis=1)
-    # Set CaseRepType to identify newly reported cases.
+    # Add column for easily identifying newly reported cases.
     logging.info("Setting case report type")
-    data['CaseRepType'] = data.apply(lambda row :
+    data[CASE_REP_TYPE] = data.apply(lambda row :
                 'Incomplete' if not row['DateRepConf'] else (
                     'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'),
+                axis=1)
+    # Add column for easily identifying closed and active cases.
+    logging.info("Setting case status")
+    data[CASE_STATUS] = data.apply(lambda row :
+                'CLOSED' if row['HealthStatus'] in ["RECOVERED", "DIED"] else 'ACTIVE',
                 axis=1)
     # Trim Region names for shorter chart legends.
     logging.info("Setting region")
