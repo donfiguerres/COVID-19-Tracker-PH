@@ -76,16 +76,18 @@ is not sustainable.
 
 ## TODOs
 ### Plots
-* Top Region
+* Active casess
+* More descriptions on how to interpret the charts
+* Age group comparison (total, closed and active cases)
 * Testing ang Confirmation Gap
 * Death and Recovery Reporting
 * Recovery Time
 * Period from Infection to Death (what's the proper term for this?)
-* More descriptions on how to interpret the charts
 * R0 and projection
+* Per region and city/municipality pages
 * Hospital daily report - occupancy
 * Hospital weekly report - PPE inventory
-* Age group comparison (total, closed and active cases)
+* Quarantine facility reports
 
 ### Theme
 * Organize post tags.
@@ -94,7 +96,8 @@ is not sustainable.
 
 ### Others
 * Modify gh-pages commit script to fit into current setup.
-* git repo cleanup.
+* git repo cleanup
+* Faster loading time
 
 
 ## Limitations
