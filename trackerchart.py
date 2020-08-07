@@ -291,6 +291,7 @@ def plot_summary(ci_data, test_data):
     ci_agg_filtered = filter_latest(ci_agg, 14, return_latest=False)
     cumsum = ci_agg_filtered['CaseCode'].cumsum()
     case_doubling_time = doubling_time(cumsum)[-1]
+    case_r0 = reproduction_number(case_doubling_time)
     # test
     last_test_report = test_data['report_date'].max().strftime(date_format)
     latest_test_data = filter_latest(test_data, 1, date_column='report_date')
@@ -310,6 +311,7 @@ def plot_summary(ci_data, test_data):
     latest_positivity_rate = round((latest_positive / latest_individuals) * 100, 2)
     test_agg = test_data.groupby('report_date').sum()
     positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
+    positive_r0 = reproduction_number(positive_doubling_time)
     # create table
     # Styling should integrate well with the currently used theme - Chalk.
     font = dict(color='white', size=16)
@@ -320,18 +322,18 @@ def plot_summary(ci_data, test_data):
                     font=font, height=40, fill_color=header_fill,
                     line_color=line_color)
     rows = ["Last Case Reported","Confirmed Cases", "Total Active Cases",
-            "Case Doubling Time (days)",
+            "Case Doubling Time (days)", "Case R0",
             "Last Test Report", "Samples Tested", "Individuals Tested",
             "Positive Individuals", "Positivity Rate (%)",
-            "Positive Individuals Doubling Time (days)"]
-    cumulative = ["-", total_confirmed, total_active, "-", "-", 
+            "Positive Individuals Doubling Time (days)", "Positive Individuals R0"]
+    cumulative = ["-", total_confirmed, total_active, "-", "-", "-",
                     samples_str, individuals_str, positive_str, positivity_rate,
-                    "-"]
+                    "-", "-"]
     last_reported = [last_case_reported, new_confirmed, "-",
-                    round(case_doubling_time, 2),
+                    round(case_doubling_time, 2), round(case_r0, 2),
                     last_test_report, latest_samples_str, latest_individuals_str,
                     latest_positive_str, latest_positivity_rate,
-                    round(positive_doubling_time, 2)]
+                    round(positive_doubling_time, 2), round(positive_r0, 2)]
     cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
                     fill_color=cells_fill, line_color=line_color)
     fig = go.Figure(data=[go.Table(header=header, cells=cells)])
@@ -452,6 +454,7 @@ def plot(data_dir, rebuild=False):
         os.mkdir(CHART_OUTPUT)
     # else keep directory
     plot_summary(ci_data, test_data)
+    return
     plot_ci(ci_data)
     plot_reporting_delay(ci_data)
     plot_test(test_data)
