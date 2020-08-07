@@ -454,7 +454,6 @@ def plot(data_dir, rebuild=False):
         os.mkdir(CHART_OUTPUT)
     # else keep directory
     plot_summary(ci_data, test_data)
-    return
     plot_ci(ci_data)
     plot_reporting_delay(ci_data)
     plot_test(test_data)
