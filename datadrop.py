@@ -80,7 +80,7 @@ def trim_data_file_name(name):
 
 def trim_oddball_file_name(name):
     """"Remove date in name for easier tracking in the repo."""
-    return re.sub(r" \d{8}", r"", name)
+    return re.sub(r"(.* \d{8} - )", r"", name)
 
 def download_gdrive_file(drive_service, file_id, download_path):
     request = drive_service.files().get_media(fileId=file_id)
@@ -128,7 +128,7 @@ def download_data_files(drive_service, folder_id):
         os.mkdir(DATA_DIR)
     items = list_data_files(drive_service, folder_id)
     # These do not follow the naming convention of the rest of the files.
-    oddballs = ["DOH Data Drop - Changelog.xlsx", "DOH Data Drop.xlsx"]
+    oddballs = ["Changelog.xlsx", "DOH Data Drop.xlsx"]
     for item in items:
         item_file_name = item['name']
         if "READ ME" in item_file_name:
