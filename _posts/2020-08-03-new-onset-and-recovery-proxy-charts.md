@@ -20,7 +20,7 @@ Also, removed automargin in the plotly charts to maximize the available space.
 
 # COVID-19 Updates
 
-## DOH Tagged 38k Recoveries
+## DOH Tags 38k Recoveries
 
 DOH tagged 38,075 recoveries last July 30, 2020 as announced in this
 [post](https://www.facebook.com/OfficialDOHgov/photos/a.157979910879936/3550394868305073/)
