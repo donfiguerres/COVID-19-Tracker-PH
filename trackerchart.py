@@ -248,8 +248,14 @@ def plot_active_cases(ci_data):
             closed = group
         else:
             logging.warning(f"Unkown group {name}")
-    active_agg = active.groupby(ONSET_PROXY).count()
-    # TODO: continue calculation of daily active cases using proxy
+    ci_agg = ci_data.groupby(['DateOnset']).count()
+    closed_agg = closed.groupby([DATE_CLOSED]).count()
+    active = ci_agg.merge(closed_agg, left_index=True, right_index=True)
+    active['ActiveCount'] = active['CaseCode_x'] - active['CaseCode_y']
+    # work in progress
+    # TODO: add color by region
+    fig = px.bar(ci_agg, y='CaseCode', barmode='stack', title="Active Cases")
+    write_chart(fig, "Active")
 
 def plot_ci(ci_data):
     # confirmed cases
@@ -260,7 +266,7 @@ def plot_ci(ci_data):
         plot_per_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
                         " by Date of Onset of Illness", color="HealthStatus")
     # active cases
-    #plot_active_cases(ci_data)
+    plot_active_cases(ci_data)
     # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
@@ -387,6 +393,9 @@ def calc_case_info_data(data):
     logging.info("Setting case status")
     data[CASE_STATUS] = data.apply(lambda row :
                 'CLOSED' if row['HealthStatus'] in ["RECOVERED", "DIED"] else 'ACTIVE',
+                axis=1)
+    data[DATE_CLOSED] = data.apply(lambda row :
+                row['DateDied'] if row['HealthStatus'] == 'DIED' else row['DateRecover'],
                 axis=1)
     # Trim Region names for shorter chart legends.
     logging.info("Setting region")
