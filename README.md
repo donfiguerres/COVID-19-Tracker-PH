@@ -76,7 +76,8 @@ is not sustainable.
 
 ## TODOs
 ### Plots
-* Active casess
+* Cumulative cases
+* Active cases
 * More descriptions on how to interpret the charts
 * Age group comparison (total, closed and active cases)
 * Testing ang Confirmation Gap
@@ -95,7 +96,7 @@ is not sustainable.
 * Change about image.
 
 ### Others
-* Modify gh-pages commit script to fit into current setup.
+* Modify gh-pages commit script to fit into the current setup.
 * git repo cleanup
 * Faster loading time
 
