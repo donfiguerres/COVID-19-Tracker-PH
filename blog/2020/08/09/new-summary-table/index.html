@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>COVID-19-Tracker-PH | The COVID-19 Tracker Gets a New Theme</title>
-  <meta name="description" content="The COVID-19 Tracker is now using the Chalk Theme.">
+  <title>COVID-19-Tracker-PH | New Summary Table in the Tracker Home Page</title>
+  <meta name="description" content="A summary table is added along with a few improvements.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta property="og:title" content="The COVID-19 Tracker Gets a New Theme">
+  <meta property="og:title" content="New Summary Table in the Tracker Home Page">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/07/27/covid-19-tracker-ph-gets-a-new-theme/">
-  <meta property="og:description" content="The COVID-19 Tracker is now using the Chalk Theme.">
+  <meta property="og:url" content="https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/08/09/new-summary-table/">
+  <meta property="og:description" content="A summary table is added along with a few improvements.">
   <meta property="og:site_name" content="COVID-19-Tracker-PH">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:url" content="https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/07/27/covid-19-tracker-ph-gets-a-new-theme/">
-  <meta name="twitter:title" content="The COVID-19 Tracker Gets a New Theme">
-  <meta name="twitter:description" content="The COVID-19 Tracker is now using the Chalk Theme.">
+  <meta name="twitter:url" content="https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/08/09/new-summary-table/">
+  <meta name="twitter:title" content="New Summary Table in the Tracker Home Page">
+  <meta name="twitter:description" content="A summary table is added along with a few improvements.">
 
   
     <meta property="og:image" content="https://donfiguerres.github.io/COVID-19-Tracker-PH/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
@@ -96,11 +96,11 @@
 
         <article class="article scrollappear">
           <header class="article-header">
-            <h1>The COVID-19 Tracker Gets a New Theme</h1>
-            <p>The COVID-19 Tracker is now using the Chalk Theme.</p>
+            <h1>New Summary Table in the Tracker Home Page</h1>
+            <p>A summary table is added along with a few improvements.</p>
             <div class="article-list-footer">
   <span class="article-list-date">
-    July 27, 2020
+    August 9, 2020
   </span>
   <span class="article-list-divider">-</span>
   <span class="article-list-minutes">
@@ -117,33 +117,37 @@
           </header>
 
           <div class="article-content">
-            <p>I’m happy to announce that the COVID-19 Tracker PH site is now using the 
-<a href="https://github.com/nielsenramon/chalk">Chalk Theme</a>.</p>
+            <h1 id="the-summary-table">The Summary Table</h1>
+<p>A summary table is added at the tracker home page. It includes the cumulative
+and last daily report statistics along with other computations done in the
+tracker project like doubling time and R0.
+I’m still undecided if I’ll add this too on other pages or not.</p>
 
-<h1 id="other-changes">Other changes</h1>
-<h2 id="gh-pages-branch">gh-pages branch</h2>
-<p>The live site will now be published from the gh-pages branch since I need to
-build the site first locally due to some dependencies not being supported by
-Github Pages.</p>
+<p><img src="/COVID-19-Tracker-PH/images/2020-08-09/summary-table.png" alt="Summary Table" /></p>
 
-<h1 id="smaller-sized-charts">Smaller sized charts</h1>
-<p>Charts are now at kilobytes size from around 3.5MB each. By default, plotly’s
-write_html method would include the their whole js library which is around 3MB.
-I changed the include_plotlyjs option to ‘cdn’. This will load the publicly
-available copy of their library from the internet instead of being included in
-each chart.</p>
+<h1 id="improved-viewing-experience-for-mobile">Improved Viewing Experience for Mobile</h1>
+<p>The chart sizes have been adjusted for better viewing in mobile screens. The
+charts, when viewed in mobile screens initially didn’t have a responsive design.
+Some of the changes made were the following</p>
+<ul>
+  <li>Removed automargin in the figure layouts then manually adjusted the margins.</li>
+  <li>Shifted to include tags instead of iframe.</li>
+  <li>Added max height for small screens.</li>
+</ul>
 
-<h1 id="top-lgu">Top LGU</h1>
-<p>Horizontal bar chart for top city/municipality is now available.</p>
+<h1 id="distributed-the-charts-to-separate-pages">Distributed the Charts to Separate Pages</h1>
+<p>Related charts were moved together to their own ‘sub-pages’ for faster loading
+time for each page. This is because the charts use a lot of resources during
+loading and the ideal loading time should be around 3 seconds.</p>
 
           </div>
           <div class="article-share">
             
             
-            <a href="https://twitter.com/home?status=The+COVID-19+Tracker+Gets+a+New+Theme%20-%20https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/07/27/covid-19-tracker-ph-gets-a-new-theme/" title="Share on Twitter" rel="noreferrer noopener" target="_blank">
+            <a href="https://twitter.com/home?status=New+Summary+Table+in+the+Tracker+Home+Page%20-%20https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/08/09/new-summary-table/" title="Share on Twitter" rel="noreferrer noopener" target="_blank">
               <svg viewBox="0 0 512 512"><path d="M492 109.5c-17.4 7.7-36 12.9-55.6 15.3 20-12 35.4-31 42.6-53.6 -18.7 11.1-39.4 19.2-61.5 23.5C399.8 75.8 374.6 64 346.8 64c-53.5 0-96.8 43.4-96.8 96.9 0 7.6 0.8 15 2.5 22.1 -80.5-4-151.9-42.6-199.6-101.3 -8.3 14.3-13.1 31-13.1 48.7 0 33.6 17.2 63.3 43.2 80.7C67 210.7 52 206.3 39 199c0 0.4 0 0.8 0 1.2 0 47 33.4 86.1 77.7 95 -8.1 2.2-16.7 3.4-25.5 3.4 -6.2 0-12.3-0.6-18.2-1.8 12.3 38.5 48.1 66.5 90.5 67.3 -33.1 26-74.9 41.5-120.3 41.5 -7.8 0-15.5-0.5-23.1-1.4C62.8 432 113.7 448 168.3 448 346.6 448 444 300.3 444 172.2c0-4.2-0.1-8.4-0.3-12.5C462.6 146 479 129 492 109.5z"/></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/07/27/covid-19-tracker-ph-gets-a-new-theme/" title="Share on Facebook" rel="noreferrer noopener" target="_blank">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/08/09/new-summary-table/" title="Share on Facebook" rel="noreferrer noopener" target="_blank">
               <svg viewBox="0 0 512 512"><path d="M288 192v-38.1c0-17.2 3.8-25.9 30.5-25.9H352V64h-55.9c-68.5 0-91.1 31.4-91.1 85.3V192h-45v64h45v192h83V256h56.4l7.6-64H288z"/></svg>
             </a>
           </div>
