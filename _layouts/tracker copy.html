@@ -12,26 +12,26 @@ layout: default
 {% include charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
-<h2>Recoveries</h2>
-<a href="{{ '/tracker/recoveries' | relative_url }}{{ page.period }}">See more</a>
+<h2>Recovery</h2>
+<a href="{{ '/tracker/recovery' | relative_url }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include charts/DateRecover{{ page.period }}Region.html %}
 </div>
 
-<h2>Deaths</h2>
-<a href="{{ '/tracker/deaths' | relative_url }}{{ page.period }}">See more</a>
+<h2>Death</h2>
+<a href="{{ '/tracker/death' | relative_url }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include charts/DateDied{{ page.period }}Region.html %}
 </div>
 
 <h2>Testing</h2>
-<a href="{{ '/tracker/testing' | relative_url }}{{ page.period }}">See more</a>
+<a href="{{ '/tracker/testing' | relative_url }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include charts/daily_output_positive_individuals{{ page.period }}.html %}
 </div>
 
 <h2>Reporting</h2>
-<a href="{{ '/tracker/reporting' | relative_url }}{{ page.period }}">See more</a>
+<a href="{{ '/tracker/reporting' | relative_url }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include charts/SpecimenToRepConf{{ page.period }}.html %}
 </div>
