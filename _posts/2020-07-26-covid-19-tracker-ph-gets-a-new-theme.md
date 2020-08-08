@@ -1,7 +1,7 @@
 ---
 layout: post 
 date: 2020-07-27 00:30
-title: "The COVID-19 Gets a New Theme"
+title: "The COVID-19 Tracker Gets a New Theme"
 description: "The COVID-19 Tracker is now using the Chalk Theme."
 categories: blog
 ---
