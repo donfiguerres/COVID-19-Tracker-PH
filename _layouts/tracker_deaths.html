@@ -1,0 +1,23 @@
+---
+layout: default
+---
+
+<h1>{{ page.title }}</h1>
+<a href="{{ '/tracker/' | relative_url }}">Back to main tracker page</a>
+
+{{ content }}
+
+<h2>Death by Region</h2>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/DateDied{{ page.period }}Region.html %}
+</div>
+
+<h2>Top Region</h2>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/TopDeathRegion{{ page.period }}.html %}
+</div>
+
+<h2>Top City/Municipality</h2>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/TopDeathCityMunRes{{ page.period }}.html %}
+</div>
