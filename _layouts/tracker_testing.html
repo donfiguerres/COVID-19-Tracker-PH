@@ -1,0 +1,36 @@
+---
+layout: default
+---
+
+<h1>{{ page.title }}</h1>
+<a href="{{ '/tracker/' | relative_url }}">Back to main tracker page</a>
+
+{{ content }}
+
+<h2>Daily</h2>
+
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/daily_output_positive_individuals{{ page.period }}.html %}
+</div>
+
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/daily_output_unique_individuals{{ page.period }}.html %}
+</div>
+
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/daily_output_samples_tested{{ page.period }}.html %}
+</div>
+
+<h2>Cumulative</h2>
+
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/cumulative_positive_individuals{{ page.period }}.html %}
+</div>
+
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/cumulative_unique_individuals{{ page.period }}.html %}
+</div>
+
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include charts/cumulative_samples_tested{{ page.period }}.html %}
+</div>
