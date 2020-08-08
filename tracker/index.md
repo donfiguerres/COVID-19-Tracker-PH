@@ -1,10 +1,8 @@
 ---
 layout: tracker
-title: "COVID-19 Tracker Philippines"
-description: "Open source COVID-19 tracker for the Philippines"
+title: "COVID-19 Tracker Home"
+description: "Tracker home page"
 ---
-
-# COVID-19 Tracker Philippines
 
 This serves as a supplementary tracker for the
 [COVID-19 Tracker](https://www.doh.gov.ph/covid19tracker) maintained by the
@@ -17,8 +15,8 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 
 ## Links
 
-* [Last 14 Days](Last-14-Days)
-* [Last 30 Days](Last-30-Days)
+* [Last 14 Days](14days)
+* [Last 30 Days](30days)
 
 ## Summary
 Note: Case Doubling Time and Reproduction Number are measured at 14 days before
