@@ -1,0 +1,15 @@
+
+<h1>{{ page.title }}</h1>
+
+<h2>Links</h2>
+<ul>
+    {% unless page.title == "COVID-19 Tracker Home" %}
+    <li><a href="{{ 'tracker' | relative_url }}">Tracker Home</a></li>
+    {% endunless %}
+    {% unless page.title == "Last 14 Days" %}
+    <li><a href="{{ 'tracker/14days' | relative_url }}">Last 14 Days</a></li>
+    {% endunless %}
+    {% unless page.title == "Last 30 Days" %}
+    <li><a href="{{ 'tracker/30days' | relative_url }}">Last 30 Days</a></li>
+    {% endunless %}
+</ul>
