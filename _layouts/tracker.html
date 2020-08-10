@@ -13,7 +13,7 @@ layout: tracker_default
 <h2>Recoveries</h2>
 <a href="{{ '/tracker/recoveries' | relative_url }}{{ page.period }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/DateRecover{{ page.period }}Region.html %}
+{% include charts/DateRecover{{ page.period }}RecoverProxy.html %}
 </div>
 
 <h2>Deaths</h2>
