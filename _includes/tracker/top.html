@@ -6,10 +6,10 @@
     {% unless page.title == "COVID-19 Tracker Home" %}
     <li><a href="{{ 'tracker' | relative_url }}">Tracker Home</a></li>
     {% endunless %}
-    {% unless page.title == "Last 14 Days" %}
+    {% unless page.period == "14days" %}
     <li><a href="{{ 'tracker/14days' | relative_url }}">Last 14 Days</a></li>
     {% endunless %}
-    {% unless page.title == "Last 30 Days" %}
+    {% unless page.period == "30days" %}
     <li><a href="{{ 'tracker/30days' | relative_url }}">Last 30 Days</a></li>
     {% endunless %}
 </ul>
