@@ -249,12 +249,12 @@ def plot_active_cases(ci_data):
         else:
             logging.warning(f"Unkown group {name}")
     ci_agg = ci_data.groupby(['DateOnset']).count()
+    ci_agg['CumulativeConfirmed'] = ci_agg['CaseCode'].cumsum()
     closed_agg = closed.groupby([DATE_CLOSED]).count()
+    closed_agg['CumulativeClosed'] = closed_agg['CaseCode'].cumsum()
     active = ci_agg.merge(closed_agg, left_index=True, right_index=True)
-    active['ActiveCount'] = active['CaseCode_x'] - active['CaseCode_y']
-    # work in progress
-    # TODO: add color by region
-    fig = px.bar(ci_agg, y='CaseCode', barmode='stack', title="Active Cases")
+    active['ActiveCount'] = active['CumulativeConfirmed'] - active['CumulativeClosed']
+    fig = px.bar(active, y='ActiveCount', barmode='stack', title="Active Cases")
     write_chart(fig, "Active")
 
 def plot_ci(ci_data):
