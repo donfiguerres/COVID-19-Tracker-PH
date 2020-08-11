@@ -239,23 +239,28 @@ def plot_per_area(ci_data, y, filename, title, title_period_suffix="", color=Non
 
 def plot_active_cases(ci_data):
     y = 'CaseCode'
-    active = None
     closed = None
     for name, group in ci_data.groupby([CASE_STATUS]):
-        if name == "ACTIVE":
-            active = group
-        elif name == "CLOSED":
+        if name == "CLOSED":
             closed = group
         else:
             logging.warning(f"Unkown group {name}")
-    ci_agg = ci_data.groupby(['DateOnset']).count()
-    ci_agg['CumulativeConfirmed'] = ci_agg['CaseCode'].cumsum()
-    closed_agg = closed.groupby([DATE_CLOSED]).count()
-    closed_agg['CumulativeClosed'] = closed_agg['CaseCode'].cumsum()
-    active = ci_agg.merge(closed_agg, left_index=True, right_index=True)
-    active['ActiveCount'] = active['CumulativeConfirmed'] - active['CumulativeClosed']
-    fig = px.bar(active, y='ActiveCount', barmode='stack', title="Active Cases")
-    write_chart(fig, "Active")
+    ci_agg = ci_data.groupby(['DateOnset', REGION]).count()
+    ci_agg['CumulativeConfirmed'] = ci_agg.groupby(REGION)['CaseCode'].cumsum()
+    closed_agg = closed.groupby([DATE_CLOSED, REGION]).count()
+    closed_agg['CumulativeClosed'] = closed_agg.groupby(REGION)['CaseCode'].cumsum()
+    merged = ci_agg.merge(closed_agg, left_on=['DateOnset', REGION], right_on=[DATE_CLOSED, REGION])
+    merged['ActiveCount'] = merged['CumulativeConfirmed'] - merged['CumulativeClosed']
+    #fig = px.bar(merged, y='ActiveCount', color=f'{REGION}_x', barmode='stack', title="Active Cases")
+    #write_chart(fig, "Active")
+
+def plot_cumulative_cases(ci_data):
+    y = 'CaseCode'
+    ci_agg = ci_data.groupby(['DateOnset', REGION]).count()
+    ci_agg['CumulativeConfirmed'] = ci_agg.groupby(REGION)['CaseCode'].cumsum()
+    ci_agg = ci_agg.reset_index(REGION)
+    fig = px.bar(ci_agg, y=y, color=REGION, barmode='stack', title='Cumulative Cases')
+    write_chart(fig, "CumulativeConfirmed")
 
 def plot_ci(ci_data):
     # confirmed cases
@@ -265,8 +270,9 @@ def plot_ci(ci_data):
     for area in [CITY_MUN, REGION]:
         plot_per_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
                         " by Date of Onset of Illness", color="HealthStatus")
+    plot_cumulative_cases(ci_data)
     # active cases
-    plot_active_cases(ci_data)
+    #plot_active_cases(ci_data)
     # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
