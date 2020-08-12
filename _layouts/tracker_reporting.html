@@ -5,14 +5,14 @@ layout: tracker_default
 {{ content }}
 
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/SpecimenToRepConf{{ page.period }}.html %}
+{% include tracker/charts/SpecimenToRepConf{{ page.period }}.html %}
 </div>
 
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/SpecimenToRelease{{ page.period }}.html %}
+{% include tracker/charts/SpecimenToRelease{{ page.period }}.html %}
 </div>
 
 
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/ReleaseToRepConf{{ page.period }}.html %}
+{% include tracker/charts/ReleaseToRepConf{{ page.period }}.html %}
 </div>
