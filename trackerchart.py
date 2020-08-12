@@ -17,7 +17,7 @@ import plotly.graph_objects as go
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CHART_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "charts")
+CHART_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "tracker", "charts")
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 MA_SUFFIX = '_MA7'
