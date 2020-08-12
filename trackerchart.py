@@ -255,9 +255,10 @@ def plot_active_cases(ci_data):
     #write_chart(fig, "Active")
 
 def plot_cumulative_cases(ci_data):
-    y = 'CaseCode'
+    y = 'CumulativeConfirmed'
     ci_agg = ci_data.groupby(['DateOnset', REGION]).count()
-    ci_agg['CumulativeConfirmed'] = ci_agg.groupby(REGION)['CaseCode'].cumsum()
+    ci_agg[y] = ci_agg.groupby(REGION)['CaseCode'].cumsum()
+    ci_agg = ci_agg.unstack([REGION]).fillna(method='ffill').stack([REGION])
     ci_agg = ci_agg.reset_index(REGION)
     fig = px.bar(ci_agg, y=y, color=REGION, barmode='stack', title='Cumulative Cases')
     write_chart(fig, "CumulativeConfirmed")
