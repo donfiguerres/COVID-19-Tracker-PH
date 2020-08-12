@@ -17,5 +17,5 @@ Note: Case Doubling Time and Reproduction Number are measured at 14 days before
 the last daily report.
 
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/summary.html %}
+{% include tracker/charts/summary.html %}
 </div>
