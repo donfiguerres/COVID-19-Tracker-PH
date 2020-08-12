@@ -6,25 +6,25 @@ layout: tracker_default
 
 <h2>Confirmed Cases by Time of Reporting</h2>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/DateOnset{{ page.period }}CaseRepType.html %}
+{% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
 <h2>Confirmed Cases by Region</h2>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/DateOnset{{ page.period }}Region.html %}
+{% include tracker/charts/DateOnset{{ page.period }}Region.html %}
 </div>
 
 <h2>Top Region</h2>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/TopConfirmedCaseRegion{{ page.period }}.html %}
+{% include tracker/charts/TopConfirmedCaseRegion{{ page.period }}.html %}
 </div>
 
 <h2>Top City/Municipality</h2>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/TopConfirmedCaseCityMunRes{{ page.period }}.html %}
+{% include tracker/charts/TopConfirmedCaseCityMunRes{{ page.period }}.html %}
 </div>
 
 <h2>Proxy</h2>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/DateOnset{{ page.period }}OnsetProxy.html %}
+{% include tracker/charts/DateOnset{{ page.period }}OnsetProxy.html %}
 </div>
