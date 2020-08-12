@@ -7,29 +7,29 @@ layout: tracker_default
 <h2>Confirmed Cases</h2>
 <a href="{{ '/tracker/confirmed-cases' | relative_url }}{{ page.period }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/DateOnset{{ page.period }}CaseRepType.html %}
+{% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
 <h2>Recoveries</h2>
 <a href="{{ '/tracker/recoveries' | relative_url }}{{ page.period }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/DateRecover{{ page.period }}RecoverProxy.html %}
+{% include tracker/charts/DateRecover{{ page.period }}RecoverProxy.html %}
 </div>
 
 <h2>Deaths</h2>
 <a href="{{ '/tracker/deaths' | relative_url }}{{ page.period }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/DateDied{{ page.period }}Region.html %}
+{% include tracker/charts/DateDied{{ page.period }}Region.html %}
 </div>
 
 <h2>Testing</h2>
 <a href="{{ '/tracker/testing' | relative_url }}{{ page.period }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/daily_output_positive_individuals{{ page.period }}.html %}
+{% include tracker/charts/daily_output_positive_individuals{{ page.period }}.html %}
 </div>
 
 <h2>Reporting</h2>
 <a href="{{ '/tracker/reporting' | relative_url }}{{ page.period }}">See more</a>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include charts/SpecimenToRepConf{{ page.period }}.html %}
+{% include tracker/charts/SpecimenToRepConf{{ page.period }}.html %}
 </div>
