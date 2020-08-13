@@ -125,7 +125,6 @@ def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
 def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
         filename=None, color=None):
     logging.info(f"Plotting {filename}")
-    nlargest = 10
     if color:
         agg = getattr(data.groupby([y, color]), agg_func)().reset_index(color)
     else:
