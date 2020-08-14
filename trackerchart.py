@@ -114,7 +114,20 @@ def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
     if x is None:
         x = data.index
     if color:
-        agg = getattr(data.groupby([x, color]), agg_func)().reset_index(color)
+        if agg_func == 'cumsum':
+            # We're filling non-observed dates so that the chart won't have
+            # dates with no data.
+            agg = data.groupby([color, x]).count()
+            unique_color = agg.index.unique(level=color)
+            date_range = pd.DatetimeIndex(pd.date_range(start=data[x].min(),
+                                            end=data[x].max(), freq='D'))
+            date_index = pd.MultiIndex.from_product(iterables=[unique_color, date_range],
+                                                    names=[color, x])
+            agg = agg.reindex(date_index, fill_value=0)
+            agg[y] = agg.reindex().groupby(color).cumsum()
+            agg = agg.reset_index(color)
+        else:
+            agg = getattr(data.groupby([x, color]), agg_func)().reset_index(color)
     else:
         agg = getattr(data.groupby(x), agg_func)()
     fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
@@ -208,9 +221,15 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[]):
             plot_trend_chart(ci_data, x=x, y=y, title=title,
                     filename=f"{filename}{color}", color=color,
                     overlays=[ma_line])
+            plot_trend_chart(ci_data, x=x, y=y, agg_func='cumsum',
+                    title=f"{title} - Cumulative",
+                    filename=f"{filename}Cumulative{color}", color=color)
     else:
         plot_trend_chart(ci_data, x=x, y=y, title=title,
                 filename=f"{filename}{color}", overlays=[ma_line])
+        plot_trend_chart(ci_data, x=x, y=y, agg_func='cumsum', title=title,
+                filename=f"{filename}cumulative{color}", overlays=[ma_line])
+
 
 def plot_case_trend(ci_data, x, title, filename, colors=[]):
     y = 'CaseCode'
@@ -253,37 +272,27 @@ def plot_active_cases(ci_data):
     #fig = px.bar(merged, y='ActiveCount', color=f'{REGION}_x', barmode='stack', title="Active Cases")
     #write_chart(fig, "Active")
 
-def plot_cumulative_cases(ci_data):
-    y = 'CumulativeConfirmed'
-    ci_agg = ci_data.groupby(['DateOnset', REGION]).count()
-    ci_agg[y] = ci_agg.groupby(REGION)['CaseCode'].cumsum()
-    ci_agg = ci_agg.unstack([REGION]).fillna(method='ffill').stack([REGION])
-    ci_agg = ci_agg.reset_index(REGION)
-    fig = px.bar(ci_agg, y=y, color=REGION, barmode='stack', title='Cumulative Cases')
-    write_chart(fig, "CumulativeConfirmed")
-
 def plot_ci(ci_data):
     # confirmed cases
     plot_case_trend(ci_data, 'DateOnset',
-            "Daily Confirmed Cases by Date of Onset of Illness", "DateOnset",
+            "Confirmed Cases by Date of Onset", "DateOnset",
             colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY])
     for area in [CITY_MUN, REGION]:
         plot_per_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
-                        " by Date of Onset of Illness", color="HealthStatus")
-    plot_cumulative_cases(ci_data)
+                        " by Date of Onset", color="HealthStatus")
     # active cases
     #plot_active_cases(ci_data)
     # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
-            "Daily Recovery", "DateRecover",
+            "Recovery", "DateRecover",
             colors=['Region', RECOVER_PROXY])
     for area in [CITY_MUN, REGION]:
         plot_per_area(recovered, area, f"TopRecovery{area}", "Top 10 "+area)
     # death
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
-            "Daily Death", "DateDied",
+            "Death", "DateDied",
             colors=['Region'])
     for area in [CITY_MUN, REGION]:
         plot_per_area(died, area, f"TopDeath{area}", "Top 10 "+area)
