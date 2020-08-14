@@ -9,9 +9,14 @@ layout: tracker_default
 {% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
-<h2>Confirmed Cases by Region</h2>
+<h2>Daily Confirmed Cases by Region</h2>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateOnset{{ page.period }}Region.html %}
+</div>
+
+<h2>Cumulative Confirmed Cases by Region</h2>
+<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include tracker/charts/DateOnset{{ page.period }}CumulativeRegion.html %}
 </div>
 
 <h2>Top Region</h2>
