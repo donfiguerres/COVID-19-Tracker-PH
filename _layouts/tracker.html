@@ -5,47 +5,57 @@ layout: tracker_default
 {{ content }}
 
 <h2>Confirmed Cases</h2>
+<p>
 Daily confirmed cases with highlighted newly reported cases are shown in the chart below.
 <br>
 <a href="{{ '/tracker/confirmed-cases' | relative_url }}{{ page.period }}">Click here</a>
 to see more on confirmed case statistics.
+</p>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
 <h2>Recoveries</h2>
+<p>
 Daily recoveries by date proxies is shown in the chart below. Date proxies had
 to be used in this tracker for recoveries with no date recovered entry.
 <br>
 <a href="{{ '/tracker/recoveries' | relative_url }}{{ page.period }}">Click here</a>
 to see more on recovery statistics.
+</p>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateRecover{{ page.period }}RecoverProxy.html %}
 </div>
 
 <h2>Deaths</h2>
+<p>
 Daily deaths by region is shown in the chart below.
 <br>
 <a href="{{ '/tracker/deaths' | relative_url }}{{ page.period }}">Click here</a>
 to see more on death statistics.
+</p>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateDied{{ page.period }}Region.html %}
 </div>
 
 <h2>Testing</h2>
+<p>
 Daily test output by region is shown in the chart below.
 <br>
 <a href="{{ '/tracker/testing' | relative_url }}{{ page.period }}">Click here</a>
 to see more on testing statistics.
+</p>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/daily_output_positive_individuals{{ page.period }}.html %}
 </div>
 
 <h2>Reporting</h2>
+<p>
 Distribution for the number of days it takes from specimen collection to reporting.
 <br>
 <a href="{{ '/tracker/reporting' | relative_url }}{{ page.period }}">Click here</a>
 to see more on reporting statistics.
+</p>
 <div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/SpecimenToRepConf{{ page.period }}.html %}
 </div>
