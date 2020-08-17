@@ -149,6 +149,22 @@ img {
   margin: 0;
 }
 
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table, th, td {
+  border: 1px solid $gray;
+}
+
+th, td {
+  text-align: center;
+}
+
+tr:hover {background-color: $gray-dark;}
+
+
 .notfound-wrapper {
   margin-top: 100px;
   margin-bottom: 100px;

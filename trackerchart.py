@@ -31,6 +31,15 @@ CASE_STATUS = 'CaseStatus'
 DATE_CLOSED = 'DateClosed'
 
 
+def write_table(header, body, filename):
+    table = "".join(f"<th>{cell}</th>" for cell in header)
+    for row in body:
+        row_html = "".join(f"<td>{cell}</td>" for cell in row)
+        table += f"<tr>{row_html}</tr>"
+    table = f"<div><table>{table}</table></div>"
+    with open(f"{CHART_OUTPUT}/{filename}.html", 'w') as f:
+        f.write(table)
+
 def write_chart(fig, filename):
     fig.update_layout(template=TEMPLATE)
     fig.update_layout(margin=dict(l=5, r=5, b=5, t=60))
@@ -334,31 +343,22 @@ def plot_summary(ci_data, test_data):
     positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
     positive_r0 = reproduction_number(positive_doubling_time)
     # create table
-    # Styling should integrate well with the currently used theme - Chalk.
-    font = dict(color='white', size=16)
-    header_fill = '#161616'
-    cells_fill = '#1A1A1A'
-    line_color = '#8C8C8C'
-    header = dict(values=['Statistic', 'Cumulative', 'Last Daily Report'],
-                    font=font, height=40, fill_color=header_fill,
-                    line_color=line_color)
-    rows = ["Last Case Reported","Confirmed Cases", "Total Active Cases",
-            "Case Doubling Time (days)", "Case R0",
-            "Last Test Report", "Samples Tested", "Individuals Tested",
-            "Positive Individuals", "Positivity Rate (%)",
-            "Positive Individuals Doubling Time (days)", "Positive Individuals R0"]
-    cumulative = ["-", total_confirmed, total_active, "-", "-", "-",
-                    samples_str, individuals_str, positive_str, positivity_rate,
-                    "-", "-"]
-    last_reported = [last_case_reported, new_confirmed, "-",
-                    round(case_doubling_time, 2), round(case_r0, 2),
-                    last_test_report, latest_samples_str, latest_individuals_str,
-                    latest_positive_str, latest_positivity_rate,
-                    round(positive_doubling_time, 2), round(positive_r0, 2)]
-    cells = dict(values=[rows, cumulative, last_reported], font=font, height=28,
-                    fill_color=cells_fill, line_color=line_color)
-    fig = go.Figure(data=[go.Table(header=header, cells=cells)])
-    write_chart(fig, "summary")
+    header = ['Statistic', 'Cumulative', 'Last Daily Report'] 
+    body = [
+        ["Last Case Reported", "-", last_case_reported],
+        ["Confirmed Cases", total_confirmed, new_confirmed],
+        ["Total Active Cases", total_active, "-"],
+        ["Case Doubling Time (days)", "-", round(case_doubling_time, 2)],
+        ["Case R0", "-", round(case_r0, 2)],
+        ["Last Test Report", "-", last_test_report],
+        ["Samples Tested", samples_str, latest_samples_str],
+        ["Individuals Tested", individuals_str, latest_individuals_str],
+        ["Positive Individuals", positive_str, latest_positive_str],
+        ["Positivity Rate (%)", positivity_rate, latest_positivity_rate],
+        ["Positive Individuals Doubling Time (days)", "-", round(positive_doubling_time, 2)],
+        ["Positive Individuals R0", "-", round(positive_r0, 2)]
+    ]
+    write_table(header, body, "summary")
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
