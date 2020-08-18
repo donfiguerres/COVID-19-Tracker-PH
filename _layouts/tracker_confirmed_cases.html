@@ -8,7 +8,7 @@ layout: tracker_default
 <p>
 Daily confirmed cases with highlighted newly reported cases are shown in the chart below.
 </p>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
@@ -19,26 +19,26 @@ the DOH in their reporting for cases with no date of onset of illeness. The same
 is applied in this tracker. However, in the absence of both the date of onset of
 illness and date of specimen collection, the date of reporting is used.
 </p>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateOnset{{ page.period }}OnsetProxy.html %}
 </div>
 
 <h2>Daily Confirmed Cases by Region</h2>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateOnset{{ page.period }}Region.html %}
 </div>
 
 <h2>Cumulative Confirmed Cases by Region</h2>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateOnset{{ page.period }}CumulativeRegion.html %}
 </div>
 
 <h2>Top Region</h2>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/TopConfirmedCaseRegion{{ page.period }}.html %}
 </div>
 
 <h2>Top City/Municipality</h2>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/TopConfirmedCaseCityMunRes{{ page.period }}.html %}
 </div>

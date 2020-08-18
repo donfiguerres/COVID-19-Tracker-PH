@@ -5,16 +5,16 @@ layout: tracker_default
 {{ content }}
 
 <h2>Death by Region</h2>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateDied{{ page.period }}Region.html %}
 </div>
 
 <h2>Top Region</h2>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/TopDeathRegion{{ page.period }}.html %}
 </div>
 
 <h2>Top City/Municipality</h2>
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/TopDeathCityMunRes{{ page.period }}.html %}
 </div>
