@@ -100,14 +100,14 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
             ],
             annotations=[
                 dict(
-                    x=np.log10(percentile_50), y=1000,
+                    x=np.log10(percentile_50), y=0.5,
                     text=f"50th percentile = {percentile_50}",
-                    xref='x', yref='y'
+                    xref='x', yref='paper'
                 ),
                 dict(
-                    x=np.log10(percentile_90), y=2000,
+                    x=np.log10(percentile_90), y=0.25,
                     text=f"90th percentile = {percentile_90}",
-                    xref='x', yref='y'
+                    xref='x', yref='paper'
                 )
             ]
     )
