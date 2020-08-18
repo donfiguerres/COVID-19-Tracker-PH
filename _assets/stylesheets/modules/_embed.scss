@@ -29,25 +29,3 @@
 .embed-responsive-16by9 {
   padding-bottom: 56.25%;
 }
-
-
-// Modifier class for charts
-
-.embed-chart {
-  padding-bottom: 56.25%;
-  max-height: 90vh;
-}
-
-@include breakpoint(small) {
-  .embed-chart {
-    padding-bottom: 75%;
-    margin-bottom: 10px;
-  }
-}
-
-@include breakpoint(extra-small) {
-  .embed-chart {
-    padding-bottom: 100%;
-    margin-bottom: 1px;
-  }
-}

@@ -16,6 +16,6 @@ GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-T
 Note: Case Doubling Time and Reproduction Number are measured at 14 days before
 the last daily report.
 
-<div class="embed-responsive embed-chart {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/summary.html %}
 </div>
