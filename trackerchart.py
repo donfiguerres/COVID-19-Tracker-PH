@@ -343,11 +343,11 @@ def plot_summary(ci_data, test_data):
     positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
     positive_r0 = reproduction_number(positive_doubling_time)
     # create table
-    header = ['Statistic', 'Cumulative', 'Last Daily Report'] 
+    header = ['Statistic', 'Cumulative', 'Latest Report'] 
     body = [
         ["Last Case Reported", "-", last_case_reported],
         ["Confirmed Cases", total_confirmed, new_confirmed],
-        ["Total Active Cases", total_active, "-"],
+        ["Active Cases", "-", total_active],
         ["Case Doubling Time (days)", "-", round(case_doubling_time, 2)],
         ["Case R0", "-", round(case_r0, 2)],
         ["Last Test Report", "-", last_test_report],
