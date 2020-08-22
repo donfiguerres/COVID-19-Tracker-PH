@@ -280,14 +280,17 @@ def plot_active_cases(ci_data):
             closed = group
         else:
             logging.warning(f"Unkown group {name}")
-    ci_agg = ci_data.groupby(['DateOnset', REGION]).count()
-    ci_agg['CumulativeConfirmed'] = ci_agg.groupby(REGION)['CaseCode'].cumsum()
-    closed_agg = closed.groupby([DATE_CLOSED, REGION]).count()
-    closed_agg['CumulativeClosed'] = closed_agg.groupby(REGION)['CaseCode'].cumsum()
-    merged = ci_agg.merge(closed_agg, left_on=['DateOnset', REGION], right_on=[DATE_CLOSED, REGION])
-    merged['ActiveCount'] = merged['CumulativeConfirmed'] - merged['CumulativeClosed']
-    #fig = px.bar(merged, y='ActiveCount', color=f'{REGION}_x', barmode='stack', title="Active Cases")
-    #write_chart(fig, "Active")
+    ci_agg = agg_count_cumsum_by_date(ci_data, y, REGION, 'DateOnset').reset_index()
+    closed_agg = agg_count_cumsum_by_date(closed, y, REGION, DATE_CLOSED).reset_index()
+    # Creating common date columns for easier merging.
+    ci_agg['date'] = ci_agg['DateOnset']
+    ci_agg = ci_agg.set_index('date')
+    closed_agg['date'] = closed_agg[DATE_CLOSED]
+    closed_agg = closed_agg.set_index('date')
+    merged = ci_agg.merge(closed_agg, left_on=['date', REGION], right_on=['date', REGION])
+    merged['ActiveCount'] = merged[f'{y}_x'] - merged[f'{y}_y']
+    fig = px.bar(merged, y='ActiveCount', color=REGION, barmode='stack', title="Active Cases")
+    write_chart(fig, "Active")
 
 def plot_ci(ci_data):
     # confirmed cases
@@ -298,7 +301,8 @@ def plot_ci(ci_data):
         plot_per_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
                         " by Date of Onset", color="HealthStatus")
     # active cases
-    #plot_active_cases(ci_data)
+    plot_active_cases(ci_data)
+    return
     # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
