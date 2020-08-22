@@ -4,7 +4,7 @@ layout: tracker_default
 
 {{ content }}
 
-<h2>Proxy</h2>
+<h2>Date Proxy</h2>
 <p>
 Date proxies are shown in the chart below. Many of the recoveries in the data
 drop do not have an entry for the date of recovery field. To compensate for this
@@ -15,9 +15,14 @@ a date of recovery entry, the date of onset (or its proxy) + 14 days is used.
 {% include tracker/charts/DateRecover{{ page.period }}RecoverProxy.html %}
 </div>
 
-<h2>Recovery by Region</h2>
+<h2>Daily Recovery by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/DateRecover{{ page.period }}Region.html %}
+</div>
+
+<h2>Cumulative Recovery by Region</h2>
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include tracker/charts/DateRecover{{ page.period }}CumulativeRegion.html %}
 </div>
 
 <h2>Top Region</h2>
