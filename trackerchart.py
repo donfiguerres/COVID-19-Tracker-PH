@@ -81,6 +81,22 @@ def reproduction_number(doubling_time):
     # COVID-19 has an incubation period of up to 14 days.
     return np.exp((np.log(2)/doubling_time) * 14)
 
+def agg_count_cumsum_by_date(data, cumsum, group, date):
+    """ Aggregate using the count groupby function then get the cumsum of each
+    group by date. Non-observed dates are filled using data from the previous
+    day.
+    """
+    agg = data.groupby([group, date]).count()
+    unique_index = agg.index.unique(level=group)
+    date_range = pd.DatetimeIndex(pd.date_range(start=data[date].min(),
+                                    end=data[date].max(), freq='D'))
+    new_index = pd.MultiIndex.from_product(iterables=[unique_index, date_range],
+                                            names=[group, date])
+    agg = agg.reindex(new_index, fill_value=0)
+    agg[cumsum] = agg.reindex().groupby(group).cumsum()
+    agg = agg.reset_index(group)
+    return agg
+
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
@@ -126,15 +142,7 @@ def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
         if agg_func == 'cumsum':
             # We're filling non-observed dates so that the chart won't have
             # dates with no data.
-            agg = data.groupby([color, x]).count()
-            unique_color = agg.index.unique(level=color)
-            date_range = pd.DatetimeIndex(pd.date_range(start=data[x].min(),
-                                            end=data[x].max(), freq='D'))
-            date_index = pd.MultiIndex.from_product(iterables=[unique_color, date_range],
-                                                    names=[color, x])
-            agg = agg.reindex(date_index, fill_value=0)
-            agg[y] = agg.reindex().groupby(color).cumsum()
-            agg = agg.reset_index(color)
+            agg = agg_count_cumsum_by_date(data, y, color, x)
         else:
             agg = getattr(data.groupby([x, color]), agg_func)().reset_index(color)
     else:
