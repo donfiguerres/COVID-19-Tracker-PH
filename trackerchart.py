@@ -302,7 +302,6 @@ def plot_ci(ci_data):
                         " by Date of Onset", color="HealthStatus")
     # active cases
     plot_active_cases(ci_data)
-    return
     # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
