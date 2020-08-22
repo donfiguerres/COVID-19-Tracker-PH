@@ -76,7 +76,6 @@ is not sustainable.
 
 ## TODOs
 ### Plots
-* Cumulative cases
 * Active cases
 * More descriptions on how to interpret the charts
 * Age group comparison (total, closed and active cases)
