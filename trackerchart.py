@@ -260,7 +260,7 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
                 title=f"{title} - Last {days} days",
                 filename=f"{filename}{days}days", colors=colors)
 
-def plot_per_area(ci_data, y, filename, title, title_period_suffix="", color=None):
+def plot_top_area(ci_data, y, filename, title, title_period_suffix="", color=None):
     x = 'CaseCode'
     top = ci_data.groupby(y).count()[x].nlargest(10).reset_index()[y]
     top_filtered = ci_data[ci_data[y].isin(top)]
@@ -298,7 +298,7 @@ def plot_ci(ci_data):
             "Confirmed Cases by Date of Onset", "DateOnset",
             colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY])
     for area in [CITY_MUN, REGION]:
-        plot_per_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
+        plot_top_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
                         " by Date of Onset", color="HealthStatus")
     # active cases
     plot_active_cases(ci_data)
@@ -308,14 +308,14 @@ def plot_ci(ci_data):
             "Recovery", "DateRecover",
             colors=['Region', RECOVER_PROXY])
     for area in [CITY_MUN, REGION]:
-        plot_per_area(recovered, area, f"TopRecovery{area}", "Top 10 "+area)
+        plot_top_area(recovered, area, f"TopRecovery{area}", "Top 10 "+area)
     # death
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
             "Death", "DateDied",
             colors=['Region'])
     for area in [CITY_MUN, REGION]:
-        plot_per_area(died, area, f"TopDeath{area}", "Top 10 "+area)
+        plot_top_area(died, area, f"TopDeath{area}", "Top 10 "+area)
 
 def plot_summary(ci_data, test_data):
     # Using the format key for for the cells will apply the formatting to all of
