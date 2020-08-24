@@ -78,8 +78,8 @@ def doubling_time(series):
 
 def reproduction_number(doubling_time):
     """Calculate reproduction number using simple model."""
-    # COVID-19 has an incubation period of up to 14 days.
-    return np.exp((np.log(2)/doubling_time) * 14)
+    # COVID-19 generation interval is around 5 days.
+    return np.exp((np.log(2)/doubling_time) * 5)
 
 def agg_count_cumsum_by_date(data, cumsum, group, date):
     """ Aggregate using the count groupby function then get the cumsum of each
@@ -332,7 +332,7 @@ def plot_summary(ci_data, test_data):
     ci_agg_filtered = filter_latest(ci_agg, 14, return_latest=False)
     cumsum = ci_agg_filtered['CaseCode'].cumsum()
     case_doubling_time = doubling_time(cumsum)[-1]
-    case_r0 = reproduction_number(case_doubling_time)
+    case_rt = reproduction_number(case_doubling_time)
     # test
     last_test_report = test_data['report_date'].max().strftime(date_format)
     latest_test_data = filter_latest(test_data, 1, date_column='report_date')
@@ -352,7 +352,7 @@ def plot_summary(ci_data, test_data):
     latest_positivity_rate = round((latest_positive / latest_individuals) * 100, 2)
     test_agg = test_data.groupby('report_date').sum()
     positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
-    positive_r0 = reproduction_number(positive_doubling_time)
+    positive_rt = reproduction_number(positive_doubling_time)
     # create table
     header = ['Statistic', 'Cumulative', 'Latest Report'] 
     body = [
@@ -360,14 +360,14 @@ def plot_summary(ci_data, test_data):
         ["Confirmed Cases", total_confirmed, new_confirmed],
         ["Active Cases", "-", total_active],
         ["Case Doubling Time (days)", "-", round(case_doubling_time, 2)],
-        ["Case R0", "-", round(case_r0, 2)],
+        ["Case Rt", "-", round(case_rt, 2)],
         ["Last Test Report", "-", last_test_report],
         ["Samples Tested", samples_str, latest_samples_str],
         ["Individuals Tested", individuals_str, latest_individuals_str],
         ["Positive Individuals", positive_str, latest_positive_str],
         ["Positivity Rate (%)", positivity_rate, latest_positivity_rate],
         ["Positive Individuals Doubling Time (days)", "-", round(positive_doubling_time, 2)],
-        ["Positive Individuals R0", "-", round(positive_r0, 2)]
+        ["Positive Individuals Rt", "-", round(positive_rt, 2)]
     ]
     write_table(header, body, "summary")
 

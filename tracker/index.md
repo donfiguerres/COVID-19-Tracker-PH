@@ -13,8 +13,11 @@ tracker are pulled from DOH's
 GitHub Project: [COVID-19-Tracker-PH](https://github.com/donfiguerres/COVID-19-Tracker-PH)
 
 ## Summary
-Note: Case Doubling Time and Reproduction Number are measured at 14 days before
+Note:
+* Case Doubling Time and Reproduction Number are measured at 14 days before
 the last daily report.
+* Rt is computed using the simple model and thus may not be the same with 
+the official computation of DOH.
 
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/summary.html %}
