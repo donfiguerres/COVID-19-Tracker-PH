@@ -133,21 +133,24 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig = px.line(data, title=title, x=x_axis, y=y_axis)
     fig.write_image(fig, f"{filename}")
 
-def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
+def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
         filename=None, color=None, overlays=[], initial_range=None):
     logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
-    if color:
-        if agg_func == 'cumsum':
-            # We're filling non-observed dates so that the chart won't have
-            # dates with no data.
-            agg = agg_count_cumsum_by_date(data, y, color, x)
+    dataplot = data
+    if agg_func:
+        if color:
+            if agg_func == 'cumsum':
+                # We're filling non-observed dates so that the chart won't have
+                # dates with no data.
+                agg = agg_count_cumsum_by_date(data, y, color, x)
+            else:
+                agg = getattr(data.groupby([x, color]), agg_func)().reset_index(color)
         else:
-            agg = getattr(data.groupby([x, color]), agg_func)().reset_index(color)
-    else:
-        agg = getattr(data.groupby(x), agg_func)()
-    fig = px.bar(agg, y=y, color=color, barmode='stack', title=title)
+            agg = getattr(data.groupby(x), agg_func)()
+        dataplot = agg
+    fig = px.bar(dataplot, y=y, color=color, barmode='stack', title=title)
     ranges = [dict(count=days, label=f"{days}d",
                     step="day", stepmode="backward") for days in PERIOD_DAYS]
     ranges.append(dict(step="all"))
@@ -167,7 +170,10 @@ def plot_trend_chart(data, agg_func='count', x=None, y=None, title=None,
         fig.add_trace(trace)
     if initial_range:
         if isinstance(initial_range, int):
-            current_date = data[x].max()
+            if isinstance(x, str):
+                current_date = data[x].max()
+            else:
+                current_date = data.index.max()
             cutoff_date = current_date - pd.Timedelta(days=initial_range)
             initial_range = [cutoff_date, current_date]
         fig['layout']['xaxis'].update(range=initial_range)
@@ -254,18 +260,18 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}{MA_SUFFIX}'], name=MA_NAME)
     if colors:
         for color in colors:
-            plot_trend_chart(ci_data, x=x, y=y, title=title,
+            plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
                     filename=f"{filename}{color}", color=color,
                     overlays=[ma_line], initial_range=initial_range)
-            plot_trend_chart(ci_data, x=x, y=y, agg_func='cumsum',
+            plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y, 
                     title=f"{title} - Cumulative",
                     filename=f"{filename}Cumulative{color}", color=color,
                     initial_range=initial_range)
     else:
-        plot_trend_chart(ci_data, x=x, y=y, title=title,
+        plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
                 filename=f"{filename}{color}", overlays=[ma_line],
                 initial_range=initial_range)
-        plot_trend_chart(ci_data, x=x, y=y, agg_func='cumsum', title=title,
+        plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y,  title=title,
                 filename=f"{filename}cumulative{color}", overlays=[ma_line],
                 initial_range=initial_range)
 
@@ -299,7 +305,7 @@ def plot_active_cases(ci_data):
         if name == "CLOSED":
             closed = group
         else:
-            logging.warning(f"Unkown group {name}")
+            logging.warning(f"Ignoring group {name}")
     ci_agg = agg_count_cumsum_by_date(ci_data, y, REGION, 'DateOnset').reset_index()
     closed_agg = agg_count_cumsum_by_date(closed, y, REGION, DATE_CLOSED).reset_index()
     # Creating common date columns for easier merging.
@@ -309,8 +315,12 @@ def plot_active_cases(ci_data):
     closed_agg = closed_agg.set_index('date')
     merged = ci_agg.merge(closed_agg, left_on=['date', REGION], right_on=['date', REGION])
     merged['ActiveCount'] = merged[f'{y}_x'] - merged[f'{y}_y']
-    fig = px.bar(merged, y='ActiveCount', color=REGION, barmode='stack', title="Active Cases")
-    write_chart(fig, "Active")
+    plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
+                        filename="Active", color=REGION)
+    for days in PERIOD_DAYS:
+        plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
+                        filename=f"Active{days}days", color=REGION,
+                        initial_range=days)
 
 def plot_ci(ci_data):
     # confirmed cases
