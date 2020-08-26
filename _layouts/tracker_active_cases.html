@@ -1,0 +1,10 @@
+---
+layout: tracker_default
+---
+
+{{ content }}
+
+<h2>Daily Active Cases by Region</h2>
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include tracker/charts/Active{{ page.period }}.html %}
+</div>
