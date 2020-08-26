@@ -15,6 +15,17 @@ to see more on confirmed case statistics.
 {% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
 </div>
 
+<h2>Active Cases</h2>
+<p>
+Daily active cases by region are shown in the chart below.
+<br>
+<a href="{{ '/tracker/active-cases' | relative_url }}{{ page.period }}">Click here</a>
+to see more on active case statistics.
+</p>
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include tracker/charts/Active{{ page.period }}.html %}
+</div>
+
 <h2>Recoveries</h2>
 <p>
 Daily recoveries by date proxies are shown in the chart below. Date proxies had
