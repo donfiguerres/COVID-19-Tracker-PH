@@ -2,15 +2,15 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://donfiguerres.github.io/COVID-19-Tracker-PH/tag/design/</loc>
-<lastmod>2020-09-01T23:21:59+08:00</lastmod>
+<lastmod>2020-09-02T00:35:50+08:00</lastmod>
 </url>
 <url>
 <loc>https://donfiguerres.github.io/COVID-19-Tracker-PH/tag/jekyll/</loc>
-<lastmod>2020-09-01T23:21:59+08:00</lastmod>
+<lastmod>2020-09-02T00:35:50+08:00</lastmod>
 </url>
 <url>
 <loc>https://donfiguerres.github.io/COVID-19-Tracker-PH/tag/web/</loc>
-<lastmod>2020-09-01T23:21:59+08:00</lastmod>
+<lastmod>2020-09-02T00:35:50+08:00</lastmod>
 </url>
 <url>
 <loc>https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/07/27/covid-19-tracker-ph-gets-a-new-theme/</loc>
@@ -23,6 +23,10 @@
 <url>
 <loc>https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/08/09/new-summary-table/</loc>
 <lastmod>2020-08-09T01:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/09/02/added-active-cases-and-more/</loc>
+<lastmod>2020-09-02T00:00:00+08:00</lastmod>
 </url>
 <url>
 <loc>https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker/14days/</loc>
