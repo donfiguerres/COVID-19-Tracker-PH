@@ -16,3 +16,13 @@ the weekly recovery tagging by DOH.
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/Active{{ page.period }}.html %}
 </div>
+
+<h2>Top Region</h2>
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include tracker/charts/TopActiveRegion{{ page.period }}.html %}
+</div>
+
+<h2>Top City/Municipality</h2>
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include tracker/charts/TopActiveCityMunRes{{ page.period }}.html %}
+</div>
