@@ -7,6 +7,14 @@
     <atom:link href="https://donfiguerres.github.io/COVID-19-Tracker-PH/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Added Active Cases and More</title>
+        <description>Updates to the tracker.</description>
+        <pubDate>Wed, 02 Sep 2020 00:00:00 +0800</pubDate>
+        <link>https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/09/02/added-active-cases-and-more/</link>
+        <guid isPermaLink="true">https://donfiguerres.github.io/COVID-19-Tracker-PH/blog/2020/09/02/added-active-cases-and-more/</guid>
+      </item>
+    
+      <item>
         <title>New Summary Table in the Tracker Home Page</title>
         <description>A summary table is added along with a few improvements.</description>
         <pubDate>Sun, 09 Aug 2020 01:00:00 +0800</pubDate>
