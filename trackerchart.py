@@ -286,8 +286,8 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
                 filename=f"{filename}{days}days", colors=colors,
                 initial_range=days)
 
-def plot_top_area(ci_data, y, filename, title, title_period_suffix="", color=None):
-    x = 'CaseCode'
+def plot_top(ci_data, x=None, y=None, filename=None, title=None,
+                                title_period_suffix="", color=None):
     top = ci_data.groupby(y).count()[x].nlargest(10).reset_index()[y]
     top_filtered = ci_data[ci_data[y].isin(top)]
     plot_horizontal_bar(top_filtered, x=x, y=y, color=color, title=title,
@@ -299,28 +299,35 @@ def plot_top_area(ci_data, y, filename, title, title_period_suffix="", color=Non
                 filename=f"{filename}{days}days")
 
 def plot_active_cases(ci_data):
-    y = 'CaseCode'
     closed = None
+    active = None
     for name, group in ci_data.groupby([CASE_STATUS]):
-        if name == "CLOSED":
+        if name == 'CLOSED':
             closed = group
+        elif name == 'ACTIVE':
+            active = group
         else:
             logging.warning(f"Ignoring group {name}")
-    ci_agg = agg_count_cumsum_by_date(ci_data, y, REGION, 'DateOnset').reset_index()
-    closed_agg = agg_count_cumsum_by_date(closed, y, REGION, DATE_CLOSED).reset_index()
+    ci_agg = agg_count_cumsum_by_date(ci_data, 'CaseCode', REGION, 'DateOnset').reset_index()
+    closed_agg = agg_count_cumsum_by_date(closed, 'CaseCode', REGION, DATE_CLOSED).reset_index()
     # Creating common date columns for easier merging.
     ci_agg['date'] = ci_agg['DateOnset']
     ci_agg = ci_agg.set_index('date')
     closed_agg['date'] = closed_agg[DATE_CLOSED]
     closed_agg = closed_agg.set_index('date')
     merged = ci_agg.merge(closed_agg, left_on=['date', REGION], right_on=['date', REGION])
-    merged['ActiveCount'] = merged[f'{y}_x'] - merged[f'{y}_y']
+    merged['ActiveCount'] = merged['CaseCode_x'] - merged['CaseCode_y']
     plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
                         filename="Active", color=REGION)
     for days in PERIOD_DAYS:
         plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
                         filename=f"Active{days}days", color=REGION,
                         initial_range=days)
+    for area in [CITY_MUN, REGION]:
+        plot_top(active, x='CaseCode', y=area, filename=f"TopActive{area}",
+                        title="Top 10 "+area,
+                        title_period_suffix=" by Date of Onset",
+                        color="HealthStatus")
 
 def plot_ci(ci_data):
     # confirmed cases
@@ -328,8 +335,9 @@ def plot_ci(ci_data):
             "Confirmed Cases by Date of Onset", "DateOnset",
             colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY])
     for area in [CITY_MUN, REGION]:
-        plot_top_area(ci_data, area, f"TopConfirmedCase{area}", "Top 10 "+area,
-                        " by Date of Onset", color="HealthStatus")
+        plot_top(ci_data, x='CaseCode', y=area, filename=f"TopConfirmedCase{area}",
+                    title="Top 10 "+area, title_period_suffix=" by Date of Onset",
+                    color="HealthStatus")
     # active cases
     plot_active_cases(ci_data)
     # recovery
@@ -338,14 +346,16 @@ def plot_ci(ci_data):
             "Recovery", "DateRecover",
             colors=['Region', RECOVER_PROXY])
     for area in [CITY_MUN, REGION]:
-        plot_top_area(recovered, area, f"TopRecovery{area}", "Top 10 "+area)
+        plot_top(recovered, x='CaseCode', y=area, filename=f"TopRecovery{area}",
+                    title="Top 10 "+area)
     # death
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
             "Death", "DateDied",
             colors=['Region'])
     for area in [CITY_MUN, REGION]:
-        plot_top_area(died, area, f"TopDeath{area}", "Top 10 "+area)
+        plot_top(died, x='CaseCode', y=area, filename=f"TopDeath{area}",
+                    title="Top 10 "+area)
 
 def plot_summary(ci_data, test_data):
     # Using the format key for for the cells will apply the formatting to all of
