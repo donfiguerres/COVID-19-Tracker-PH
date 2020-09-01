@@ -6,7 +6,7 @@ description: "New charts to visualize date proxies and analysis of the 38k recov
 categories: blog
 ---
 
-# Tracker Updates
+## Tracker Updates
 ### New Charts to Visualize Date Proxies
 New charts to visualize date of onset proxies and date of recovery proxies are
 now added to the tracker. This is to better understand the [38,075 tagged
@@ -18,9 +18,9 @@ recoveries in a day last July 30, 2020](#doh-tagged-38k-recoveries).
 Replaced iframes with includes to improve viewing experience for mobile devices.
 Also, removed automargin in the plotly charts to maximize the available space.
 
-# COVID-19 Updates
+## COVID-19 Updates
 
-## DOH Tags 38k Recoveries
+### DOH Tags 38k Recoveries
 
 DOH tagged 38,075 recoveries last July 30, 2020 as announced in this
 [post](https://www.facebook.com/OfficialDOHgov/photos/a.157979910879936/3550394868305073/)
