@@ -23,3 +23,8 @@ layout: tracker_default
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 {% include tracker/charts/TopDeathCityMunRes{{ page.period }}.html %}
 </div>
+
+<h2>Age Group</h2>
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
+{% include tracker/charts/DeathAgeGroup{{ page.period }}.html %}
+</div>
