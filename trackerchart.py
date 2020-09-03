@@ -30,6 +30,11 @@ RECOVER_PROXY = 'RecoverProxy'
 CASE_STATUS = 'CaseStatus'
 DATE_CLOSED = 'DateClosed'
 
+AGE_GROUP_CATEGORYARRAY=['0 to 4', '5 to 9', '10 to 14', '15 to 19', '20 to 24',
+    '25 to 29', '30 to 34', '35 to 39', '40 to 44', '45 to 49', '50 to 54',
+    '55 to 59', '60 to 64', '65 to 69', '70 to 74', '75 to 79', '80+', 'No Data'
+]
+
 
 def write_table(header, body, filename):
     table = "".join(f"<th>{cell}</th>" for cell in header)
@@ -180,14 +185,21 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
     write_chart(fig, f"{filename}")
 
 def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
-        filename=None, color=None):
+        filename=None, color=None, order=None, categoryarray=None):
     logging.info(f"Plotting {filename}")
     if color:
         agg = getattr(data.groupby([y, color]), agg_func)().reset_index(color)
     else:
         agg = getattr(data.groupby(y), agg_func)()
     fig = px.bar(agg, x=x, color=color, barmode='stack', title=f"{title}")
-    fig.update_layout(yaxis={'categoryorder':'total ascending'})
+    if categoryarray:
+        # The order kwarg is intentionally disregarded since only the array
+        # ordering uses categoryarray.
+        fig.update_layout(yaxis={'categoryorder': 'array',
+                                    'categoryarray': categoryarray})
+    elif order:
+        fig.update_layout(yaxis={'categoryorder': order})
+    # else no ordering
     write_chart(fig, f"{filename}")
 
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
@@ -286,17 +298,21 @@ def plot_case_trend(ci_data, x, title, filename, colors=[]):
                 filename=f"{filename}{days}days", colors=colors,
                 initial_range=days)
 
-def plot_top(ci_data, x=None, y=None, filename=None, title=None,
-                                title_period_suffix="", color=None):
-    top = ci_data.groupby(y).count()[x].nlargest(10).reset_index()[y]
-    top_filtered = ci_data[ci_data[y].isin(top)]
-    plot_horizontal_bar(top_filtered, x=x, y=y, color=color, title=title,
-                            filename=filename)
+def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
+                            title_period_suffix="", color=None, filter_top=None,
+                            order=None, categoryarray=None):
+    if filter_top:
+        top = ci_data.groupby(y).count()[x].nlargest(filter_top).reset_index()[y]
+        ci_data = ci_data[ci_data[y].isin(top)]
+    plot_horizontal_bar(ci_data, x=x, y=y, color=color, title=title,
+                            filename=filename, order=order,
+                            categoryarray=categoryarray)
     for days in PERIOD_DAYS:
-        filtered_latest = filter_latest(top_filtered, days, 'DateOnset')
+        filtered_latest = filter_latest(ci_data, days, 'DateOnset')
         plot_horizontal_bar(filtered_latest, x=x, y=y, color=color,
                 title=f"{title} - Last {days} days{title_period_suffix}",
-                filename=f"{filename}{days}days")
+                filename=f"{filename}{days}days", order=order,
+                categoryarray=categoryarray)
 
 def plot_active_cases(ci_data):
     closed = None
@@ -324,10 +340,14 @@ def plot_active_cases(ci_data):
                         filename=f"Active{days}days", color=REGION,
                         initial_range=days)
     for area in [CITY_MUN, REGION]:
-        plot_top(active, x='CaseCode', y=area, filename=f"TopActive{area}",
+        plot_case_horizontal(active, x='CaseCode', y=area, filename=f"TopActive{area}",
                         title="Top 10 "+area,
                         title_period_suffix=" by Date of Onset",
-                        color="HealthStatus")
+                        color="HealthStatus", filter_top=10, order='total ascending')
+    plot_case_horizontal(active, x='CaseCode', y='AgeGroup',
+                    filename=f"ActiveAgeGroup", title="Active Cases by Age Group",
+                    title_period_suffix=" by Date of Onset", color='HealthStatus',
+                    categoryarray=AGE_GROUP_CATEGORYARRAY)
 
 def plot_ci(ci_data):
     # confirmed cases
@@ -335,9 +355,13 @@ def plot_ci(ci_data):
             "Confirmed Cases by Date of Onset", "DateOnset",
             colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY])
     for area in [CITY_MUN, REGION]:
-        plot_top(ci_data, x='CaseCode', y=area, filename=f"TopConfirmedCase{area}",
+        plot_case_horizontal(ci_data, x='CaseCode', y=area, filename=f"TopConfirmedCase{area}",
                     title="Top 10 "+area, title_period_suffix=" by Date of Onset",
-                    color="HealthStatus")
+                    color="HealthStatus", filter_top=10, order='total ascending')
+    plot_case_horizontal(ci_data, x='CaseCode', y='AgeGroup',
+                    filename=f"ConfirmedAgeGroup", title="Confirmed Cases by Age Group",
+                    title_period_suffix=" by Date of Onset", color='HealthStatus',
+                    categoryarray=AGE_GROUP_CATEGORYARRAY)
     # active cases
     plot_active_cases(ci_data)
     # recovery
@@ -346,16 +370,22 @@ def plot_ci(ci_data):
             "Recovery", "DateRecover",
             colors=['Region', RECOVER_PROXY])
     for area in [CITY_MUN, REGION]:
-        plot_top(recovered, x='CaseCode', y=area, filename=f"TopRecovery{area}",
-                    title="Top 10 "+area)
+        plot_case_horizontal(recovered, x='CaseCode', y=area, filename=f"TopRecovery{area}",
+                    title="Top 10 "+area, filter_top=10, order='total ascending')
+    plot_case_horizontal(recovered, x='CaseCode', y='AgeGroup',
+                    filename=f"RecoveryAgeGroup", title="Recovery by Age Group",
+                    categoryarray=AGE_GROUP_CATEGORYARRAY)
     # death
     died = ci_data[ci_data.HealthStatus == 'DIED']
     plot_case_trend(died, 'DateDied',
             "Death", "DateDied",
             colors=['Region'])
     for area in [CITY_MUN, REGION]:
-        plot_top(died, x='CaseCode', y=area, filename=f"TopDeath{area}",
-                    title="Top 10 "+area)
+        plot_case_horizontal(died, x='CaseCode', y=area, filename=f"TopDeath{area}",
+                    title="Top 10 "+area, filter_top=10, order='total ascending')
+    plot_case_horizontal(died, x='CaseCode', y='AgeGroup',
+                    filename=f"DeathAgeGroup", title="Death by Age Group",
+                    categoryarray=AGE_GROUP_CATEGORYARRAY)
 
 def plot_summary(ci_data, test_data):
     # Using the format key for for the cells will apply the formatting to all of
@@ -492,6 +522,7 @@ def read_case_information(data_dir):
     data['ProvRes'].fillna('No Data', inplace=True)
     data['Quarantined'].fillna('No Data', inplace=True)
     data['Admitted'].fillna('No Data', inplace=True)
+    data['AgeGroup'].fillna('No Data', inplace=True)
     return calc_case_info_data(data)
 
 def calc_testing_aggregates_data(data):
