@@ -76,9 +76,6 @@ is not sustainable.
 
 ## TODOs
 ### Plots
-* Active cases
-* More descriptions on how to interpret the charts
-* Age group comparison (total, closed and active cases)
 * Testing ang Confirmation Gap
 * Death and Recovery Reporting
 * Recovery Time
