@@ -17,6 +17,7 @@ NCR,Metro Manila,Muntinlupa City, ,Research Institute for Tropical Medicine (RIT
 NCR,Metro Manila,City of Manila,San Lazaro Hospital,San Lazaro Hospital (SLH),PUBLIC,rRT PCR,(02) 8732-3778; 8732-3776 ; 8732-3174 ; 8732-3138 ; 8732-3179 ; 8732-3107,03/27/2020 - 12/31/2020
 NCR,Metro Manila,Makati City,"Singapore Diagnostic, Inc.",Singapore Diagnostics,PRIVATE,rRT PCR,(02) 8845-0655 ; (0917) 566-4137,05/02/2020 - 12/31/2020
 NCR,Metro Manila,Bonifacio Global City,St. Luke's Medical Center - BGC (HB),St. Luke's Medical Center - BGC (SLMC-BGC),PRIVATE,rRT PCR,(02) 8789-7700,04/11/2020 - 12/31/2020
+NCR,Metro Manila,Bonifacio Global City,St. Luke's Medical Center - BGC (HB),St. Luke's Medical Center - BGC (HB) GeneXpert Laboratory,PRIVATE,rRT PCR,(02) 8789-7700,04/11/2020 - 12/31/2020
 NCR,Metro Manila,Quezon City,St. Luke's Medical Center- QC,St. Luke's Medical Center - Quezon City (SLMC-QC),PRIVATE,rRT PCR,(02) 8723-0101,04/05/2020 - 12/31/2020
 NCR,Metro Manila,Pasig City,The Medical City - Ortigas,The Medical City (TMC),PRIVATE,rRT PCR,,04/06/2020 - 12/31/2020
 NCR,Metro Manila,City of Manila,University of the Philippines National Institutes of Health (UP NIH),UP National Institutes of Health (UP-NIH),PUBLIC,rRT PCR,(02) 8526-4349; 8526-4266,03/27/2020 - 12/31/2020
@@ -57,6 +58,7 @@ Region 3,Bataan,Balanga City,Bataan General Hospital and Medical Center,Bataan G
 Region 3,Pampanga,San Fernando,Green City Medical Center,Greencity Medical Center,PRIVATE,rRT PCR,0919-068-8862; (045) 649-8701,06/13/2020 - 12/31/2020
 Region 3,Zambales,Subic,Philippine Red Cross - Logistics and Training Center,Philippine Red Cross - Logistics and Training Center,PRIVATE,rRT PCR,,06/17/2020 - 12/31/2020
 Region 3,Bulacan,Malolos,Bulacan Medical Center,Bulacan Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,06/20/2020 - 12/31/2020
+Region 3,Bulacan,Malolos,Bulacan Medical Center,Bulacan Medical Center (RT PCR),PUBLIC,Cartridge - Based PCR,,06/20/2020 - 12/31/2020
 Region 3,Pampanga,Clark City,Philippine Red Cross - Clark Molecular Laboratory,Philippine Red Cross Clark Molecular Laboratory,PRIVATE,rRT PCR,,06/30/2020 - 12/31/2020
 Region 3,Bulacan,San Jose Del Monte,Qualimed Hospital - San Jose Del Monte,Qualimed Hospital - San Jose Del Monte,PRIVATE,rRT PCR,,07/09/2020 - 12/31/2020
 Region 3,Tarlac,Tarlac City,Central Luzon Doctor's Hospital Inc.,Central Luzon Doctor's Hospital GeneXpert Laboratory,PRIVATE,Cartridge - Based PCR,,08/12/2020 - 12/31/2020
