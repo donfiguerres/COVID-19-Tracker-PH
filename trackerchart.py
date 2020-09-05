@@ -171,6 +171,30 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
             type="date"
         )
     )
+    fig.update_layout(
+        updatemenus = [
+            dict(
+                type='buttons',
+                direction='right',
+                bgcolor='darkgrey',
+                buttons=list([
+                    dict(
+                        args=[{'yaxis.type': 'linear'}],
+                        label='linear',
+                        method='relayout'
+                    ),
+                    dict(
+                        args=[{'yaxis.type': 'log'}],
+                        label='log',
+                        method='relayout'
+                    )
+                ]),
+                showactive=False,
+                x=0.3, xanchor='left',
+                y=1.1, yanchor='top'
+            )
+        ]
+    )
     for trace in overlays:
         fig.add_trace(trace)
     if initial_range:
@@ -536,7 +560,7 @@ def calc_testing_aggregates_data(data):
     logging.info("Reading test facilty data")
     test_facilty =  pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
     data = pd.merge(data, test_facilty, on='facility_name', how='left')
-    data['REGION'].fillna('Unknown')
+    data['REGION'].fillna('Unknown', inplace=True)
     logging.debug(data)
     return data
 
