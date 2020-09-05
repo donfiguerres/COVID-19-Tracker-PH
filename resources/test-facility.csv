@@ -1,4 +1,5 @@
 REGION,PROVINCE,MUNICIPALITY / CITY,NAME OF FACILITY,facility_name,OWNERSHIP (PUBLIC / PRIVATE),TYPE OF TESTING,CONTACT NUMBER,LICENSE VALIDITY
+NCR,Metro Manila,Marikina City,Amang Rodriguez Memorial Medical Center,Amang Rodriguez Memorial Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,07/18/2020 - 12/31/2020
 NCR,Metro Manila,Quezon City,AFRIMS - Collaborative Molecular Laboratory,Victoriano Luna - AFRIMS,PUBLIC,rRT PCR,,04/11/2020 - 12/31/2020
 NCR,Metro Manila,Muntilupa City,Asian Hospital and Medical Center,Asian Hospital and Medical Center,PRIVATE,rRT PCR,(02) 8771-9000,05/11/2020 - 12/31/2020
 NCR,Metro Manila,City of Manila,Chinese General Hospital,Chinese General Hospital,PRIVATE,rRT PCR,(02) 8711-4141,04/15/2020 - 12/31/2020
@@ -9,10 +10,10 @@ NCR,Metro Manila,Quezon City,Lung Center of the Philippines (GeneXpert),Lung Cen
 NCR,Metro Manila,Makati City,Makati Medical Center (HB),Makati Medical Center (MMC),PRIVATE,rRT PCR,(02) 8888-8999,04/11/2020 - 12/31/2020
 NCR,Metro Manila,Marikina City,Marikina Molecular Diagnostic laboratory,Marikina Molecular Diagnostics Laboratory (MMDL),PUBLIC,rRT PCR,,04/30/2020 - 12/31/2020
 NCR,Metro Manila,Quezon City,Philippine Genome Center UP-Diliman (NHB),UP Philippine Genome Center,PUBLIC,rRT PCR,8981-8500 Loc 4713,04/23/2020 - 12/31/2020
-NCR,Metro Manila,Mandaluyong City,Philippine Red Cross,Philippine Red Cross (PRC),PRIVATE,rRT PCR,(02) 8790-2300 local 931/932/935,04/23/2020 - 12/31/2020
+NCR,Metro Manila,Mandaluyong City,Philippine Red Cross - National Blood Center,Philippine Red Cross (PRC),PRIVATE,rRT PCR,(02) 8790-2300 local 931/932/935,04/23/2020 - 12/31/2020
 NCR,Metro Manila,City of Manila,Philippine Red Cross - Port Area,Philippine Red Cross - Port Area,PRIVATE,rRT PCR,(02) 8527-0861,04/14/2020 - 12/31/2020
 NCR,Metro Manila,Mandaluyong City,Philippine Red Cross Logistics and Multipurpose Center,Philippine Red Cross Logistics & Multipurpose Center,PRIVATE,rRT PCR,(02) 8790-2300,
-NCR,Metro Manila,Muntinlupa City,"Research Institute for Tropical Medicine, Inc. (RITM)",Research Institute for Tropical Medicine (RITM),PUBLIC,rRT PCR,(02) 8807-2631; (02) 8807-2632; (02) 8807-2637),03/17/2020 - 12/31/2020
+NCR,Metro Manila,Muntinlupa City, ,Research Institute for Tropical Medicine (RITM),PUBLIC,rRT PCR,(02) 8807-2631; (02) 8807-2632; (02) 8807-2637),03/17/2020 - 12/31/2020
 NCR,Metro Manila,City of Manila,San Lazaro Hospital,San Lazaro Hospital (SLH),PUBLIC,rRT PCR,(02) 8732-3778; 8732-3776 ; 8732-3174 ; 8732-3138 ; 8732-3179 ; 8732-3107,03/27/2020 - 12/31/2020
 NCR,Metro Manila,Makati City,"Singapore Diagnostic, Inc.",Singapore Diagnostics,PRIVATE,rRT PCR,(02) 8845-0655 ; (0917) 566-4137,05/02/2020 - 12/31/2020
 NCR,Metro Manila,Bonifacio Global City,St. Luke's Medical Center - BGC (HB),St. Luke's Medical Center - BGC (SLMC-BGC),PRIVATE,rRT PCR,(02) 8789-7700,04/11/2020 - 12/31/2020
@@ -31,20 +32,25 @@ NCR,Metro Manila,Quezon City,National Kidney and Transplant Institute (NKTI) - (
 NCR,Metro Manila,City of Manila,Sta. Ana Hospital - Closed System Molecular Laboratory,Sta. Ana Hospital - Closed System Molecular Laboratory (GeneXpert),PUBLIC,Cartridge - Based PCR,,06/25/2020 - 12/31/2020
 NCR,Metro Manila,Quezon City,Fe Del Mundo Medical Center,Fe del Mundo Medical center,PRIVATE,rRT PCR,712-0845 to 50; 712-2552 to 53; 732-7103; 09178064271,06/27/2020 - 12/31/2020
 NCR,Metro Manila,Mandaluyong City,"Health Delivery Systems, Inc.",Health Delivery Systems,PRIVATE,rRT PCR,,07/02/2020 - 12/31/2020
-NCR,Metro Manila,Caloocan City,Dr. Jose B. Rodriguez Memorial Hospital and Sanitarium (TALA),Dr. Jose N. Rodriguez Memorial Hospital and Sanitarium (TALA) RT PCR,PUBLIC,rRT PCR,,05/12/2020 - 08/12/2020
+NCR,Metro Manila,Caloocan City,Dr. Jose N. Rodriguez Memorial Hospital and Sanitarium (TALA),Dr. Jose N. Rodriguez Memorial Hospital and Sanitarium (TALA) RT PCR,PUBLIC,rRT PCR,,05/12/2020 - 08/12/2020
+NCR,Metro Manila,Quezon City,Veteran Memorial Medical Center,Veteran Memorial Medical Center,PUBLIC,rRT PCR,,08/10/2020 - 12/31/2020
 NCR,Metro Manila,Quezon City,Philippine Heart Center,Philippine Heart Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,07/07/2020 - 12/31/2020
 NCR,Metro Manila,Pasay City,Philippine Airport Diagnostic Laboratory,Philippine Airport Diagnostic Laboratory,Private,rRT PCR,,
-NCR,Metro Manila,Quezon City,De Los Santos Medical Center,,PRIVATE,rRT PCR,,
-NCR,Metro Manila,Quezon City,Victoriano Luna Medical Center,Victoriano Luna - AFRIMS,PUBLIC,rRT PCR,,
+NCR,Metro Manila,Quezon City,De Los Santos Medical Center,De Los Santos Medical Center,PRIVATE,rRT PCR,,
+NCR,Metro Manila,Quezon City,Victoriano Luna Medical Center - (AFIRMS),Victoriano Luna - AFRIMS,PUBLIC,rRT PCR,,
 NCR,Metro Manila,Quezon City,Philippine Children's Medical Center,Philippine Children's Medical Center,PUBLIC,rRT PCR,,
-NCR,Metro Manila,Las Pinas City,University of Perpetual Help System Dalta,,PRIVATE,rRT PCR,,
+NCR,Metro Manila,Las Pinas City,University of Perpetual Help System Dalta,"University of Perpetual Help DALTA Medical Center, Inc.",PRIVATE,rRT PCR,,
 NCR,Metro Manila,Marikina City,Amang Rodriguez Memorial Center GeneXpert Laboratory,Amang Rodriguez Memorial Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,
+NCR,Metro Manila,Makati City,AL Molecular Diagnostic Laboratory,,PRIVATE,rRT PCR,,-
+NCR,Metro Manila,City of Manila,Amosup Seamen's Hospital,,PRIVATE,Cartridge - Based PCR,,-
 Region 1,La Union,San Fernando,Ilocos Training and Regional Medical Center,Ilocos Training and Regional Medical Center,PUBLIC,rRT PCR,(072) 607-6418; 607-6422,05/20/2020 - 12/31/2020
 Region 1,Ilocos Norte,Batac,Mariano Marcos Memorial Hospital,Mariano Marcos Memorial Hospital (RT PCR),PUBLIC,rRT PCR,(077) 600-8000,06/13/2020 - 12/13/2020
 Region 1,Ilocos Norte,Batac,Mariano Marcos Memorial Hospital,Mariano Marcos Memorial Hospital GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(077) 600-8000,
 Region 1,Pangasinan,Dagupan,Region 1 Medical Center,Region 1 Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(075) 515-8916; (075) 653-7162,06/09/2020 - 09/09/2020
 Region 1,La Union,San Juan,Ilocos Training and Regional Medical Center,Ilocos Training and Regional Medical Center,PUBLIC,rRT PCR,(072) 607-6418,05/20/2020 - 12/31/2020
+Region 1,Pangasinan,Dagupan City,"Dagupan Doctors Villaflor Memorial Hospital, Inc.",Dagupan Doctors Villaflor Memorial Hospital,PRIVATE,rRT PCR,,08/11/2020 - 12/31/2020
 Region 2,Cagayan,Tuguegarao City,Cagayan Valley CHD TB Reference Laboratory ( GeneXpert),Cagayan Valley CHD GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,05/13/2020 - 08/13/2020
+Region 2,Cagayan,Tuguegarao City,Cagayan Valley Medical Center Molecular Laboratory,Cagayan Valley Medical Center Molecular Laboratory,PUBLIC,rRT PCR,,08/08/2020 - 12/31/2020
 Region 3,Pampanga,San Fernando,Jose B. Lingad Memorial General Hospital,Jose B. Lingad Memorial General Hospital,PUBLIC,rRT PCR,(045) 961-3363,05/08/2020 - 12/31/2020
 Region 3,Bataan,Balanga,Bataan General Hospital and Medical Center,Bataan General Hospital and Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(047) 237-3635,05/27/2020 - 08/27/2020
 Region 3,Bataan,Balanga City,Bataan General Hospital and Medical Center,Bataan General Hospital (RT PCR),PUBLIC,rRT PCR,(047) 237-3635,06/08/2020 - 12/31/2020
@@ -53,6 +59,8 @@ Region 3,Zambales,Subic,Philippine Red Cross - Logistics and Training Center,Phi
 Region 3,Bulacan,Malolos,Bulacan Medical Center,Bulacan Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,06/20/2020 - 12/31/2020
 Region 3,Pampanga,Clark City,Philippine Red Cross - Clark Molecular Laboratory,Philippine Red Cross Clark Molecular Laboratory,PRIVATE,rRT PCR,,06/30/2020 - 12/31/2020
 Region 3,Bulacan,San Jose Del Monte,Qualimed Hospital - San Jose Del Monte,Qualimed Hospital - San Jose Del Monte,PRIVATE,rRT PCR,,07/09/2020 - 12/31/2020
+Region 3,Tarlac,Tarlac City,Central Luzon Doctor's Hospital Inc.,Central Luzon Doctor's Hospital GeneXpert Laboratory,PRIVATE,Cartridge - Based PCR,,08/12/2020 - 12/31/2020
+Region 3,Bulacan,Municipality of Bucaue,Marilao Medical and Diagnostic Clinic,,PRIVATE,rRT PCR,,08/17/2020 - 12/31/2020
 Region 4A,Cavite,Dasmarinas Cavite,De La Salle University - Cavite,De La Salle Medical and Health Sciences Institute,PRIVATE,rRT PCR,(046) 481-8000,05/08/2020 - 12/31/2020
 Region 4A,Quezon,Lucena City,Lucena United Doctors Hospital and Medical Center,Lucena United Doctors Hospital and Medical Center,PRIVATE,rRT PCR,(042) 373-6161,05/14/2020 - 12/31/2020
 Region 4A,Cavite,Imus,Ospital ng Imus,Ospital ng Imus,PUBLIC,rRT PCR,(046) 419-8300 - 29,06/08/2020 - 12/31/2020
@@ -61,32 +69,40 @@ Region 4A,Laguna,Sta. Rosa,Qualimed Hospital Sta. Rosa,Qualimed Hospital Sta. Ro
 Region 4A,Laguna,San Pablo City,San Pablo District Hospital,San Pablo District Hospital,PUBLIC,rRT PCR,(049) 562 4135,06/27/2020 - 12/31/2020
 Region 4A,Laguna,Los Baños,UPLB Covid-19 Molecular Laboratory,UPLB Covid-19 Molecular Laboratory,PUBLIC,rRT PCR,,06/27/2020 - 12/31/2020
 Region 4A,Batangas,Batangas City,PRC- Batangas Chapter Molecular Laboratory,PRC- Batangas Chapter Molecular Laboratory,PRIVATE,rRT PCR,,07/06/2020 - 12/31/2020
-Region 4A,Batangas,Lipa City,Mary Mediatrix Medical Center,,PRIVATE,rRT PCR,,
-Region 4A,Batangas,Tanauan City,Daniel O. Mercado Medical Center,,PRIVATE,rRT PCR,,
+Region 4A,Batangas,Lipa City,Mary Mediatrix Medical Center,Mary Mediatrix Medical Center,PRIVATE,rRT PCR,,
+Region 4A,Batangas,Tanauan City,Daniel O. Mercado Medical Center,Daniel O. Mercado Medical Center,PRIVATE,rRT PCR,,
 Region 4A,Laguna,San Pablo City,San Pablo College Medical Center,San Pablo College Medical Center,PRIVATE,rRT PCR,,
+Region 4A,Laguna,San Pablo City,San Pablo Colleges Medical Center,San Pablo College Medical Center,PRIVATE,rRT PCR,,07/25/2020 - 12/31/2020
+Region 4A,Laguna,Calamba City,Calamba Medical Center,,PRIVATE,rRT PCR,,-
 Region 4B,Palawan,Puerto Princesa,Ospital ng Palawan,Ospital ng Palawan GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(048) 434.8339; (048) 434.2148; (048) 433.2621,05/12/2020 - 08/12/2020
 Region 4B,Oriental Mindoro,Calapan,Oriental Mindoro Provincial Hospital,Oriental Mindoro Provincial Hospital GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,06/08/2020 - 12/31/2020
 Region 5,Albay,Legazpi City,Bicol Regional Diagnostic and Reference Laboratory,Bicol Regional Diagnostic and Reference Laboratory (BRDRL),PUBLIC,rRT PCR,,04/05/2020 - 12/31/2020
 Region 5,Camarines Sur,Naga,Bicol Medical Center,Bicol Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(054) 472-3434,05/26/2020 - 08/26/2020
 Region 6,Iloilo,Iloilo City,Western Visayas Medical Center (WVMC),Western Visayas Medical Center (WVMC),PUBLIC,rRT PCR,(033) 321-2841 to 50,03/31/2020 - 12/31/2020
 Region 6,Negros Occidental,Silay City,Teresita Jalandoni Provincial Hospital,Teresita Jalandoni Provincial Hospital,PUBLIC,rRT PCR,(034) 495 0753,06/01/2020 - 12/312020
+Region 6,Negros Occidental,Bacolod City,Corazon Locsin Montelibano Memorial Regional Hospital,Corazon Locsin Montelibano Memorial Regional Hospital,PUBLIC,rRT PCR,,07/10/2020 - 12/31/2020
 Region 6,Iloilo,Mandurriao,Qualimed Health Network - Iloilo,Qualimed Health Network - Iloilo,PRIVATE,rRT PCR,,
 Region 6,Negros Occidental,Bacolod City,Carazon Locsin Montelibano Memorial Regional Hospital,Corazon Locsin Montelibano Memorial Regional Hospital,PUBLIC,rRT PCR,,07/10/2020 - 12/31/2020
-Region 6,Negros Occidental,Bacolod City,Bacolod Queen of Mercy Hospital,,PRIVATE,rRT PCR,,
-Region 6,Negros Occidental,Bacolod City,"The Doctors Hospital, Inc.",,PRIVATE,rRT PCR,,
+Region 6,Negros Occidental,Bacolod City,Bacolod Queen of Mercy Hospital,Bacolod Queen of Mercy Hospital,PRIVATE,rRT PCR,,
+Region 6,Negros Occidental,Bacolod City,"The Doctors Hospital, Inc.","The Doctors Hospital, Inc.",PRIVATE,rRT PCR,,
+Region 6,Negros Occidental,Bacolod City,Philippine Red Cross - Negros Occidental Molecular Laboratory,PRC - Negros Occidental Molecular Laboratory,PRIVATE,rRT PCR,,08/14/2020 - 12/31/2020
 Region 7,Cebu,Lapu Lapu City,Allegiant Regional Care Hospital,Allegiant Regional Care Hospital,PRIVATE,rRT PCR,(032) 493-4248,05/11/2020 - 12/31/2020
 Region 7,Cebu,Cebu City,Cebu TB Reference Laboratory,Cebu TB Reference Laboratory - Molecular Facility for COVID-19 Testing,PUBLIC,rRT PCR,,05/04/2020 - 12/31/2020
 Region 7,Cebu,Cebu City,Vicente Sotto Memorial Medical Center (VSMMC),Vicente Sotto Memorial Medical Center (VSMMC),PUBLIC,rRT PCR,(032) 253-9891 to 98,03/27/2020 - 12/31/2020
 Region 7,Cebu,Lapu Lapu City,Prime Care Alpha Covid-19 Testing Laboratory,Prime Care Alpha Covid-19 Testing Laboratory,PRIVATE,rRT PCR,,06/21/2020 - 12/31/2020
 Region 7,Cebu,Cebu City,Philippine Red Cross - Cebu Chapter,Philippine Red Cross - Cebu Chapter,PRIVATE,rRT PCR,,
-Region 7,Cebu,Mandaue City,University of Cebu Medical Center,,PRIVATE,rRT PCR,,
-Region 7,Cebu,Cebu City,"Cebu Doctors University Hospital, Inc.",,PRIVATE,rRT PCR,,
-Region 7,Bohol,Tagbilaran City,Governor Celestino Gallares Memorial Medical Center,,PUBLIC,rRT PCR,,
+Region 7,Cebu,Mandaue City,University of Cebu Medical Center,University of Cebu Medical Center,PRIVATE,rRT PCR,,
+Region 7,Cebu,Cebu City,"Cebu Doctors University Hospital, Inc.","Cebu Doctors University Hospital, Inc.",PRIVATE,rRT PCR,,
+Region 7,Bohol,Tagbilaran City,Governor Celestino Gallares Memorial Medical Center,Governor Celestino Gallares Memorial Medical Center,PUBLIC,rRT PCR,,
+Region 7,Bohol,Tagbilaran City,Governor Celestino Gallares Memorial Hospital,Governor Celestino Gallares Memorial Medical Center,PUBLIC,rRT PCR,,08/01/2020 - 12/31/2020
+Region 7,Cebu,Cebu City,Chong Hua Hospital,Chong Hua Hospital,PRIVATE,rRT PCR,,08/06/2020 - 12/31/2020
+Region 7,Bohol,Tagbilaran City,Bohol Containerized PCR Laboratory,,PUBLIC,rRT PCR,,-
 Region 8,Leyte,Tacloban City,Divine Word Hospital,Divine Word Hospital,PRIVATE,rRT PCR,(053) 321- 4228,05/13/2020 - 12/31/2020
 Region 8,Leyte,Tacloban City,Eastern Visayas Regional Covid-19 Testing Center,Eastern Visayas Regional Covid Testing Center,PUBLIC,rRT PCR,,05/08/2020 - 12/31/2020
 Region 9,Zamboanga del Sur,Zamboanga City,Zamboanga City Medical Center (GeneXpert),Zamboanga City Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(062) 991-0573; (062) 991-2934,05/05/2020 - 12/31/2020
 Region 9,Zamboanga del Sur,Zamboanga City,Zamboanga City Medical Center-Department of Agriculture Satellite Laboratory for COVID-19 Testing,Zamboanga City Medical Center - DA Satellite Laboratory,PUBLIC,rRT PCR,,05/13/2020 - 12/31/2020
 Region 9,Zamboanga del Sur,Zamboanga City,Ciudad Medical Zamboanga,Ciudad Medical Zamboanga,PRIVATE,rRT PCR,,07/07/2020 - 12/31/2020
+Region 9,Zamboanga del Sur,Zamboanga City,Philippine Red Cross - Molecular Biology Laboratory,,PRIVATE,rRT PCR,,-
 Region 10,Misamis Oriental,Cagayan De Oro City,Northern Mindanao Medical Center (GeneXpert),Northern Mindanao Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(088) 856-5490,05/12/2020 - 08/12/2020
 Region 10,Misamis Oriental,Cagayan De Oro City,Northern Mindanao TB Regional Center,Northern Mindanao TB Regional Center,PUBLIC,rRT PCR,,06/09/2020 - 12/31/2020
 Region 10,Misamis Oriental,Cagayan De Oro City,"Polymedic Medical Plaza, Inc.",Polymedic Medical Plaza,PRIVATE,rRT PCR,,06/27/2020 - 12/31/2020
@@ -96,6 +112,8 @@ Region 11,Davao Del Norte,Tagum City,Davao Regional Medical Center,Davao Regiona
 Region 12,Cotabato,Cotabato City,Cotabato Regional and Medical Center,Cotabato Regional and Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,(064) 421-2340,05/19/2020 - 08/19/2020
 Region 12,South Cotabato,Koronadal City,Dr. Arturo Pingoy Medical Center,Dr. Arturo Pingoy Medical Center GeneXpert Laboratory,PRIVATE,Cartridge - Based PCR,(083) 228-2202,
 Region 12,South Cotabato,General Santos City,St. Elizabeth Hospital,St. Elizabeth Hospital GeneXpert Laboratory,PRIVATE,Cartridge - Based PCR,,
+CARAGA,Surigao Del Norte,Butuan City,Butuan Medical Center,Butuan Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,08/10/2020 - 12/31/2020
+CARAGA,Surigao Del Norte,Butuan City,Butuan Medical Center,,PUBLIC,rRT PCR,,-
 CAR,Benguet,Baguio City,Baguio General Hospital Medical Center (BGHMC),Baguio General Hospital and Medical Center,PUBLIC,rRT PCR,(074) 661-7936,03/27/2020 - 12/31/2020
 CAR,Benguet,Baguio City,Parkway Medical and Diagnostic Center,Parkway Medical and Diagnostic Center,PRIVATE,rRT PCR,,
 BARMM,Lanao Del Sur,Marawi,Amai Pakpak Medical Center,Amai Pakpak Medical Center GeneXpert Laboratory,PUBLIC,Cartridge - Based PCR,,06/29/2020 - 12/31/2020
