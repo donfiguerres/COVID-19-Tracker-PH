@@ -139,7 +139,8 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig.write_image(fig, f"{filename}")
 
 def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
-        filename=None, color=None, overlays=[], initial_range=None):
+        filename=None, color=None, overlays=[], initial_range=None,
+        vertical_marker=None):
     logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
@@ -190,13 +191,34 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
                     )
                 ]),
                 showactive=False,
-                x=0.3, xanchor='left',
+                x=0.5, xanchor='left',
                 y=1.1, yanchor='top'
             )
         ]
     )
     for trace in overlays:
         fig.add_trace(trace)
+    if vertical_marker:
+        if agg_func:
+            max_date = data[x].max()
+        else:
+            max_date = data.index.max()
+        marker_date = max_date - pd.Timedelta(days=vertical_marker) 
+        fig.update_layout(
+            shapes=[
+                dict(
+                    type='line', yref='paper', y0=0, y1=1,
+                    xref='x', x0=marker_date, x1=marker_date
+                )
+            ],
+            annotations=[
+                dict(
+                    x=marker_date, y=0.5,
+                    text=f"{vertical_marker} days",
+                    xref='x', yref='paper'
+                )
+            ]
+        )
     if initial_range:
         if isinstance(initial_range, int):
             if isinstance(x, str):
@@ -298,7 +320,8 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
         for color in colors:
             plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
                     filename=f"{filename}{color}", color=color,
-                    overlays=[ma_line], initial_range=initial_range)
+                    overlays=[ma_line], initial_range=initial_range,
+                    vertical_marker=15)
             plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y, 
                     title=f"{title} - Cumulative",
                     filename=f"{filename}Cumulative{color}", color=color,
@@ -306,7 +329,7 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
     else:
         plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
                 filename=f"{filename}{color}", overlays=[ma_line],
-                initial_range=initial_range)
+                initial_range=initial_range, vertical_marker=15)
         plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y,  title=title,
                 filename=f"{filename}cumulative{color}", overlays=[ma_line],
                 initial_range=initial_range)
@@ -358,11 +381,11 @@ def plot_active_cases(ci_data):
     merged = ci_agg.merge(closed_agg, left_on=['date', REGION], right_on=['date', REGION])
     merged['ActiveCount'] = merged['CaseCode_x'] - merged['CaseCode_y']
     plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
-                        filename="Active", color=REGION)
+                        filename="Active", color=REGION, vertical_marker=15)
     for days in PERIOD_DAYS:
         plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
                         filename=f"Active{days}days", color=REGION,
-                        initial_range=days)
+                        initial_range=days, vertical_marker=15)
     for area in [CITY_MUN, REGION]:
         plot_case_horizontal(active, x='CaseCode', y=area, filename=f"TopActive{area}",
                         title="Top 10 "+area,
