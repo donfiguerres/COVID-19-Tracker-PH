@@ -213,7 +213,7 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
             ],
             annotations=[
                 dict(
-                    x=marker_date, y=0.5,
+                    x=marker_date, y=0.9,
                     text=f"{vertical_marker} days",
                     xref='x', yref='paper'
                 )
@@ -314,36 +314,37 @@ def plot_reporting_delay(ci_data, days=None):
                         filename_suffix=f"{days}days")
 
 def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
-                        initial_range=None):
+                        initial_range=None, vertical_marker=None):
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}{MA_SUFFIX}'], name=MA_NAME)
     if colors:
         for color in colors:
             plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
                     filename=f"{filename}{color}", color=color,
                     overlays=[ma_line], initial_range=initial_range,
-                    vertical_marker=15)
+                    vertical_marker=vertical_marker)
             plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y, 
                     title=f"{title} - Cumulative",
                     filename=f"{filename}Cumulative{color}", color=color,
-                    initial_range=initial_range)
+                    initial_range=initial_range, vertical_marker=vertical_marker)
     else:
         plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
                 filename=f"{filename}{color}", overlays=[ma_line],
-                initial_range=initial_range, vertical_marker=15)
+                initial_range=initial_range, vertical_marker=vertical_marker)
         plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y,  title=title,
                 filename=f"{filename}cumulative{color}", overlays=[ma_line],
-                initial_range=initial_range)
+                initial_range=initial_range, vertical_marker=vertical_marker)
 
-def plot_case_trend(ci_data, x, title, filename, colors=[]):
+def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None):
     y = 'CaseCode'
     agg = ci_data.groupby([x]).count()
     agg[f'{x}{MA_SUFFIX}'] = moving_average(agg, y)
-    do_plot_case_trend(ci_data, agg, x, y, title, filename, colors=colors)
+    do_plot_case_trend(ci_data, agg, x, y, title, filename, colors=colors,
+                            vertical_marker=vertical_marker)
     for days in PERIOD_DAYS:
         do_plot_case_trend(ci_data, agg, x, y,
                 title=title,
                 filename=f"{filename}{days}days", colors=colors,
-                initial_range=days)
+                initial_range=days, vertical_marker=vertical_marker)
 
 def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
                             title_period_suffix="", color=None, filter_top=None,
@@ -400,7 +401,7 @@ def plot_ci(ci_data):
     # confirmed cases
     plot_case_trend(ci_data, 'DateOnset',
             "Confirmed Cases by Date of Onset", "DateOnset",
-            colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY])
+            colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY], vertical_marker=15)
     for area in [CITY_MUN, REGION]:
         plot_case_horizontal(ci_data, x='CaseCode', y=area, filename=f"TopConfirmedCase{area}",
                     title="Top 10 "+area, title_period_suffix=" by Date of Onset",
@@ -415,7 +416,7 @@ def plot_ci(ci_data):
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
             "Recovery", "DateRecover",
-            colors=['Region', RECOVER_PROXY])
+            colors=['Region', RECOVER_PROXY], vertical_marker=15)
     for area in [CITY_MUN, REGION]:
         plot_case_horizontal(recovered, x='CaseCode', y=area, filename=f"TopRecovery{area}",
                     title="Top 10 "+area, filter_top=10, order='total ascending')
