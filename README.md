@@ -69,11 +69,6 @@ can use the --folder-id option of the script.
     # example
     python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
 
-## Ongoing Tasks
-* Migration to another web server or creating a mirror. This is because the
-html charts are taking up a huge space in the repository for each update. This
-is not sustainable.
-
 ## TODOs
 ### Plots
 * Testing ang Confirmation Gap
