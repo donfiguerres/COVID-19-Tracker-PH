@@ -248,6 +248,14 @@ def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
     # else no ordering
     write_chart(fig, f"{filename}")
 
+def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
+                        filename=None):
+    logging.info(f"Plotting {filename}")
+    if agg_func:
+        data = getattr(data.groupby(names), agg_func)().reset_index()
+    fig = px.pie(data, values=values, names=names, title=title)
+    write_chart(fig, f"{filename}")
+
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'SpecimenToRepConf',
                         f"Specimen Collection to Reporting{title_suffix}",
@@ -362,6 +370,13 @@ def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
                 filename=f"{filename}{days}days", order=order,
                 categoryarray=categoryarray)
 
+def plot_case_pie(data, values=None, names=None, title=None, filename=None):
+    plot_pie_chart(data, agg_func='count', values=values, names=names,
+                        title=title, filename=filename)
+    for days in PERIOD_DAYS:
+        plot_pie_chart(data, agg_func='count', values=values, names=names,
+            title=title, filename=f"{filename}{days}days")
+
 def plot_active_cases(ci_data):
     closed = None
     active = None
@@ -396,6 +411,8 @@ def plot_active_cases(ci_data):
                     filename=f"ActiveAgeGroup", title="Active Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
+    plot_case_pie(active, values='CaseCode', names='HealthStatus',
+                        title='Active Cases Health Status', filename='ActivePie')
 
 def plot_ci(ci_data):
     # confirmed cases
@@ -410,6 +427,8 @@ def plot_ci(ci_data):
                     filename=f"ConfirmedAgeGroup", title="Confirmed Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
+    plot_case_pie(ci_data, values='CaseCode', names='HealthStatus',
+                        title='Confirmed Cases Health Status', filename='ConfirmedPie')
     # active cases
     plot_active_cases(ci_data)
     # recovery
