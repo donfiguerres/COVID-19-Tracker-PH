@@ -464,6 +464,7 @@ def plot_summary(ci_data, test_data):
     last_case_reported = ci_data['DateRepConf'].max().strftime(date_format)
     total_confirmed = format_num(ci_data['CaseCode'].count())
     total_active = format_num(ci_data[ci_data[CASE_STATUS] == 'ACTIVE']['CaseCode'].count())
+    total_death = format_num(ci_data[ci_data['HealthStatus'] == 'DIED']['CaseCode'].count())
     new_confirmed = format_num(ci_data[ci_data[CASE_REP_TYPE] == 'New Case']['CaseCode'].count())
     ci_agg = ci_data.groupby('DateOnset').count()
     ci_agg_filtered = filter_latest(ci_agg, 14, return_latest=False)
@@ -494,7 +495,7 @@ def plot_summary(ci_data, test_data):
         ["Last Case Reported", "-", last_case_reported],
         ["Confirmed Cases", total_confirmed, new_confirmed],
         ["Active Cases", "-", total_active],
-        # Add deaths here
+        ["Deaths", "-", total_death],
         ["Case Doubling Time (days)", "-", round(case_doubling_time, 2)],
         ["Last Test Report", "-", last_test_report],
         ["Samples Tested", samples_str, latest_samples_str],
