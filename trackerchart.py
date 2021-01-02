@@ -469,7 +469,6 @@ def plot_summary(ci_data, test_data):
     ci_agg_filtered = filter_latest(ci_agg, 14, return_latest=False)
     cumsum = ci_agg_filtered['CaseCode'].cumsum()
     case_doubling_time = doubling_time(cumsum)[-1]
-    case_rt = reproduction_number(case_doubling_time)
     # test
     last_test_report = test_data['report_date'].max().strftime(date_format)
     latest_test_data = filter_latest(test_data, 1, date_column='report_date')
@@ -489,22 +488,20 @@ def plot_summary(ci_data, test_data):
     latest_positivity_rate = round((latest_positive / latest_individuals) * 100, 2)
     test_agg = test_data.groupby('report_date').sum()
     positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
-    positive_rt = reproduction_number(positive_doubling_time)
     # create table
     header = ['Statistic', 'Cumulative', 'Latest Report'] 
     body = [
         ["Last Case Reported", "-", last_case_reported],
         ["Confirmed Cases", total_confirmed, new_confirmed],
         ["Active Cases", "-", total_active],
+        # Add deaths here
         ["Case Doubling Time (days)", "-", round(case_doubling_time, 2)],
-        ["Case Rt", "-", round(case_rt, 2)],
         ["Last Test Report", "-", last_test_report],
         ["Samples Tested", samples_str, latest_samples_str],
         ["Individuals Tested", individuals_str, latest_individuals_str],
         ["Positive Individuals", positive_str, latest_positive_str],
         ["Positivity Rate (%)", positivity_rate, latest_positivity_rate],
         ["Positive Individuals Doubling Time (days)", "-", round(positive_doubling_time, 2)],
-        ["Positive Individuals Rt", "-", round(positive_rt, 2)]
     ]
     write_table(header, body, "summary")
 
@@ -616,6 +613,15 @@ def read_testing_aggregates(data_dir):
         break
     data = pd.read_csv(ci_file_name)
     return calc_testing_aggregates_data(data)
+
+def read_quarantine_facility_daily(data_dir):
+    logging.info("Reading Testing Aggregates")
+    qfd_file_name = ""
+    for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Quarantine Facility Data - Daily Report.csv"):
+        qfd_file_name = name
+        # We expect to have only one file.
+        break
+    data = pd.read_csv(qfd_file_name)
 
 def plot(data_dir, rebuild=False):
     ci_data = read_case_information(data_dir)
