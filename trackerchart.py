@@ -495,7 +495,7 @@ def plot_summary(ci_data, test_data):
         ["Last Case Reported", "-", last_case_reported],
         ["Confirmed Cases", total_confirmed, new_confirmed],
         ["Active Cases", "-", total_active],
-        ["Deaths", "-", total_death],
+        ["Deaths", total_death, "-"],
         ["Case Doubling Time (days)", "-", round(case_doubling_time, 2)],
         ["Last Test Report", "-", last_test_report],
         ["Samples Tested", samples_str, latest_samples_str],
