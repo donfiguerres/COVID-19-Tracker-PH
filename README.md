@@ -54,7 +54,7 @@ Open all of the files in the Data Drop Folder.
 You need to do this step due to a limitation in the Google Drive API. See [Limitations](#limitations)
 below.
 
-### Run the Script
+### Running the Script
 Navigate to your project directory then run the 'update-tracker.py' script.
 
     cd /path/to/COVID-19-Tracker-PH
