@@ -8,6 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 import logging
 import shutil
+import multiprocessing as mp
 
 import pandas as pd
 import numpy as np
@@ -35,6 +36,24 @@ AGE_GROUP_CATEGORYARRAY=['0 to 4', '5 to 9', '10 to 14', '15 to 19', '20 to 24',
     '55 to 59', '60 to 64', '65 to 69', '70 to 74', '75 to 79', '80+', 'No Data'
 ]
 
+
+# Number of processes to launch when applying a parallel processing.
+# We leave one core idle to avoid hogging all the resources.
+num_processes = 1 if (mp.cpu_count() <= 2) else mp.cpu_count() - 1
+
+def apply_parallel(df, func, n_proc=num_processes):
+    """ Apply function to the dataframe using multiprocessing.
+    The initial plan was to use modin but because there are still a lot of
+    missing features and instability in modin, I've resorted to doing the
+    parallel processing in here.
+    """
+    logging.info(f"Running multiprocessing on {func.__name__} with {num_processes} processes")
+    df_split = np.array_split(df, n_proc)
+    pool = mp.Pool(n_proc)
+    df = pd.concat(pool.map(func, df_split))
+    pool.close()
+    pool.join()
+    return df
 
 def write_table(header, body, filename):
     table = "".join(f"<th>{cell}</th>" for cell in header)
@@ -455,9 +474,9 @@ def plot_ci(ci_data):
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
 
 def plot_summary(ci_data, test_data):
-    # Using the format key for for the cells will apply the formatting to all of
+    # Using the format key on the cells will apply the formatting to all of
     # the columns and we don't want that applied to the first column so we need
-    # to do the formatting for now
+    # to do the formatting for now.
     format_num = lambda num: f'{num:,}'
     date_format = "%Y-%m-%d"
     # confirmed cases
@@ -508,6 +527,20 @@ def plot_summary(ci_data, test_data):
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
+    convert_columns = ['DateSpecimen', 'DateRepConf', 'DateResultRelease',
+    #        'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
+    # There is no DateRepRem column in the 2020-07-10 data.
+            'DateOnset', 'DateRecover', 'DateDied']
+    for column in convert_columns:
+        logging.debug(f"Converting column {column} to datetime")
+        # Some of the data are invalid.
+        data[column] = pd.to_datetime(data[column], errors='coerce')
+    logging.info("Filling empty data")
+    data[CITY_MUN].fillna('No Data', inplace=True)
+    data['ProvRes'].fillna('No Data', inplace=True)
+    data['Quarantined'].fillna('No Data', inplace=True)
+    data['Admitted'].fillna('No Data', inplace=True)
+    data['AgeGroup'].fillna('No Data', inplace=True)
     max_date_repconf = data.DateRepConf.max()
     # Some incomplete entries have no dates so we need to check first before
     # making a computation.
@@ -574,21 +607,7 @@ def read_case_information(data_dir):
         # We expect to have only one file.
         break
     data = pd.read_csv(ci_file_name)
-    convert_columns = ['DateSpecimen', 'DateRepConf', 'DateResultRelease',
-    #        'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
-    # There is no DateRepRem column in the 2020-07-10 data.
-            'DateOnset', 'DateRecover', 'DateDied']
-    for column in convert_columns:
-        logging.debug(f"Converting column {column} to datetime")
-        # Some of the data are invalid.
-        data[column] = pd.to_datetime(data[column], errors='coerce')
-    logging.info("Filling empty data")
-    data[CITY_MUN].fillna('No Data', inplace=True)
-    data['ProvRes'].fillna('No Data', inplace=True)
-    data['Quarantined'].fillna('No Data', inplace=True)
-    data['Admitted'].fillna('No Data', inplace=True)
-    data['AgeGroup'].fillna('No Data', inplace=True)
-    return calc_case_info_data(data)
+    return apply_parallel(data, calc_case_info_data)
 
 def calc_testing_aggregates_data(data):
     """Calculate data needed for the plots.""" 
@@ -613,7 +632,7 @@ def read_testing_aggregates(data_dir):
         # We expect to have only one file.
         break
     data = pd.read_csv(ci_file_name)
-    return calc_testing_aggregates_data(data)
+    return apply_parallel(data, calc_testing_aggregates_data)
 
 def read_quarantine_facility_daily(data_dir):
     logging.info("Reading Testing Aggregates")
