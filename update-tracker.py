@@ -27,9 +27,11 @@ def _parse_args():
                     help="set log level")
     return parser.parse_args()
 
+
 def set_loglevel(loglevel):
     numeric_level = getattr(logging, loglevel.upper())
     logging.basicConfig(level=numeric_level)
+
 
 def main():
     args = _parse_args()
