@@ -47,13 +47,21 @@ def apply_parallel(df, func, n_proc=num_processes):
     missing features and instability in modin, I've resorted to doing the
     parallel processing in here.
     """
-    logging.info(f"Running multiprocessing on {func.__name__} with {num_processes} processes")
+    logging.info(f"Running multiprocessing on {func.__name__} with {n_proc} processes")
     df_split = np.array_split(df, n_proc)
     pool = mp.Pool(n_proc)
     df = pd.concat(pool.map(func, df_split))
     pool.close()
     pool.join()
     return df
+
+def create_tasks(df, fn, filter, **kwargs):
+    """Generate functions to be executed by the multiprocessing pool."""
+    tasks = [lambda: fn(df, **kwargs)]
+    for days in PERIOD_DAYS:
+        filtered = filter(df, days)
+        tasks.append(lambda: fn(filtered, period=days, **kwargs))
+    return tasks
 
 def write_table(header, body, filename):
     table = "".join(f"<th>{cell}</th>" for cell in header)
@@ -121,6 +129,10 @@ def agg_count_cumsum_by_date(data, cumsum, group, date):
     agg = agg.reset_index(group)
     return agg
 
+def aggregate(df, by, agg_fn='count', reset_index=None):
+    """Aggregate the dataframe by the given aggregate method name."""
+    return df.groupby(by).agg(agg_fn).reset_index(reset_index)
+
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
@@ -171,9 +183,9 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
                 # dates with no data.
                 agg = agg_count_cumsum_by_date(data, y, color, x)
             else:
-                agg = getattr(data.groupby([x, color]), agg_func)().reset_index(color)
+                agg = aggregate(data, [x, color], agg_func, color)
         else:
-            agg = getattr(data.groupby(x), agg_func)()
+            agg = aggregate(data, x, agg_func)
         dataplot = agg
     fig = px.bar(dataplot, y=y, color=color, barmode='stack', title=title)
     ranges = [dict(count=days, label=f"{days}d",
@@ -253,9 +265,9 @@ def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
         filename=None, color=None, order=None, categoryarray=None):
     logging.info(f"Plotting {filename}")
     if color:
-        agg = getattr(data.groupby([y, color]), agg_func)().reset_index(color)
+        agg = aggregate(data, [y, color], agg_func, color)
     else:
-        agg = getattr(data.groupby(y), agg_func)()
+        agg = aggregate(data, y, agg_func)
     fig = px.bar(agg, x=x, color=color, barmode='stack', title=f"{title}")
     if categoryarray:
         # The order kwarg is intentionally disregarded since only the array
@@ -271,7 +283,7 @@ def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
                         filename=None):
     logging.info(f"Plotting {filename}")
     if agg_func:
-        data = getattr(data.groupby(names), agg_func)().reset_index()
+        data = aggregate(data, names, agg_func)
     fig = px.pie(data, values=values, names=names, title=title)
     write_chart(fig, f"{filename}")
 
