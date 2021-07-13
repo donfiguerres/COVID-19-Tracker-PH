@@ -85,6 +85,7 @@ can use the --folder-id option of the script.
 * Organize post tags.
 * Create own icon.
 * Change about image.
+* Migrate to Hugo.
 
 ### Others
 * Refactor to use functional programming principles to make it more readable.
