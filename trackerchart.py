@@ -55,6 +55,7 @@ def apply_parallel(df, func, n_proc=num_processes):
     pool.join()
     return df
 
+
 def create_tasks(df, fn, filter, **kwargs):
     """Generate functions to be executed by the multiprocessing pool."""
     tasks = [lambda: fn(df, **kwargs)]
@@ -62,6 +63,7 @@ def create_tasks(df, fn, filter, **kwargs):
         filtered = filter(df, days)
         tasks.append(lambda: fn(filtered, period=days, **kwargs))
     return tasks
+
 
 def write_table(header, body, filename):
     table = "".join(f"<th>{cell}</th>" for cell in header)
@@ -72,11 +74,13 @@ def write_table(header, body, filename):
     with open(f"{CHART_OUTPUT}/{filename}.html", 'w') as f:
         f.write(table)
 
+
 def write_chart(fig, filename):
     fig.update_layout(template=TEMPLATE)
     fig.update_layout(margin=dict(l=5, r=5, b=50, t=70))
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
                         full_html=False)
+
 
 def filter_latest(data, days, date_column=None, return_latest=True):
     """ Filter data by the days indicated in the days parameter.
@@ -97,8 +101,10 @@ def filter_latest(data, days, date_column=None, return_latest=True):
             return data[data.index > cutoff_date]
         return data[data.index < cutoff_date]
 
+
 def moving_average(data, column, days=7):
     return data[column].rolling(days).mean()
+
 
 def doubling_time(series):
     y = series.to_numpy()
@@ -108,10 +114,12 @@ def doubling_time(series):
     x_interp = f(y_half)
     return x - x_interp
 
+
 def reproduction_number(doubling_time):
     """Calculate reproduction number using simple model."""
     # COVID-19 generation interval is around 5 days.
     return np.exp((np.log(2)/doubling_time) * 5)
+
 
 def agg_count_cumsum_by_date(data, cumsum, group, date):
     """ Aggregate using the count groupby function then get the cumsum of each
@@ -129,9 +137,11 @@ def agg_count_cumsum_by_date(data, cumsum, group, date):
     agg = agg.reset_index(group)
     return agg
 
+
 def aggregate(df, by, agg_fn='count', reset_index=None):
     """Aggregate the dataframe by the given aggregate method name."""
     return df.groupby(by).agg(agg_fn).reset_index(reset_index)
+
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
@@ -165,9 +175,11 @@ def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     )
     write_chart(fig, f"{xaxis}{suffix}")
 
+
 def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig = px.line(data, title=title, x=x_axis, y=y_axis)
     fig.write_image(fig, f"{filename}")
+
 
 def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
         filename=None, color=None, overlays=[], initial_range=None,
@@ -261,6 +273,7 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
         fig['layout']['xaxis'].update(range=initial_range)
     write_chart(fig, f"{filename}")
 
+
 def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
         filename=None, color=None, order=None, categoryarray=None):
     logging.info(f"Plotting {filename}")
@@ -279,6 +292,7 @@ def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
     # else no ordering
     write_chart(fig, f"{filename}")
 
+
 def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
                         filename=None):
     logging.info(f"Plotting {filename}")
@@ -286,6 +300,7 @@ def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
         data = aggregate(data, names, agg_func)
     fig = px.pie(data, values=values, names=names, title=title)
     write_chart(fig, f"{filename}")
+
 
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'SpecimenToRepConf',
@@ -297,6 +312,7 @@ def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
     plot_histogram(ci_data, 'ReleaseToRepConf',
                         f"Result Release to Reporting{title_suffix}",
                         suffix=filename_suffix)
+
 
 def do_plot_test(test_data, x, columns, agg=None, filename_suffix="",
                     initial_range=None):
@@ -316,6 +332,7 @@ def do_plot_test(test_data, x, columns, agg=None, filename_suffix="",
                     y=column, title=f"{column}",
                     filename=f"{column}{filename_suffix}", color='REGION',
                     initial_range=initial_range)
+
 
 def plot_test(test_data):
     # daily
@@ -339,11 +356,13 @@ def plot_test(test_data):
         do_plot_test(test_data, x, cumulative_columns,
                 filename_suffix=f"{days}days", initial_range=days)
 
+
 def plot_test_reports_comparison(ci_data, test_data,
                                     title_suffix="", filename_suffix=""):
     # Daily reporting
     data_report_daily = ci_data['DateRepConf'].value_counts()
     logging.debug(data_report_daily)
+
 
 def plot_reporting_delay(ci_data, days=None):
     plot_reporting(ci_data)
@@ -351,6 +370,7 @@ def plot_reporting_delay(ci_data, days=None):
         ci_data = filter_latest(ci_data, days, date_column='DateRepConf')
         plot_reporting(ci_data, title_suffix=f" - Last {days} days",
                         filename_suffix=f"{days}days")
+
 
 def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
                         initial_range=None, vertical_marker=None):
@@ -373,6 +393,7 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
                 filename=f"{filename}cumulative{color}", overlays=[ma_line],
                 initial_range=initial_range, vertical_marker=vertical_marker)
 
+
 def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None):
     y = 'CaseCode'
     agg = ci_data.groupby([x]).count()
@@ -384,6 +405,7 @@ def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None
                 title=title,
                 filename=f"{filename}{days}days", colors=colors,
                 initial_range=days, vertical_marker=vertical_marker)
+
 
 def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
                             title_period_suffix="", color=None, filter_top=None,
@@ -401,12 +423,14 @@ def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
                 filename=f"{filename}{days}days", order=order,
                 categoryarray=categoryarray)
 
+
 def plot_case_pie(data, values=None, names=None, title=None, filename=None):
     plot_pie_chart(data, agg_func='count', values=values, names=names,
                         title=title, filename=filename)
     for days in PERIOD_DAYS:
         plot_pie_chart(data, agg_func='count', values=values, names=names,
             title=title, filename=f"{filename}{days}days")
+
 
 def plot_active_cases(ci_data):
     closed = None
@@ -444,6 +468,7 @@ def plot_active_cases(ci_data):
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
     plot_case_pie(active, values='CaseCode', names='HealthStatus',
                         title='Active Cases Health Status', filename='ActivePie')
+
 
 def plot_ci(ci_data):
     # confirmed cases
@@ -484,6 +509,7 @@ def plot_ci(ci_data):
     plot_case_horizontal(died, x='CaseCode', y='AgeGroup',
                     filename=f"DeathAgeGroup", title="Death by Age Group",
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
+
 
 def plot_summary(ci_data, test_data):
     # Using the format key on the cells will apply the formatting to all of
@@ -536,6 +562,7 @@ def plot_summary(ci_data, test_data):
         ["Positive Individuals Doubling Time (days)", "-", round(positive_doubling_time, 2)],
     ]
     write_table(header, body, "summary")
+
 
 def calc_case_info_data(data):
     """Calculate data needed for the plots."""
@@ -611,6 +638,7 @@ def calc_case_info_data(data):
     logging.debug(data)
     return data
 
+
 def read_case_information(data_dir):
     logging.info("Reading Case Information")
     ci_file_name = ""
@@ -620,6 +648,7 @@ def read_case_information(data_dir):
         break
     data = pd.read_csv(ci_file_name)
     return apply_parallel(data, calc_case_info_data)
+
 
 def calc_testing_aggregates_data(data):
     """Calculate data needed for the plots.""" 
@@ -636,6 +665,7 @@ def calc_testing_aggregates_data(data):
     logging.debug(data)
     return data
 
+
 def read_testing_aggregates(data_dir):
     logging.info("Reading Testing Aggregates")
     ci_file_name = ""
@@ -646,6 +676,7 @@ def read_testing_aggregates(data_dir):
     data = pd.read_csv(ci_file_name)
     return apply_parallel(data, calc_testing_aggregates_data)
 
+
 def read_quarantine_facility_daily(data_dir):
     logging.info("Reading Testing Aggregates")
     qfd_file_name = ""
@@ -654,6 +685,7 @@ def read_quarantine_facility_daily(data_dir):
         # We expect to have only one file.
         break
     data = pd.read_csv(qfd_file_name)
+
 
 def plot(data_dir, rebuild=False):
     ci_data = read_case_information(data_dir)

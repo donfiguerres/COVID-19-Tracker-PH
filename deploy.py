@@ -4,6 +4,8 @@ import os
 import sys
 import logging
 import getpass
+import shutil
+import traceback
 from ftplib import FTP, error_perm
 
 
@@ -30,6 +32,7 @@ def store_files(ftp, path):
             store_files(ftp, localpath)
             logging.info(f"CWD ..")
             ftp.cwd("..")
+
 
 def deploy_ftp(source):
     ftp = FTP('ftpupload.net')
