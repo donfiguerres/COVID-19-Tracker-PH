@@ -564,8 +564,14 @@ def plot_summary(ci_data, test_data):
     write_table(header, body, "summary")
 
 
+def find_file(path):
+    """Find the first file path that matches the given path."""
+    for name in glob.glob(path):
+        return name
+
+
 def calc_case_info_data(data):
-    """Calculate data needed for the plots."""
+    """Calculate data needed for the plots from the Case Information."""
     convert_columns = ['DateSpecimen', 'DateRepConf', 'DateResultRelease',
     #        'DateOnset', 'DateRecover', 'DateDied', 'DateRepRem']
     # There is no DateRepRem column in the 2020-07-10 data.
@@ -639,17 +645,6 @@ def calc_case_info_data(data):
     return data
 
 
-def read_case_information(data_dir):
-    logging.info("Reading Case Information")
-    ci_file_name = ""
-    for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Case Information.csv"):
-        ci_file_name = name
-        # We expect to have only one file.
-        break
-    data = pd.read_csv(ci_file_name)
-    return apply_parallel(data, calc_case_info_data)
-
-
 def calc_testing_aggregates_data(data):
     """Calculate data needed for the plots.""" 
     data['report_date'] = pd.to_datetime(data['report_date'])
@@ -666,30 +661,18 @@ def calc_testing_aggregates_data(data):
     return data
 
 
-def read_testing_aggregates(data_dir):
-    logging.info("Reading Testing Aggregates")
-    ci_file_name = ""
-    for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Testing Aggregates.csv"):
-        ci_file_name = name
-        # We expect to have only one file.
-        break
-    data = pd.read_csv(ci_file_name)
-    return apply_parallel(data, calc_testing_aggregates_data)
-
-
-def read_quarantine_facility_daily(data_dir):
-    logging.info("Reading Testing Aggregates")
-    qfd_file_name = ""
-    for name in glob.glob(f"{SCRIPT_DIR}/{data_dir}/*Quarantine Facility Data - Daily Report.csv"):
-        qfd_file_name = name
-        # We expect to have only one file.
-        break
-    data = pd.read_csv(qfd_file_name)
+def prepare_data(data_dir, file_name, postprocess=None):
+    logging.info(f"Reading {file_name}")
+    file_path = find_file(f"{SCRIPT_DIR}/{data_dir}/*{file_name}")
+    data = pd.read_csv(file_path)
+    if postprocess:
+        data = apply_parallel(data, postprocess)
+    return data
 
 
 def plot(data_dir, rebuild=False):
-    ci_data = read_case_information(data_dir)
-    test_data = read_testing_aggregates(data_dir)
+    ci_data = prepare_data(data_dir, "Case Information.csv", calc_case_info_data)
+    test_data = prepare_data(data_dir, "Testing Aggregates.csv", calc_testing_aggregates_data)
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     elif rebuild:
