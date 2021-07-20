@@ -3,11 +3,11 @@
 import os
 import sys
 import traceback
-import glob
 from datetime import datetime
 from datetime import timedelta
 import logging
 import shutil
+import pathlib
 import multiprocessing as mp
 
 import pandas as pd
@@ -564,12 +564,6 @@ def plot_summary(ci_data, test_data):
     write_table(header, body, "summary")
 
 
-def find_file(path):
-    """Find the first file path that matches the given path."""
-    for name in glob.glob(path):
-        return name
-
-
 def calc_case_info_data(data):
     """Calculate data needed for the plots from the Case Information."""
     convert_columns = ['DateSpecimen', 'DateRepConf', 'DateResultRelease',
@@ -662,11 +656,23 @@ def calc_testing_aggregates_data(data):
 
 
 def prepare_data(data_dir, file_name, postprocess=None):
+    """Load data from  the given file name.
+    This Will load from cache if the cache is older than the file. It also uses
+    parallel processing to improve performance.
+    """
     logging.info(f"Reading {file_name}")
-    file_path = find_file(f"{SCRIPT_DIR}/{data_dir}/*{file_name}")
+    full_data_dir = f"{SCRIPT_DIR}/{data_dir}"
+    cache = pathlib.Path(f"{full_data_dir}/{file_name}.pkl")
+    # Get only the first matching file.
+    file_path = list(pathlib.Path(full_data_dir).glob(f"*{file_name}"))[0]
+    if cache.exists():
+        if cache.stat().st_mtime > file_path.stat().st_mtime:
+            return pd.read_pickle(cache)
+        cache.unlink()
     data = pd.read_csv(file_path)
     if postprocess:
         data = apply_parallel(data, postprocess)
+    data.to_pickle(cache)
     return data
 
 
