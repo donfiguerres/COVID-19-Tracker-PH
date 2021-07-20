@@ -9,6 +9,7 @@ import logging
 import shutil
 import pathlib
 import multiprocessing as mp
+import typing
 
 import pandas as pd
 import numpy as np
@@ -41,7 +42,7 @@ AGE_GROUP_CATEGORYARRAY=['0 to 4', '5 to 9', '10 to 14', '15 to 19', '20 to 24',
 # We leave one core idle to avoid hogging all the resources.
 num_processes = 1 if (mp.cpu_count() <= 2) else mp.cpu_count() - 1
 
-def apply_parallel(df, func, n_proc=num_processes):
+def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
     """ Apply function to the dataframe using multiprocessing.
     The initial plan was to use modin but because there are still a lot of
     missing features and instability in modin, I've resorted to doing the
@@ -56,13 +57,19 @@ def apply_parallel(df, func, n_proc=num_processes):
     return df
 
 
-def create_tasks(df, fn, filter, **kwargs):
-    """Generate functions to be executed by the multiprocessing pool."""
-    tasks = [lambda: fn(df, **kwargs)]
+def apply_async(pool: mp.Pool,
+                df: pd.DataFrame,
+                fn: typing.Callable,
+                filter: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
+                **kwargs):
+    """Execute the function for the total and for each period asyncronously."""
+    results =  [pool.apply_async(fn, (df,), kwargs)]
     for days in PERIOD_DAYS:
         filtered = filter(df, days)
-        tasks.append(lambda: fn(filtered, period=days, **kwargs))
-    return tasks
+        kwargs_passed = kwargs.copy()
+        kwargs_passed['period'] = days
+        results.append(pool.apply_async(fn, (filtered,), kwargs_passed))
+    return results
 
 
 def write_table(header, body, filename):
@@ -294,7 +301,9 @@ def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
 
 
 def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
-                        filename=None):
+                        filename=None, period=None):
+    if period:
+        filename = f"{filename}{period}days"
     logging.info(f"Plotting {filename}")
     if agg_func:
         data = aggregate(data, names, agg_func)
@@ -470,7 +479,7 @@ def plot_active_cases(ci_data):
                         title='Active Cases Health Status', filename='ActivePie')
 
 
-def plot_ci(ci_data):
+def plot_ci(pool, ci_data):
     # confirmed cases
     plot_case_trend(ci_data, 'DateOnset',
             "Confirmed Cases by Date of Onset", "DateOnset",
@@ -483,8 +492,10 @@ def plot_ci(ci_data):
                     filename=f"ConfirmedAgeGroup", title="Confirmed Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
-    plot_case_pie(ci_data, values='CaseCode', names='HealthStatus',
-                        title='Confirmed Cases Health Status', filename='ConfirmedPie')
+    results = apply_async(pool, ci_data, plot_case_pie,
+                    lambda df, days: filter_latest(df, days, 'DateOnset'),
+                    values='CaseCode', names='HealthStatus',
+                    title='Confirmed Cases Health Status', filename='ConfirmedPie')
     # active cases
     plot_active_cases(ci_data)
     # recovery
@@ -509,6 +520,7 @@ def plot_ci(ci_data):
     plot_case_horizontal(died, x='CaseCode', y='AgeGroup',
                     filename=f"DeathAgeGroup", title="Death by Age Group",
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
+    return results
 
 
 def plot_summary(ci_data, test_data):
@@ -657,8 +669,8 @@ def calc_testing_aggregates_data(data):
 
 def prepare_data(data_dir, file_name, postprocess=None):
     """Load data from  the given file name.
-    This Will load from cache if the cache is older than the file. It also uses
-    parallel processing to improve performance.
+    This function will load from cache if the cache is older than the file. It
+    also uses parallel processing to improve performance.
     """
     logging.info(f"Reading {file_name}")
     full_data_dir = f"{SCRIPT_DIR}/{data_dir}"
@@ -686,6 +698,12 @@ def plot(data_dir, rebuild=False):
         os.mkdir(CHART_OUTPUT)
     # else keep directory
     plot_summary(ci_data, test_data)
-    plot_ci(ci_data)
+    pool = mp.Pool(num_processes)
+    results = plot_ci(pool, ci_data)
     plot_reporting_delay(ci_data)
     plot_test(test_data)
+    # Must wait for all tasks to be complete.
+    [result.wait() for result in results]
+    pool.close()
+    pool.join()
+
