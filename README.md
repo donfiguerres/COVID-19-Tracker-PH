@@ -9,7 +9,7 @@ This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.do
 ## Requirements
 ### Python
 * google-api-client
-* google-auth-oathlib
+* google-auth-oauthlib
 * pypdf2
 * pandas
 * numpy
