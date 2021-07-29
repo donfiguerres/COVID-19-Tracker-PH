@@ -58,21 +58,27 @@ def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
 
 
 def plot_for_period(df: pd.DataFrame,
-                chart: typing.Callable,
-                filename: str,
+                plot: typing.Callable,
                 filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
                 write_chart: typing.Callable,
                 **kwargs):
-    logging.info(f"Plotting {filename}")
-    write_chart(chart(df, **kwargs), filename)
+    """Execute the plot function for the overall data and for each PERIOD_DAYS.
+    The plot function must take a 'write_chart' keyword argument which is the
+    function that writes the chart to a file.
+    """
+    plot(df, **kwargs)
     for days in PERIOD_DAYS:
         filtered = filter_df(df, days)
-        period_filename = f"{filename}{days}days"
-        logging.info(f"Plotting {period_filename}")
-        write_chart(chart(df, **kwargs), period_filename)
+        kwargs_passed = kwargs.copy()
+        # Append the period in days at the end of the filename.
+        write_chart = kwargs_passed['write_chart']
+        kwargs_passed['write_chart'] = (lambda fig, filename :
+                                    write_chart(fig, f"{filename}{days}days"))
+        plot(df, **kwargs_passed)
 
 
 def write_table(header, body, filename):
+    logging.info(f"Writing {filename}")
     table = "".join(f"<th>{cell}</th>" for cell in header)
     for row in body:
         row_html = "".join(f"<td>{cell}</td>" for cell in row)
@@ -83,6 +89,7 @@ def write_table(header, body, filename):
 
 
 def write_chart(fig, filename):
+    logging.info(f"Writing {filename}")
     fig.update_layout(template=TEMPLATE)
     fig.update_layout(margin=dict(l=5, r=5, b=50, t=70))
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
@@ -190,7 +197,7 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
 
 def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
         filename=None, color=None, overlays=[], initial_range=None,
-        vertical_marker=None):
+        vertical_marker=None, write_chart=write_chart):
     logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
@@ -300,10 +307,12 @@ def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
     write_chart(fig, f"{filename}")
 
 
-def pie_chart(data, agg_func=None, values=None, names=None, title=None):
+def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
+                filename=None, write_chart=write_chart):
     if agg_func:
         data = aggregate(data, names, agg_func)
-    return px.pie(data, values=values, names=names, title=title)
+    fig = px.pie(data, values=values, names=names, title=title)
+    write_chart(fig, filename)
 
 
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
@@ -377,25 +386,21 @@ def plot_reporting_delay(ci_data, days=None):
 
 
 def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
-                        initial_range=None, vertical_marker=None):
+                        initial_range=None, vertical_marker=None,
+                        write_chart=write_chart):
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}{MA_SUFFIX}'], name=MA_NAME)
+    plot = lambda agg_func, title, filename, color : (
+            plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
+            filename=filename, color=color, overlays=[ma_line],
+            initial_range=initial_range, vertical_marker=vertical_marker,
+            write_chart=write_chart))
     if colors:
         for color in colors:
-            plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
-                    filename=f"{filename}{color}", color=color,
-                    overlays=[ma_line], initial_range=initial_range,
-                    vertical_marker=vertical_marker)
-            plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y, 
-                    title=f"{title} - Cumulative",
-                    filename=f"{filename}Cumulative{color}", color=color,
-                    initial_range=initial_range, vertical_marker=vertical_marker)
+            plot('count', title, f"{filename}{color}", color)
+            plot('cumsum', f"{title} - Cumulative", f"{filename}Cumulative{color}", color)
     else:
-        plot_trend_chart(ci_data, agg_func='count', x=x, y=y, title=title,
-                filename=f"{filename}{color}", overlays=[ma_line],
-                initial_range=initial_range, vertical_marker=vertical_marker)
-        plot_trend_chart(ci_data, agg_func='cumsum', x=x, y=y,  title=title,
-                filename=f"{filename}cumulative{color}", overlays=[ma_line],
-                initial_range=initial_range, vertical_marker=vertical_marker)
+        plot('count', title, f"{filename}", color)
+        plot('cumsum', f"{title} - Cumulative", f"{filename}Cumulative", color)
 
 
 def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None):
@@ -464,8 +469,8 @@ def plot_active_cases(ci_data):
                     filename=f"ActiveAgeGroup", title="Active Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
-    write_chart(pie_chart(active, agg_func='count', values='CaseCode',
-                    names='HealthStatus', title='Active Cases Health Status'),
+    plot_pie_chart(active, agg_func='count', values='CaseCode',
+                    names='HealthStatus', title='Active Cases Health Status',
                     filename='ActivePie')
 
 
@@ -482,12 +487,11 @@ def plot_ci(ci_data):
                     filename=f"ConfirmedAgeGroup", title="Confirmed Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
-    plot_for_period(ci_data, pie_chart, 'ConfirmedPie', 
+    plot_for_period(ci_data, plot_pie_chart, 
                     lambda df, days: filter_latest(df, days, 'DateOnset'),
-                    write_chart,
                     agg_func='count',
                     values='CaseCode', names='HealthStatus',
-                    title='Confirmed Cases Health Status')
+                    title='Confirmed Cases Health Status', filename='ConfirmedPie')
     # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
