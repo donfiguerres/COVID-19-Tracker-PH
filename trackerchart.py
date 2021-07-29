@@ -57,19 +57,16 @@ def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
     return df
 
 
-def apply_async(pool: mp.Pool,
-                df: pd.DataFrame,
-                fn: typing.Callable,
-                filter: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
+def plot_for_period(df: pd.DataFrame,
+                chart: typing.Callable,
+                filename: str,
+                filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
+                write_chart: typing.Callable,
                 **kwargs):
-    """Execute the function for the total and for each period asyncronously."""
-    results =  [pool.apply_async(fn, (df,), kwargs)]
+    write_chart(chart(df, **kwargs), filename)
     for days in PERIOD_DAYS:
-        filtered = filter(df, days)
-        kwargs_passed = kwargs.copy()
-        kwargs_passed['period'] = days
-        results.append(pool.apply_async(fn, (filtered,), kwargs_passed))
-    return results
+        filtered = filter_df(df, days)
+        write_chart(chart(df, **kwargs), f"{filename}{days}days")
 
 
 def write_table(header, body, filename):
@@ -300,15 +297,10 @@ def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
     write_chart(fig, f"{filename}")
 
 
-def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
-                        filename=None, period=None):
-    if period:
-        filename = f"{filename}{period}days"
-    logging.info(f"Plotting {filename}")
+def pie_chart(data, agg_func=None, values=None, names=None, title=None):
     if agg_func:
         data = aggregate(data, names, agg_func)
-    fig = px.pie(data, values=values, names=names, title=title)
-    write_chart(fig, f"{filename}")
+    return px.pie(data, values=values, names=names, title=title)
 
 
 def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
@@ -433,14 +425,6 @@ def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
                 categoryarray=categoryarray)
 
 
-def plot_case_pie(data, values=None, names=None, title=None, filename=None):
-    plot_pie_chart(data, agg_func='count', values=values, names=names,
-                        title=title, filename=filename)
-    for days in PERIOD_DAYS:
-        plot_pie_chart(data, agg_func='count', values=values, names=names,
-            title=title, filename=f"{filename}{days}days")
-
-
 def plot_active_cases(ci_data):
     closed = None
     active = None
@@ -471,15 +455,18 @@ def plot_active_cases(ci_data):
                         title="Top 10 "+area,
                         title_period_suffix=" by Date of Onset",
                         color="HealthStatus", filter_top=10, order='total ascending')
+    # No need to filter these charts per period because the active cases are
+    # always at the present time.
     plot_case_horizontal(active, x='CaseCode', y='AgeGroup',
                     filename=f"ActiveAgeGroup", title="Active Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
-    plot_case_pie(active, values='CaseCode', names='HealthStatus',
-                        title='Active Cases Health Status', filename='ActivePie')
+    write_chart(pie_chart(active, agg_func='count', values='CaseCode',
+                    names='HealthStatus', title='Active Cases Health Status'),
+                    filename='ActivePie')
 
 
-def plot_ci(pool, ci_data):
+def plot_ci(ci_data):
     # confirmed cases
     plot_case_trend(ci_data, 'DateOnset',
             "Confirmed Cases by Date of Onset", "DateOnset",
@@ -492,12 +479,12 @@ def plot_ci(pool, ci_data):
                     filename=f"ConfirmedAgeGroup", title="Confirmed Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
-    results = apply_async(pool, ci_data, plot_case_pie,
+    plot_for_period(ci_data, pie_chart, 'ConfirmedPie', 
                     lambda df, days: filter_latest(df, days, 'DateOnset'),
+                    write_chart,
+                    agg_func='count',
                     values='CaseCode', names='HealthStatus',
-                    title='Confirmed Cases Health Status', filename='ConfirmedPie')
-    # active cases
-    plot_active_cases(ci_data)
+                    title='Confirmed Cases Health Status')
     # recovery
     recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
     plot_case_trend(recovered, 'DateRecover',
@@ -520,7 +507,6 @@ def plot_ci(pool, ci_data):
     plot_case_horizontal(died, x='CaseCode', y='AgeGroup',
                     filename=f"DeathAgeGroup", title="Death by Age Group",
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
-    return results
 
 
 def plot_summary(ci_data, test_data):
@@ -697,11 +683,12 @@ def plot(data_dir, rebuild=False):
         shutil.rmtree(CHART_OUTPUT)
         os.mkdir(CHART_OUTPUT)
     # else keep directory
-    plot_summary(ci_data, test_data)
     pool = mp.Pool(num_processes)
-    results = plot_ci(pool, ci_data)
-    plot_reporting_delay(ci_data)
-    plot_test(test_data)
+    results = [pool.apply_async(plot_summary, (ci_data, test_data)),
+        pool.apply_async(plot_active_cases, (ci_data,)),
+        pool.apply_async(plot_ci, (ci_data,)),
+        pool.apply_async(plot_reporting_delay, (ci_data,)),
+        pool.apply_async(plot_test, (test_data,))]
     # Must wait for all tasks to be complete.
     [result.wait() for result in results]
     pool.close()
