@@ -677,7 +677,7 @@ def prepare_data(data_dir, file_name, postprocess=None):
     return data
 
 
-def plot(data_dir, rebuild=False):
+def plot(data_dir: str, rebuild: bool = False):
     ci_data = prepare_data(data_dir, "Case Information.csv", calc_case_info_data)
     test_data = prepare_data(data_dir, "Testing Aggregates.csv", calc_testing_aggregates_data)
     if not os.path.exists(CHART_OUTPUT):
