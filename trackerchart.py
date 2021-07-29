@@ -63,10 +63,13 @@ def plot_for_period(df: pd.DataFrame,
                 filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
                 write_chart: typing.Callable,
                 **kwargs):
+    logging.info(f"Plotting {filename}")
     write_chart(chart(df, **kwargs), filename)
     for days in PERIOD_DAYS:
         filtered = filter_df(df, days)
-        write_chart(chart(df, **kwargs), f"{filename}{days}days")
+        period_filename = f"{filename}{days}days"
+        logging.info(f"Plotting {period_filename}")
+        write_chart(chart(df, **kwargs), period_filename)
 
 
 def write_table(header, body, filename):
