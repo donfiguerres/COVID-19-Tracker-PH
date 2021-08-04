@@ -116,6 +116,8 @@ def filter_latest(data, days, date_column=None, return_latest=True):
         return data[data.index < cutoff_date]
 
 
+
+
 def moving_average(data, column, days=7):
     return data[column].rolling(days).mean()
 
@@ -155,6 +157,11 @@ def agg_count_cumsum_by_date(data, cumsum, group, date):
 def aggregate(df, by, agg_fn='count', reset_index=None):
     """Aggregate the dataframe by the given aggregate method name."""
     return df.groupby(by).agg(agg_fn).reset_index(reset_index)
+
+
+def filter_top(data, by, criteria, num=10, agg_fn='count'):
+    top = data.groupby(by).agg(agg_fn)[criteria].nlargest(num).reset_index()[by]
+    return data[data[by].isin(top)]
 
 
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
@@ -420,8 +427,7 @@ def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
                             title_period_suffix="", color=None, filter_top=None,
                             order=None, categoryarray=None):
     if filter_top:
-        top = ci_data.groupby(y).count()[x].nlargest(filter_top).reset_index()[y]
-        ci_data = ci_data[ci_data[y].isin(top)]
+        ci_data = filter_top(ci_data, y, x)
     plot_horizontal_bar(ci_data, x=x, y=y, color=color, title=title,
                             filename=filename, order=order,
                             categoryarray=categoryarray)
