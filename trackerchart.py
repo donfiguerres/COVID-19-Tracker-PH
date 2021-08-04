@@ -57,26 +57,6 @@ def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
     return df
 
 
-def plot_for_period(df: pd.DataFrame,
-                plot: typing.Callable,
-                filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
-                write_chart: typing.Callable,
-                **kwargs):
-    """Execute the plot function for the overall data and for each PERIOD_DAYS.
-    The plot function must take a 'write_chart' keyword argument which is the
-    function that writes the chart to a file.
-    """
-    plot(df, **kwargs)
-    for days in PERIOD_DAYS:
-        filtered = filter_df(df, days)
-        kwargs_passed = kwargs.copy()
-        # Append the period in days at the end of the filename.
-        write_chart = kwargs_passed['write_chart']
-        kwargs_passed['write_chart'] = (lambda fig, filename :
-                                    write_chart(fig, f"{filename}{days}days"))
-        plot(df, **kwargs_passed)
-
-
 def write_table(header, body, filename):
     logging.info(f"Writing {filename}")
     table = "".join(f"<th>{cell}</th>" for cell in header)
@@ -94,6 +74,28 @@ def write_chart(fig, filename):
     fig.update_layout(margin=dict(l=5, r=5, b=50, t=70))
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
                         full_html=False)
+
+
+def plot_for_period(df: pd.DataFrame,
+                plot: typing.Callable,
+                filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
+                **kwargs):
+    """Execute the plot function for the overall data and for each PERIOD_DAYS.
+    The plot function must take a 'write_chart' keyword argument which is the
+    function that writes the chart to a file.
+    """
+    plot(df, **kwargs)
+    for days in PERIOD_DAYS:
+        filtered = filter_df(df, days)
+        kwargs_passed = kwargs.copy()
+        # Append the period in days at the end of the filename.
+        if 'write_chart' in kwargs_passed:
+            write_fn = kwargs_passed['write_chart']
+        else:
+            write_fn = write_chart
+        kwargs_passed['write_chart'] = (lambda fig, filename :
+                                    write_fn(fig, f"{filename}{days}days"))
+        plot(df, **kwargs_passed)
 
 
 def filter_latest(data, days, date_column=None, return_latest=True):
@@ -424,10 +426,10 @@ def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None
 
 
 def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
-                            title_period_suffix="", color=None, filter_top=None,
+                            title_period_suffix="", color=None, filter_num=None,
                             order=None, categoryarray=None):
-    if filter_top:
-        ci_data = filter_top(ci_data, y, x)
+    if filter_num:
+        ci_data = filter_top(ci_data, y, x, num=filter_num)
     plot_horizontal_bar(ci_data, x=x, y=y, color=color, title=title,
                             filename=filename, order=order,
                             categoryarray=categoryarray)
@@ -468,7 +470,7 @@ def plot_active_cases(ci_data):
         plot_case_horizontal(active, x='CaseCode', y=area, filename=f"TopActive{area}",
                         title="Top 10 "+area,
                         title_period_suffix=" by Date of Onset",
-                        color="HealthStatus", filter_top=10, order='total ascending')
+                        color="HealthStatus", filter_num=10, order='total ascending')
     # No need to filter these charts per period because the active cases are
     # always at the present time.
     plot_case_horizontal(active, x='CaseCode', y='AgeGroup',
@@ -488,7 +490,7 @@ def plot_ci(ci_data):
     for area in [CITY_MUN, REGION]:
         plot_case_horizontal(ci_data, x='CaseCode', y=area, filename=f"TopConfirmedCase{area}",
                     title="Top 10 "+area, title_period_suffix=" by Date of Onset",
-                    color="HealthStatus", filter_top=10, order='total ascending')
+                    color="HealthStatus", filter_num=10, order='total ascending')
     plot_case_horizontal(ci_data, x='CaseCode', y='AgeGroup',
                     filename=f"ConfirmedAgeGroup", title="Confirmed Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
@@ -505,7 +507,7 @@ def plot_ci(ci_data):
             colors=['Region', RECOVER_PROXY], vertical_marker=15)
     for area in [CITY_MUN, REGION]:
         plot_case_horizontal(recovered, x='CaseCode', y=area, filename=f"TopRecovery{area}",
-                    title="Top 10 "+area, filter_top=10, order='total ascending')
+                    title="Top 10 "+area, filter_num=10, order='total ascending')
     plot_case_horizontal(recovered, x='CaseCode', y='AgeGroup',
                     filename=f"RecoveryAgeGroup", title="Recovery by Age Group",
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
@@ -516,7 +518,7 @@ def plot_ci(ci_data):
             colors=['Region'])
     for area in [CITY_MUN, REGION]:
         plot_case_horizontal(died, x='CaseCode', y=area, filename=f"TopDeath{area}",
-                    title="Top 10 "+area, filter_top=10, order='total ascending')
+                    title="Top 10 "+area, filter_num=10, order='total ascending')
     plot_case_horizontal(died, x='CaseCode', y='AgeGroup',
                     filename=f"DeathAgeGroup", title="Death by Age Group",
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
@@ -703,7 +705,7 @@ def plot(data_dir: str, rebuild: bool = False):
         pool.apply_async(plot_reporting_delay, (ci_data,)),
         pool.apply_async(plot_test, (test_data,))]
     # Must wait for all tasks to be complete.
-    [result.wait() for result in results]
+    [result.get() for result in results]
     pool.close()
     pool.join()
 
