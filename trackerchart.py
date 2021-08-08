@@ -166,6 +166,14 @@ def filter_top(data, by, criteria, num=10, agg_fn='count'):
     return data[data[by].isin(top)]
 
 
+def filter_recovered(data):
+    return data[data.HealthStatus == 'RECOVERED']
+
+
+def filter_died(data):
+    return data[data.HealthStatus == 'DIED']
+
+
 def plot_histogram(data, xaxis, xaxis_title, suffix=""):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
@@ -482,46 +490,64 @@ def plot_active_cases(ci_data):
                     filename='ActivePie')
 
 
-def plot_ci(ci_data):
-    # confirmed cases
-    plot_case_trend(ci_data, 'DateOnset',
-            "Confirmed Cases by Date of Onset", "DateOnset",
-            colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY], vertical_marker=15)
+def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
+                area_file_name=None, area_color=None, 
+                age_group_file_name=None, age_group_color=None,
+                optional=None, health_status_filename=None, filter=None):
+    # Preprocessing can be done here in case we need the preprocessing to be
+    # included in an async function call.
+    if preprocess:
+        data = preprocess(data)
+    # trend
+    plot_case_trend(data, trend_col, title, trend_col,
+            colors=trend_colors, vertical_marker=14)
+    # top area
     for area in [CITY_MUN, REGION]:
-        plot_case_horizontal(ci_data, x='CaseCode', y=area, filename=f"TopConfirmedCase{area}",
-                    title="Top 10 "+area, title_period_suffix=" by Date of Onset",
-                    color="HealthStatus", filter_num=10, order='total ascending')
-    plot_case_horizontal(ci_data, x='CaseCode', y='AgeGroup',
-                    filename=f"ConfirmedAgeGroup", title="Confirmed Cases by Age Group",
-                    title_period_suffix=" by Date of Onset", color='HealthStatus',
-                    categoryarray=AGE_GROUP_CATEGORYARRAY)
-    plot_for_period(ci_data, plot_pie_chart, 
+        plot_case_horizontal(data, x='CaseCode', y=area,
+                    filename=f"{area_file_name}{area}", title=f"Top 10 {area}",
+                    color=area_color, filter_num=10, order='total ascending')
+    # by age group
+    plot_case_horizontal(data, x='CaseCode', y='AgeGroup',
+                    filename=age_group_file_name, title=f"{title} by Age Group",
+                    color=age_group_color, categoryarray=AGE_GROUP_CATEGORYARRAY)
+    # health status
+    if 'health_status' in optional:
+        plot_for_period(data, plot_pie_chart, 
                     lambda df, days: filter_latest(df, days, 'DateOnset'),
                     agg_func='count',
                     values='CaseCode', names='HealthStatus',
-                    title='Confirmed Cases Health Status', filename='ConfirmedPie')
+                    title=f"{title} Health Status",
+                    filename=health_status_filename)
+
+
+def filter_latest_by_onset(df, days):
+    """Need to be defined on top level for aysnc multiprocessing."""
+    return filter_latest(df, days, 'DateOnset')
+
+
+def plot_ci_async(pool, data):
+    return [
+    # confirmed cases
+    pool.apply_async(plot_cases, (data, 'Confirmed Cases',),
+                dict(trend_col='DateOnset',
+                trend_colors=[CASE_REP_TYPE, 'Region', ONSET_PROXY],
+                area_file_name='TopConfirmedCase', area_color='HealthStatus',
+                age_group_file_name='ConfirmedAgeGroup',
+                age_group_color='HealthStatus',
+                optional=['health_status'], health_status_filename='ConfirmedPie',
+                filter=filter_latest_by_onset)),
     # recovery
-    recovered = ci_data[ci_data.HealthStatus == 'RECOVERED']
-    plot_case_trend(recovered, 'DateRecover',
-            "Recovery", "DateRecover",
-            colors=['Region', RECOVER_PROXY], vertical_marker=15)
-    for area in [CITY_MUN, REGION]:
-        plot_case_horizontal(recovered, x='CaseCode', y=area, filename=f"TopRecovery{area}",
-                    title="Top 10 "+area, filter_num=10, order='total ascending')
-    plot_case_horizontal(recovered, x='CaseCode', y='AgeGroup',
-                    filename=f"RecoveryAgeGroup", title="Recovery by Age Group",
-                    categoryarray=AGE_GROUP_CATEGORYARRAY)
+    pool.apply_async(plot_cases, (data, 'Recovery',),
+                dict(preprocess=filter_recovered,
+                trend_col='DateRecover', trend_colors=['Region', RECOVER_PROXY],
+                area_file_name='TopRecovery',
+                age_group_file_name='RecoveryAgeGroup')),
     # death
-    died = ci_data[ci_data.HealthStatus == 'DIED']
-    plot_case_trend(died, 'DateDied',
-            "Death", "DateDied",
-            colors=['Region'])
-    for area in [CITY_MUN, REGION]:
-        plot_case_horizontal(died, x='CaseCode', y=area, filename=f"TopDeath{area}",
-                    title="Top 10 "+area, filter_num=10, order='total ascending')
-    plot_case_horizontal(died, x='CaseCode', y='AgeGroup',
-                    filename=f"DeathAgeGroup", title="Death by Age Group",
-                    categoryarray=AGE_GROUP_CATEGORYARRAY)
+    pool.apply_async(plot_cases, (data, 'Death',),
+                dict(preprocess=filter_died,
+                trend_col='DateDied', trend_colors=['Region'],
+                area_file_name='TopDeath', age_group_file_name='DeathAgeGroup'))
+    ]
 
 
 def plot_summary(ci_data, test_data):
@@ -701,11 +727,9 @@ def plot(data_dir: str, rebuild: bool = False):
     pool = mp.Pool(num_processes)
     results = [pool.apply_async(plot_summary, (ci_data, test_data)),
         pool.apply_async(plot_active_cases, (ci_data,)),
-        pool.apply_async(plot_ci, (ci_data,)),
         pool.apply_async(plot_reporting_delay, (ci_data,)),
-        pool.apply_async(plot_test, (test_data,))]
+        pool.apply_async(plot_test, (test_data,))] + plot_ci_async(pool, ci_data)
     # Must wait for all tasks to be complete.
     [result.get() for result in results]
     pool.close()
     pool.join()
-
