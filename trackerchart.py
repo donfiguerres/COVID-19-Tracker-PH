@@ -511,7 +511,7 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
                     filename=age_group_file_name, title=f"{title} by Age Group",
                     color=age_group_color, categoryarray=AGE_GROUP_CATEGORYARRAY)
     # health status
-    if 'health_status' in optional:
+    if optional and 'health_status' in optional:
         plot_for_period(data, plot_pie_chart, 
                     lambda df, days: filter_latest(df, days, 'DateOnset'),
                     agg_func='count',
