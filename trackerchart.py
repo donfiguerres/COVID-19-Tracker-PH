@@ -467,20 +467,23 @@ def plot_active_cases(ci_data):
     closed_agg['date'] = closed_agg[DATE_CLOSED]
     closed_agg = closed_agg.set_index('date')
     merged = ci_agg.merge(closed_agg, left_on=['date', REGION], right_on=['date', REGION])
+    # The active cases count is calculated by subtracting the number of closed
+    # cases (CaseCode_y) from the number of confirmed cases (CaseCode_x).
     merged['ActiveCount'] = merged['CaseCode_x'] - merged['CaseCode_y']
+    # Plot the trend after calculating the number of active cases.
     plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
                         filename="Active", color=REGION, vertical_marker=15)
     for days in PERIOD_DAYS:
         plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
                         filename=f"Active{days}days", color=REGION,
                         initial_range=days, vertical_marker=15)
+    # No need to filter these charts per period because the active cases are
+    # always at the present time.
     for area in [CITY_MUN, REGION]:
         plot_case_horizontal(active, x='CaseCode', y=area, filename=f"TopActive{area}",
                         title="Top 10 "+area,
                         title_period_suffix=" by Date of Onset",
                         color="HealthStatus", filter_num=10, order='total ascending')
-    # No need to filter these charts per period because the active cases are
-    # always at the present time.
     plot_case_horizontal(active, x='CaseCode', y='AgeGroup',
                     filename=f"ActiveAgeGroup", title="Active Cases by Age Group",
                     title_period_suffix=" by Date of Onset", color='HealthStatus',
