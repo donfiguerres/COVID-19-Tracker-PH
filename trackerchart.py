@@ -118,8 +118,6 @@ def filter_latest(data, days, date_column=None, return_latest=True):
         return data[data.index < cutoff_date]
 
 
-
-
 def moving_average(data, column, days=7):
     return data[column].rolling(days).mean()
 
@@ -472,7 +470,7 @@ def plot_active_cases(ci_data):
     merged['ActiveCount'] = merged['CaseCode_x'] - merged['CaseCode_y']
     # Plot the trend after calculating the number of active cases.
     plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
-                        filename="Active", color=REGION, vertical_marker=15)
+                        filename="Active", color=REGION, vertical_marker=14)
     for days in PERIOD_DAYS:
         plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
                         filename=f"Active{days}days", color=REGION,
@@ -480,13 +478,13 @@ def plot_active_cases(ci_data):
     # No need to filter these charts per period because the active cases are
     # always at the present time.
     for area in [CITY_MUN, REGION]:
-        plot_case_horizontal(active, x='CaseCode', y=area, filename=f"TopActive{area}",
+        filtered_active = filter_top(active, area, 'CaseCode')
+        plot_horizontal_bar(filtered_active, x='CaseCode', y=area, filename=f"TopActive{area}",
                         title="Top 10 "+area,
-                        title_period_suffix=" by Date of Onset",
-                        color="HealthStatus", filter_num=10, order='total ascending')
-    plot_case_horizontal(active, x='CaseCode', y='AgeGroup',
+                        color="HealthStatus", order='total ascending')
+    plot_horizontal_bar(active, x='CaseCode', y='AgeGroup',
                     filename=f"ActiveAgeGroup", title="Active Cases by Age Group",
-                    title_period_suffix=" by Date of Onset", color='HealthStatus',
+                    color='HealthStatus',
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
     plot_pie_chart(active, agg_func='count', values='CaseCode',
                     names='HealthStatus', title='Active Cases Health Status',
