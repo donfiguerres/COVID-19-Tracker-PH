@@ -408,22 +408,6 @@ def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None
                 initial_range=days, vertical_marker=vertical_marker)
 
 
-def plot_case_horizontal(ci_data, x=None, y=None, filename=None, title=None,
-                            title_period_suffix="", color=None, filter_num=None,
-                            order=None, categoryarray=None):
-    if filter_num:
-        ci_data = filter_top(ci_data, y, x, num=filter_num)
-    plot_horizontal_bar(ci_data, x=x, y=y, color=color, title=title,
-                            filename=filename, order=order,
-                            categoryarray=categoryarray)
-    for days in PERIOD_DAYS:
-        filtered_latest = filter_latest(ci_data, days, 'DateOnset')
-        plot_horizontal_bar(filtered_latest, x=x, y=y, color=color,
-                title=f"{title} - Last {days} days{title_period_suffix}",
-                filename=f"{filename}{days}days", order=order,
-                categoryarray=categoryarray)
-
-
 def plot_active_cases(ci_data):
     closed = None
     active = None
