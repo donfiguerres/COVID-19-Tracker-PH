@@ -172,7 +172,7 @@ def filter_died(data):
     return data[data.HealthStatus == 'DIED']
 
 
-def plot_histogram(data, xaxis, xaxis_title, suffix="", write_chart=write_chart):
+def plot_histogram(data, xaxis=None, xaxis_title=None, suffix="", write_chart=write_chart):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
     percentile_50 = desc['50%']
@@ -307,18 +307,6 @@ def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
     write_chart(fig, filename)
 
 
-def plot_reporting(ci_data, title_suffix="", filename_suffix=""):
-    plot_histogram(ci_data, 'SpecimenToRepConf',
-                        f"Specimen Collection to Reporting{title_suffix}",
-                        suffix=filename_suffix)
-    plot_histogram(ci_data, 'SpecimenToRelease',
-                        f"Specimen Collection to Result Release{title_suffix}",
-                        suffix=filename_suffix)
-    plot_histogram(ci_data, 'ReleaseToRepConf',
-                        f"Result Release to Reporting{title_suffix}",
-                        suffix=filename_suffix)
-
-
 def do_plot_test(test_data, x, columns, agg=None, filename_suffix="",
                     initial_range=None):
     for column in columns:
@@ -369,12 +357,19 @@ def plot_test_reports_comparison(ci_data, test_data,
     logging.debug(data_report_daily)
 
 
-def plot_reporting_delay(ci_data, days=None):
-    plot_reporting(ci_data)
-    for days in PERIOD_DAYS:
-        ci_data = filter_latest(ci_data, days, date_column='DateRepConf')
-        plot_reporting(ci_data, title_suffix=f" - Last {days} days",
-                        filename_suffix=f"{days}days")
+def plot_reporting(ci_data, days=None):
+    filter_by_repconf = lambda df, days : filter_latest(df, days,
+                                            date_column='DateRepConf')
+    to_plot = [
+        ['SpecimenToRepConf', "Specimen Collection to Reporting"],
+        ['SpecimenToRelease', "Specimen Collection To Result Release"],
+        ['ReleaseToRepConf', "Result Release To Reporting"]
+    ]
+    for col_title in to_plot:
+        column = col_title[0]
+        title = col_title[1]
+        plot_for_period(ci_data, plot_histogram, filter_by_repconf,
+                    xaxis=column, xaxis_title=title)
 
 
 def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
@@ -693,7 +688,7 @@ def plot(data_dir: str, rebuild: bool = False):
     pool = mp.Pool(num_processes)
     results = [pool.apply_async(plot_summary, (ci_data, test_data)),
         pool.apply_async(plot_active_cases, (ci_data,)),
-        pool.apply_async(plot_reporting_delay, (ci_data,)),
+        pool.apply_async(plot_reporting, (ci_data,)),
         pool.apply_async(plot_test, (test_data,))] + plot_ci_async(pool, ci_data)
     # Must wait for all tasks to be complete.
     [result.get() for result in results]
