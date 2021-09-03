@@ -172,7 +172,7 @@ def filter_died(data):
     return data[data.HealthStatus == 'DIED']
 
 
-def plot_histogram(data, xaxis, xaxis_title, suffix=""):
+def plot_histogram(data, xaxis, xaxis_title, suffix="", write_chart=write_chart):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
     percentile_50 = desc['50%']
@@ -304,7 +304,8 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
 
 
 def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
-        filename=None, color=None, order=None, categoryarray=None):
+        filename=None, color=None, order=None, categoryarray=None,
+        write_chart=write_chart):
     logging.info(f"Plotting {filename}")
     if color:
         agg = aggregate(data, [y, color], agg_func, color)
@@ -503,14 +504,18 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
     plot_case_trend(data, trend_col, title, trend_col,
             colors=trend_colors, vertical_marker=14)
     # top area
+    top_num = 10
     for area in [CITY_MUN, REGION]:
-        plot_case_horizontal(data, x='CaseCode', y=area,
-                    filename=f"{area_file_name}{area}", title=f"Top 10 {area}",
-                    color=area_color, filter_num=10, order='total ascending')
+        filtered_top = filter_top(data, area, 'CaseCode', num=top_num)
+        plot_for_period(filtered_top, plot_horizontal_bar, filter_latest_by_onset,
+                    x='CaseCode', y=area, filename=f"{area_file_name}{area}",
+                    title=f"Top {top_num} {area}", color=area_color,
+                    order='total ascending')
     # by age group
-    plot_case_horizontal(data, x='CaseCode', y='AgeGroup',
-                    filename=age_group_file_name, title=f"{title} by Age Group",
-                    color=age_group_color, categoryarray=AGE_GROUP_CATEGORYARRAY)
+    plot_for_period(data, plot_horizontal_bar, filter_latest_by_onset,
+                    x='CaseCode', y='AgeGroup', filename=age_group_file_name,
+                    title=f"{title} by Age Group", color=age_group_color,
+                    categoryarray=AGE_GROUP_CATEGORYARRAY)
     # health status
     if optional and 'health_status' in optional:
         plot_for_period(data, plot_pie_chart, 
