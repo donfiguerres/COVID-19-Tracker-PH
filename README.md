@@ -23,6 +23,12 @@ This serves as a supplementary tracker for the [COVID-19 Tracker](https://www.do
 ### Node.js
 * npm
 
+### Hardware
+Due to the amount of data that's available in the Data Drop, you will need
+around 10GB of RAM to run the update-tracker.py script. If you only have ~8GB
+of physical RAM, consider increasing your swap partition (if in Linux) or
+virtual memory (if in Windows).
+
 ## Overview
 The update-tracker.py script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
 and generates the charts used in the [COVID-19 Tracker PH](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
