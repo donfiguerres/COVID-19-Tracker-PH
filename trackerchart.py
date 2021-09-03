@@ -244,30 +244,6 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
             type="date"
         )
     )
-    fig.update_layout(
-        updatemenus = [
-            dict(
-                type='buttons',
-                direction='right',
-                bgcolor='darkgrey',
-                buttons=list([
-                    dict(
-                        args=[{'yaxis.type': 'linear'}],
-                        label='linear',
-                        method='relayout'
-                    ),
-                    dict(
-                        args=[{'yaxis.type': 'log'}],
-                        label='log',
-                        method='relayout'
-                    )
-                ]),
-                showactive=False,
-                x=0.5, xanchor='left',
-                y=1.1, yanchor='top'
-            )
-        ]
-    )
     for trace in overlays:
         fig.add_trace(trace)
     if vertical_marker:
