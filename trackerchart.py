@@ -376,18 +376,23 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
                         initial_range=None, vertical_marker=None,
                         write_chart=write_chart):
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}{MA_SUFFIX}'], name=MA_NAME)
-    plot = lambda agg_func, title, filename, color : (
-            plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
-            filename=filename, color=color, overlays=[ma_line],
-            initial_range=initial_range, vertical_marker=vertical_marker,
-            write_chart=write_chart))
     if colors:
+        plot = lambda agg_func, title, filename, color : (
+                plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
+                filename=filename, color=color, overlays=[ma_line],
+                initial_range=initial_range, vertical_marker=vertical_marker,
+                write_chart=write_chart))
         for color in colors:
             plot('count', title, f"{filename}{color}", color)
             plot('cumsum', f"{title} - Cumulative", f"{filename}Cumulative{color}", color)
     else:
-        plot('count', title, f"{filename}", color)
-        plot('cumsum', f"{title} - Cumulative", f"{filename}Cumulative", color)
+        plot = lambda agg_func, title, filename : (
+                plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
+                filename=filename, overlays=[ma_line],
+                initial_range=initial_range, vertical_marker=vertical_marker,
+                write_chart=write_chart))
+        plot('count', title, f"{filename}")
+        plot('cumsum', f"{title} - Cumulative", f"{filename}Cumulative")
 
 
 def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None):
