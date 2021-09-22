@@ -9,7 +9,7 @@ layout: tracker_default
 Daily confirmed cases with highlighted newly reported cases are shown in the chart below.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
+{% include tracker/charts/DateOnsetCaseRepType{{ page.period }}.html %}
 </div>
 
 <h2>Date Proxy</h2>
@@ -20,17 +20,17 @@ is applied in this tracker. However, in the absence of both the date of onset of
 illness and date of specimen collection, the date of reporting is used.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateOnset{{ page.period }}OnsetProxy.html %}
+{% include tracker/charts/DateOnsetOnsetProxy{{ page.period }}.html %}
 </div>
 
 <h2>Daily Confirmed Cases by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateOnset{{ page.period }}Region.html %}
+{% include tracker/charts/DateOnsetRegion{{ page.period }}.html %}
 </div>
 
 <h2>Cumulative Confirmed Cases by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateOnset{{ page.period }}CumulativeRegion.html %}
+{% include tracker/charts/DateOnsetCumulativeRegion{{ page.period }}.html %}
 </div>
 
 <h2>Top Region</h2>

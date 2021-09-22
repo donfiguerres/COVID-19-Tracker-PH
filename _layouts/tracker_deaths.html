@@ -6,12 +6,12 @@ layout: tracker_default
 
 <h2>Daily Death by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateDied{{ page.period }}Region.html %}
+{% include tracker/charts/DateDiedRegion{{ page.period }}.html %}
 </div>
 
 <h2>Cumulative Death by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateDied{{ page.period }}CumulativeRegion.html %}
+{% include tracker/charts/DateDiedCumulativeRegion{{ page.period }}.html %}
 </div>
 
 <h2>Top Region</h2>
