@@ -211,7 +211,7 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
 
 
 def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
-        filename=None, color=None, overlays=[], initial_range=None,
+        filename=None, color=None, overlays=[], range=None,
         vertical_marker=None, write_chart=write_chart):
     logging.info(f"Plotting {filename}")
     if x is None:
@@ -267,15 +267,15 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
                 )
             ]
         )
-    if initial_range:
-        if isinstance(initial_range, int):
+    if range:
+        if isinstance(range, int):
             if isinstance(x, str):
                 current_date = data[x].max()
             else:
                 current_date = data.index.max()
-            cutoff_date = current_date - pd.Timedelta(days=initial_range)
-            initial_range = [cutoff_date, current_date]
-        fig['layout']['xaxis'].update(range=initial_range)
+            cutoff_date = current_date - pd.Timedelta(days=range)
+            range = [cutoff_date, current_date]
+        fig['layout']['xaxis'].update(range=range)
     write_chart(fig, f"{filename}")
 
 
@@ -308,7 +308,7 @@ def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
 
 
 def do_plot_test(test_data, x, columns, agg=None, filename_suffix="",
-                    initial_range=None):
+                    range=None):
     for column in columns:
         title = column.replace("_", " ")
         if agg is not None:
@@ -319,12 +319,12 @@ def do_plot_test(test_data, x, columns, agg=None, filename_suffix="",
                         filename=f"{column}{filename_suffix}",
                         color='REGION', 
                         overlays=[ma_line],
-                        initial_range=initial_range)
+                        range=range)
         else:
             plot_trend_chart(test_data, agg_func='sum', x=x,
                     y=column, title=f"{column}",
                     filename=f"{column}{filename_suffix}", color='REGION',
-                    initial_range=initial_range)
+                    range=range)
 
 
 def plot_test(test_data):
@@ -339,7 +339,7 @@ def plot_test(test_data):
     do_plot_test(test_data, x, daily_columns, agg=daily_agg)
     for days in PERIOD_DAYS:
         do_plot_test(test_data, x, daily_columns, agg=daily_agg,
-                filename_suffix=f"{days}days", initial_range=days)
+                filename_suffix=f"{days}days", range=days)
     # cumulative
     cumulative_columns = ['cumulative_samples_tested',
                         'cumulative_unique_individuals',
@@ -347,7 +347,7 @@ def plot_test(test_data):
     do_plot_test(test_data, x, cumulative_columns)
     for days in PERIOD_DAYS:
         do_plot_test(test_data, x, cumulative_columns,
-                filename_suffix=f"{days}days", initial_range=days)
+                filename_suffix=f"{days}days", range=days)
 
 
 def plot_test_reports_comparison(ci_data, test_data,
@@ -373,14 +373,14 @@ def plot_reporting(ci_data, days=None):
 
 
 def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
-                        initial_range=None, vertical_marker=None,
+                        range=None, vertical_marker=None,
                         write_chart=write_chart):
     ma_line = go.Scatter(x=ci_agg.index, y=ci_agg[f'{x}{MA_SUFFIX}'], name=MA_NAME)
     if colors:
         plot = lambda agg_func, title, filename, color : (
                 plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
                 filename=filename, color=color, overlays=[ma_line],
-                initial_range=initial_range, vertical_marker=vertical_marker,
+                range=range, vertical_marker=vertical_marker,
                 write_chart=write_chart))
         for color in colors:
             plot('count', title, f"{filename}{color}", color)
@@ -389,7 +389,7 @@ def do_plot_case_trend(ci_data, ci_agg, x, y, title="", filename="", colors=[],
         plot = lambda agg_func, title, filename : (
                 plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
                 filename=filename, overlays=[ma_line],
-                initial_range=initial_range, vertical_marker=vertical_marker,
+                range=range, vertical_marker=vertical_marker,
                 write_chart=write_chart))
         plot('count', title, f"{filename}")
         plot('cumsum', f"{title} - Cumulative", f"{filename}Cumulative")
@@ -405,7 +405,7 @@ def plot_case_trend(ci_data, x, title, filename, colors=[], vertical_marker=None
         do_plot_case_trend(ci_data, agg, x, y,
                 title=title,
                 filename=f"{filename}{days}days", colors=colors,
-                initial_range=days, vertical_marker=vertical_marker)
+                range=days, vertical_marker=vertical_marker)
 
 
 def plot_active_cases(ci_data):
@@ -435,7 +435,7 @@ def plot_active_cases(ci_data):
     for days in PERIOD_DAYS:
         plot_trend_chart(merged, y='ActiveCount', title="Active Cases",
                         filename=f"Active{days}days", color=REGION,
-                        initial_range=days, vertical_marker=15)
+                        range=days, vertical_marker=15)
     # No need to filter these charts per period because the active cases are
     # always at the present time.
     for area in [CITY_MUN, REGION]:
