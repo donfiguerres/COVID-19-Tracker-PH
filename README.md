@@ -7,8 +7,8 @@ This serves as a supplementary tracker for the
 tracker are pulled from DOH's
 [data drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o).
 
-In its current form, this project is actuallya static report generator using the 
-DOH Data Drop as a data source.
+In its current form, this project is actually a static report generator using 
+the DOH Data Drop as a data source.
 
 **Disclaimer: I am not affiliated with the DOH or any government agency. This is my own personal project.**
 
