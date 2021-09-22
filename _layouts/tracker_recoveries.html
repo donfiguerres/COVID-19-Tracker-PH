@@ -12,17 +12,17 @@ lack of data, date proxies are used in this tracker. If the case does not have
 a date of recovery entry, the date of onset (or its proxy) + 14 days is used.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateRecover{{ page.period }}RecoverProxy.html %}
+{% include tracker/charts/DateRecoverRecoverProxy{{ page.period }}.html %}
 </div>
 
 <h2>Daily Recovery by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateRecover{{ page.period }}Region.html %}
+{% include tracker/charts/DateRecoverRegion{{ page.period }}.html %}
 </div>
 
 <h2>Cumulative Recovery by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateRecover{{ page.period }}CumulativeRegion.html %}
+{% include tracker/charts/DateRecoverCumulativeRegion{{ page.period }}.html %}
 </div>
 
 <h2>Top Region</h2>

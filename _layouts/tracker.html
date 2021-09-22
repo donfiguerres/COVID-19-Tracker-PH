@@ -13,7 +13,7 @@ Data within the last 15 days is not yet complete due to reporting delays.
 to see more on confirmed case statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateOnset{{ page.period }}CaseRepType.html %}
+{% include tracker/charts/DateOnsetCaseRepType{{ page.period }}.html %}
 </div>
 
 <h2>Active Cases</h2>
@@ -43,7 +43,7 @@ the weekly recovery tagging by DOH.
 to see more on recovery statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateRecover{{ page.period }}RecoverProxy.html %}
+{% include tracker/charts/DateRecoverRecoverProxy{{ page.period }}.html %}
 </div>
 
 <h2>Deaths</h2>
@@ -54,7 +54,7 @@ Daily deaths by region are shown in the chart below.
 to see more on death statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateDied{{ page.period }}Region.html %}
+{% include tracker/charts/DateDiedRegion{{ page.period }}.html %}
 </div>
 
 <h2>Testing</h2>
