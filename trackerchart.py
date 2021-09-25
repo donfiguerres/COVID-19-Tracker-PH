@@ -218,41 +218,20 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
     logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
-    dataplot = data
-    if agg_func:
-        if color:
-            if agg_func == 'cumsum':
-                # We're filling non-observed dates so that the chart won't have
-                # dates with no data.
-                agg = agg_count_cumsum_by_date(data, y, color, x)
-            else:
-                agg = aggregate(data, [x, color], agg_func, color)
-        else:
-            agg = aggregate(data, x, agg_func)
-        dataplot = agg
-    fig = px.bar(dataplot, y=y, color=color, barmode='stack', title=title)
-    ranges = [dict(count=days, label=f"{days}d",
-                    step="day", stepmode="backward") for days in PERIOD_DAYS]
-    ranges.append(dict(step="all"))
-    fig.update_layout(
-        xaxis=dict(
-            rangeselector=dict(
-                buttons=ranges,
-                bgcolor='darkgrey'
-            ),
-            rangeslider=dict(
-                visible=True
-            ),
-            type="date"
+    dataplot = data if not agg_func else (
+        aggregate(data, x, agg_func) if not color else (
+            # We're filling non-observed dates so that the chart won't have
+            # dates with no data
+            agg_count_cumsum_by_date(data, y, color, x) if agg_func == 'cumsum' else (
+                aggregate(data, [x, color], agg_func, color)
+            )
         )
     )
+    fig = px.bar(dataplot, y=y, color=color, barmode='stack', title=title)
     for trace in overlays:
         fig.add_trace(trace)
     if vertical_marker:
-        if agg_func:
-            max_date = data[x].max()
-        else:
-            max_date = data.index.max()
+        max_date = data[x].max() if agg_func else data.index.max()
         marker_date = max_date - pd.Timedelta(days=vertical_marker) 
         fig.update_layout(
             shapes=[
@@ -263,8 +242,7 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
             ],
             annotations=[
                 dict(
-                    x=marker_date, y=0.9,
-                    text=f"{vertical_marker} days",
+                    x=marker_date, y=0.9, text=f"{vertical_marker} days",
                     xref='x', yref='paper'
                 )
             ]
@@ -272,14 +250,24 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
     # NOTE: Unlike the other plot functions, this function already includes
     # writing the plots for each period in PERIOD_DAYS. This is to avoid the
     # reduntant recreation of figures when this type of plot is created.
-    # The trick is that we simply need to update the x-axis when plotting for
-    # period.
+    # Instead of filtering the data to include only the range we want, we're
+    # setting the the initial range selected to each period in PERIOD_DAYS.
+    ranges = [dict(count=days, label=f"{days}d",
+                    step="day", stepmode="backward") for days in PERIOD_DAYS]
+    ranges.append(dict(step="all"))
+    fig.update_layout(
+        xaxis=dict(
+            rangeselector=dict(buttons=ranges, bgcolor='darkgrey'),
+            rangeslider=dict(visible=True),
+            type="date"
+        )
+    )
     write_chart(fig, f"{filename}")
     for days in PERIOD_DAYS:
         current_date = data[x].max() if isinstance(x, str) else data.index.max()
         cutoff_date = current_date - pd.Timedelta(days=days)
-        date_range = [cutoff_date, current_date]
-        fig['layout']['xaxis'].update(range=date_range)
+        initial_range = [cutoff_date, current_date]
+        fig['layout']['xaxis'].update(range=initial_range)
         write_chart(fig, f"{filename}{days}days")
 
 
