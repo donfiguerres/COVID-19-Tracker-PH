@@ -145,13 +145,15 @@ def agg_count_cumsum_by_date(data, cumsum, group, date):
     day.
     """
     agg = data.groupby([group, date]).count()
+    # Create new index for filling empty days with 0
     unique_index = agg.index.unique(level=group)
     date_range = pd.DatetimeIndex(pd.date_range(start=data[date].min(),
                                     end=data[date].max(), freq='D'))
     new_index = pd.MultiIndex.from_product(iterables=[unique_index, date_range],
                                             names=[group, date])
     agg = agg.reindex(new_index, fill_value=0)
-    agg[cumsum] = agg.reindex().groupby(group).cumsum()
+    # Get the cumulative sum
+    agg[cumsum] = agg.reindex().groupby(group).cumsum()[cumsum]
     agg = agg.reset_index(group)
     return agg
 
