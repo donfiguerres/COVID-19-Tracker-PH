@@ -15,22 +15,41 @@ the DOH Data Drop as a data source.
 
 ## Requirements
 ### Python
-* google-api-client
-* google-auth-oauthlib
-* pypdf2
-* pandas
-* numpy
-* plotly
+Python can be installed from [python.org](https://www.python.org/) or from
+[anaconda](https://www.anaconda.com/). The anaconda distribution is recommended
+since we're using python for data processing.
 
-### Ruby
-* bundle
-* gems
-* jekyll
+#### Poetry
 
-### Node.js
-* npm
+```bash
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+```
 
-### Hardware
+You can see [https://python-poetry.org/](https://python-poetry.org/) for more info.
+
+See [pyproject.toml](./pyproject.toml) for the list of dependencies in this
+project.
+
+### Other Requirements
+
+Install the requirements to build the site.
+
+```bash
+# Jekyll dependencies
+sudo apt install gem
+sudo gem install bundler
+
+# Install gem dependencies
+bundle install
+bundle update
+
+# Install theme-specific npm dependencies
+sudo apt install npm
+sudo npm -g yarn
+yarn install --modules-folder ./_assets/yarn
+```
+
+### Hardware Requirements
 Due to the amount of data that's available in the Data Drop, you will need
 around 10GB of RAM to run the update-tracker.py script. If you only have ~8GB
 of physical RAM, consider increasing your swap partition (if in Linux) or
