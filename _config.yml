@@ -85,6 +85,8 @@ exclude:
   - testdata
   - token.pickle
   - client_secret.json
+  - pyproject.toml
+  - poetry.lock
 plugins:
   - jekyll-assets
   - jekyll-paginate
