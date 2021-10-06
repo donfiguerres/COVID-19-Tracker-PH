@@ -649,6 +649,7 @@ def plot(data_dir: str, rebuild: bool = False):
     start = timer()
     ci_data = prepare_data(data_dir, "Case Information.csv", calc_case_info_data)
     test_data = prepare_data(data_dir, "Testing Aggregates.csv", calc_testing_aggregates_data)
+    prep_end = timer()
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
     elif rebuild:
@@ -656,6 +657,7 @@ def plot(data_dir: str, rebuild: bool = False):
         os.mkdir(CHART_OUTPUT)
     # else keep directory
     pool = mp.Pool(num_processes)
+    plot_start = timer()
     results = [pool.apply_async(plot_summary, (ci_data, test_data)),
         pool.apply_async(plot_active_cases, (ci_data,)),
         pool.apply_async(plot_reporting, (ci_data,)),
@@ -665,4 +667,7 @@ def plot(data_dir: str, rebuild: bool = False):
     pool.close()
     pool.join()
     end = timer()
-    logging.info(f"Plot took {timedelta(seconds=end-start)}")
+    logging.info(f"Execution times")
+    logging.info(f"Data preparation: {timedelta(seconds=prep_end-start)}")
+    logging.info(f"Plot: {timedelta(seconds=end-plot_start)}")
+    logging.info(f"Total time: {timedelta(seconds=end-start)}")
