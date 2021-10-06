@@ -624,7 +624,7 @@ def calc_testing_aggregates_data(data):
     return data
 
 
-def prepare_data(data_dir, file_name, postprocess=None):
+def prepare_data(data_dir, file_name, apply=None):
     """Load data from  the given file name.
     This function will load from cache if the cache is older than the file. It
     also uses parallel processing to improve performance.
@@ -639,8 +639,8 @@ def prepare_data(data_dir, file_name, postprocess=None):
             return pd.read_pickle(cache)
         cache.unlink()
     data = pd.read_csv(file_path)
-    if postprocess:
-        data = apply_parallel(data, postprocess)
+    if apply:
+        data = apply_parallel(data, apply)
     data.to_pickle(cache)
     return data
 
