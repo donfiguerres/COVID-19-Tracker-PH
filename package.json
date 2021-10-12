@@ -4,8 +4,7 @@
     "setup": "bin/setup",
     "serve": "bundle exec jekyll serve --drafts",
     "build": "bundle exec jekyll build",
-    "deploy-web": "python deploy.py --web",
-    "deploy-gh-pages": "python deploy.py --gh-pages"
+    "deploy": "gh-pages -d _site"
   },
   "dependencies": {
     "jquery": "^3.2.1",

@@ -43,9 +43,9 @@ sudo gem install bundler
 bundle install
 bundle update
 
-# Install theme-specific npm dependencies
+# Install npm dependencies
 sudo apt install npm
-sudo npm -g yarn
+sudo npm -g yarn gh-pages
 yarn install --modules-folder ./_assets/yarn
 ```
 
