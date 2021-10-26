@@ -103,7 +103,7 @@ def filter_date_range(data, start=None, end=None, date_column=None):
     """Return only the rows within the specified date range."""
     if date_column:
         if start and end:
-            return data[data[date_column] >= start & data[date_column] <= end]
+            return data[(data[date_column] >= start) & (data[date_column] <= end)]
         elif start:
             return data[data[date_column] >= start]
         elif end:
@@ -112,7 +112,7 @@ def filter_date_range(data, start=None, end=None, date_column=None):
             raise ValueError("Either start or end should not be None")
     else:
         if start and end:
-            return data[data.index >= start & data.index <= end]
+            return data[(data.index >= start) & (data.index <= end)]
         elif start:
             return data[data.index >= start]
         elif end:
