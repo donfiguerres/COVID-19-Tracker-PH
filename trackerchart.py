@@ -272,7 +272,7 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
         )
     # NOTE: Unlike the other plot functions, this function already includes
     # writing the plots for each period in PERIOD_DAYS. This is to avoid the
-    # reduntant recreation of figures when this type of plot is created.
+    # redundant recreation of figures when this type of plot is created.
     # Instead of filtering the data to include only the range we want, we're
     # setting the the initial range selected to each period in PERIOD_DAYS.
     ranges = [dict(count=days, label=f"{days}d",
@@ -472,7 +472,7 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
 
 
 def filter_latest_by_onset(df, days):
-    """Need to be defined on top level for aysnc multiprocessing."""
+    """Need to be defined on top level for async multiprocessing."""
     return filter_latest(df, days, 'DateOnset')
 
 
@@ -650,9 +650,9 @@ def calc_testing_aggregates_data(data):
                     if row['daily_output_unique_individuals']
                     else 0,
                 axis=1)
-    logging.info("Reading test facilty data")
-    test_facilty = pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
-    data = pd.merge(data, test_facilty, on='facility_name', how='left')
+    logging.info("Reading test facility data")
+    test_facility = pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
+    data = pd.merge(data, test_facility, on='facility_name', how='left')
     data['REGION'].fillna('Unknown', inplace=True)
     logging.debug(data)
     return data
