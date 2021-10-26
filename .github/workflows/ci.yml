@@ -24,6 +24,6 @@ jobs:
           poetry install
         shell: bash
       - name: Run pylint
-        run: pylint *.py
+        run: pylint --fail-under=6 *.py
       - name: Run tests with pytest
         run: pytest tests
