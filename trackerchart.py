@@ -1,8 +1,6 @@
 """ Plots the tracker charts. """
 
 import os
-import sys
-import traceback
 from datetime import datetime
 from datetime import timedelta
 import logging
@@ -24,7 +22,7 @@ CHART_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "tracker", "charts")
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 MA_SUFFIX = '_MA7'
-MA_NAME = "7-day MA" 
+MA_NAME = "7-day MA"
 REGION = 'Region'
 CITY_MUN = 'CityMunRes'
 CASE_REP_TYPE = 'CaseRepType'
@@ -255,7 +253,7 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
         fig.add_trace(trace)
     if vertical_marker:
         max_date = data[x].max() if agg_func else data.index.max()
-        marker_date = max_date - pd.Timedelta(days=vertical_marker) 
+        marker_date = max_date - pd.Timedelta(days=vertical_marker)
         fig.update_layout(
             shapes=[
                 dict(
@@ -337,7 +335,7 @@ def plot_test(test_data):
         plot_trend_chart(test_data, agg_func='sum', x=x,
                         y=column, title=f"{column}",
                         filename=f"{column}",
-                        color='REGION', 
+                        color='REGION',
                         overlays=[ma_line])
     # cumulative
     cumulative_columns = ['cumulative_samples_tested',
@@ -346,7 +344,7 @@ def plot_test(test_data):
     for column in cumulative_columns:
         plot_trend_chart(test_data, agg_func='sum', x=x,
                     y=column, title=f"{column}",
-                    filename=f"{column}", color='REGION') 
+                    filename=f"{column}", color='REGION')
 
 
 def plot_test_reports_comparison(ci_data, test_data,
@@ -438,7 +436,7 @@ def plot_active_cases(ci_data):
 
 
 def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
-                area_file_name=None, area_color=None, 
+                area_file_name=None, area_color=None,
                 age_group_file_name=None, age_group_color=None,
                 optional=None, health_status_filename=None, filter=None):
     # Preprocessing can be done here in case we need the preprocessing to be
@@ -463,7 +461,7 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
                     categoryarray=AGE_GROUP_CATEGORYARRAY)
     # health status
     if optional and 'health_status' in optional:
-        plot_for_period(data, plot_pie_chart, 
+        plot_for_period(data, plot_pie_chart,
                     lambda df, days: filter_latest(df, days, 'DateOnset'),
                     agg_func='count',
                     values='CaseCode', names='HealthStatus',
@@ -537,7 +535,7 @@ def plot_summary(ci_data, test_data):
     test_agg = test_data.groupby('report_date').sum()
     positive_doubling_time = doubling_time(test_agg['cumulative_positive_individuals'])[-1]
     # create table
-    header = ['Statistic', 'Cumulative', 'Latest Report'] 
+    header = ['Statistic', 'Cumulative', 'Latest Report']
     body = [
         ["Last Case Reported", "-", last_case_reported],
         ["Confirmed Cases", total_confirmed, new_confirmed],
@@ -574,17 +572,17 @@ def calc_case_info_data(data):
     # Some incomplete entries have no dates so we need to check first before
     # making a computation.
     logging.info("Calculating specimen to reporting data")
-    data['SpecimenToRepConf'] = data.apply(lambda row : 
+    data['SpecimenToRepConf'] = data.apply(lambda row :
                 (row['DateRepConf'] - row['DateSpecimen']).days
                 if row['DateRepConf'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateRepConf']
                 else np.NaN, axis=1)
-    data['SpecimenToRelease'] = data.apply(lambda row : 
+    data['SpecimenToRelease'] = data.apply(lambda row :
                 (row['DateResultRelease'] - row['DateSpecimen']).days
                 if row['DateResultRelease'] and row['DateSpecimen']
                     and row['DateSpecimen'] < row['DateResultRelease']
                 else np.NaN, axis=1)
-    data['ReleaseToRepConf'] = data.apply(lambda row : 
+    data['ReleaseToRepConf'] = data.apply(lambda row :
                 (row['DateRepConf'] - row['DateResultRelease']).days
                 if row['DateRepConf'] and row['DateResultRelease']
                     and row['DateResultRelease'] < row['DateRepConf']
