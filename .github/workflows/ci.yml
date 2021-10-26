@@ -22,6 +22,7 @@ jobs:
           pip install poetry==1.1.11
           pip install pylint
           poetry add
+        shell: bash
       - name: Run pylint
         run: pylint *.py
       - name: Run tests with pytest
