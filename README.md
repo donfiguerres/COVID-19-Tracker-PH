@@ -1,5 +1,6 @@
 # COVID-19 Tracker Philippines
 
+![example workflow](https://github.com/donfiguerres/COVID-19-Tracker-PH/actions/workflows/ci.yml/badge.svg)
 
 This serves as a supplementary tracker for the
 [COVID-19 Tracker](https://www.doh.gov.ph/covid19tracker) maintained by the
