@@ -12,7 +12,6 @@ import multiprocessing as mp
 import typing
 from timeit import default_timer as timer
 
-
 import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
@@ -98,6 +97,28 @@ def plot_for_period(df: pd.DataFrame,
         kwargs_passed['write_chart'] = (lambda fig, filename :
                                     write_fn(fig, f"{filename}{days}days"))
         plot(df, **kwargs_passed)
+
+
+def filter_date_range(data, start=None, end=None, date_column=None):
+    """Return only the rows within the specified date range."""
+    if date_column:
+        if start and end:
+            return data[data[date_column] >= start & data[date_column] <= end]
+        elif start:
+            return data[data[date_column] >= start]
+        elif end:
+            return data[data[date_column] <= end]
+        else:
+            raise ValueError("Either start or end should not be None")
+    else:
+        if start and end:
+            return data[data.index >= start & data.index <= end]
+        elif start:
+            return data[data.index >= start]
+        elif end:
+            return data[data.index <= end]
+        else:
+            raise ValueError("Either start or end should not be None")
 
 
 def filter_latest(data, days, date_column=None, return_latest=True):
@@ -610,21 +631,34 @@ def calc_case_info_data(data):
 
 def calc_testing_aggregates_data(data):
     """Calculate data needed for the plots.""" 
-    data['report_date'] = pd.to_datetime(data['report_date'])
-    data['pct_positive_daily'] = data.apply(lambda row : 
+    data['report_date'] = pd.to_datetime(data['report_date'], errors='coerce')
+    # Filter out invalid data. Data from previous uploads included empty data
+    # with invalid dates some are dating back to around 1900's.
+    # To get around this we filter-out data that are earlier than April 2020
+    # which is when the Philippines started testing.
+    data = filter_date_range(data, start=pd.to_datetime("2020-04-01"),
+                                date_column='report_date')
+    # Make a new copy of the slice and use this moving forward.
+    # This is to avoid the warning SettingWithCopyWarning and be explicit that
+    # wo do not need the original data anymore.
+    data = data.copy()
+    if data.shape[0] == 0:
+        data['pct_positive_daily'] = ""
+    else:
+        data['pct_positive_daily'] = data.apply(lambda row : 
                 row['daily_output_positive_individuals']/row['daily_output_unique_individuals']
                     if row['daily_output_unique_individuals']
                     else 0,
                 axis=1)
     logging.info("Reading test facilty data")
-    test_facilty =  pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
+    test_facilty = pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
     data = pd.merge(data, test_facilty, on='facility_name', how='left')
     data['REGION'].fillna('Unknown', inplace=True)
     logging.debug(data)
     return data
 
 
-def prepare_data(data_dir, file_name, apply=None):
+def prepare_data(data_dir, file_name, apply=None, rebuild=False):
     """Load data from  the given file name.
     This function will load from cache if the cache is older than the file. It
     also uses parallel processing to improve performance.
@@ -635,7 +669,7 @@ def prepare_data(data_dir, file_name, apply=None):
     # Get only the first matching file.
     file_path = list(pathlib.Path(full_data_dir).glob(f"*{file_name}"))[0]
     if cache.exists():
-        if cache.stat().st_mtime > file_path.stat().st_mtime:
+        if (cache.stat().st_mtime > file_path.stat().st_mtime) and (not rebuild):
             return pd.read_pickle(cache)
         cache.unlink()
     data = pd.read_csv(file_path)
@@ -647,8 +681,10 @@ def prepare_data(data_dir, file_name, apply=None):
 
 def plot(data_dir: str, rebuild: bool = False):
     start = timer()
-    ci_data = prepare_data(data_dir, "Case Information.csv", calc_case_info_data)
-    test_data = prepare_data(data_dir, "Testing Aggregates.csv", calc_testing_aggregates_data)
+    ci_data = prepare_data(data_dir, "Case Information.csv",
+                            apply=calc_case_info_data, rebuild=rebuild)
+    test_data = prepare_data(data_dir, "Testing Aggregates.csv",
+                            apply=calc_testing_aggregates_data, rebuild=rebuild)
     prep_end = timer()
     if not os.path.exists(CHART_OUTPUT):
         os.mkdir(CHART_OUTPUT)
