@@ -23,4 +23,23 @@ def test_filter_date_range():
                                     end=pd.to_datetime("2021-10-12"),
                                     date_column='date')
     assert 'apple' not in filtered.values
+    assert 'banana' in filtered.values
+    assert 'calamansi' in filtered.values
+    assert 'durian' in filtered.values
+    assert 'eggplant' not in filtered.values
+    # start only
+    filtered = tc.filter_date_range(df, start=pd.to_datetime("2021-10-10"),
+                                    date_column='date')
+    assert 'apple' not in filtered.values
+    assert 'banana' in filtered.values
+    assert 'calamansi' in filtered.values
+    assert 'durian' in filtered.values
+    assert 'eggplant' in filtered.values
+    # end only
+    filtered = tc.filter_date_range(df, end=pd.to_datetime("2021-10-12"),
+                                    date_column='date')
+    assert 'apple' in filtered.values
+    assert 'banana' in filtered.values
+    assert 'calamansi' in filtered.values
+    assert 'durian' in filtered.values
     assert 'eggplant' not in filtered.values
