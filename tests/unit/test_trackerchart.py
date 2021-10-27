@@ -43,3 +43,36 @@ def test_filter_date_range():
     assert 'calamansi' in filtered.values
     assert 'durian' in filtered.values
     assert 'eggplant' not in filtered.values
+    # neither start nor end
+    with pytest.raises(ValueError):
+        filtered = tc.filter_date_range(df, date_column='date')
+    # without date column arg
+    df_indexed = df.set_index('date')
+    # both start and end
+    filtered = tc.filter_date_range(df_indexed,
+                                    start=pd.to_datetime("2021-10-10"),
+                                    end=pd.to_datetime("2021-10-12"))
+    assert 'apple' not in filtered.values
+    assert 'banana' in filtered.values
+    assert 'calamansi' in filtered.values
+    assert 'durian' in filtered.values
+    assert 'eggplant' not in filtered.values
+    # start only
+    filtered = tc.filter_date_range(df_indexed,
+                                    start=pd.to_datetime("2021-10-10"))
+    assert 'apple' not in filtered.values
+    assert 'banana' in filtered.values
+    assert 'calamansi' in filtered.values
+    assert 'durian' in filtered.values
+    assert 'eggplant' in filtered.values
+    # end only
+    filtered = tc.filter_date_range(df_indexed,
+                                    end=pd.to_datetime("2021-10-12"))
+    assert 'apple' in filtered.values
+    assert 'banana' in filtered.values
+    assert 'calamansi' in filtered.values
+    assert 'durian' in filtered.values
+    assert 'eggplant' not in filtered.values
+    # neither start nor end
+    with pytest.raises(ValueError):
+        filtered = tc.filter_date_range(df_indexed)
