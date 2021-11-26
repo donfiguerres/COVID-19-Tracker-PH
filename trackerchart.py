@@ -130,13 +130,13 @@ def filter_latest(data, days, date_column=None, return_latest=True):
         logging.debug(f"Filtering {date_column} cutoff {cutoff_date}.")
         if return_latest:
             return data[data[date_column] > cutoff_date]
-        return data[data[date_column] < cutoff_date]
+        return data[data[date_column] <= cutoff_date]
     else:
         cutoff_date = data.index.max()- pd.Timedelta(days=days)
         logging.debug(f"Filtering index cutoff {cutoff_date}.")
         if return_latest:
             return data[data.index > cutoff_date]
-        return data[data.index < cutoff_date]
+        return data[data.index <= cutoff_date]
 
 
 def moving_average(data, column, days=7):
