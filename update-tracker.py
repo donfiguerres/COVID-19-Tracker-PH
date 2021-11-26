@@ -11,6 +11,9 @@ import datadrop
 import trackerchart
 
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-download", action="store_true",
@@ -42,7 +45,7 @@ def main():
             datadrop.download(folder_id=args.folder_id)
         else:
             datadrop.download()
-    trackerchart.plot(args.data_dir, rebuild=args.rebuild)
+    trackerchart.plot(SCRIPT_DIR, args.data_dir, rebuild=args.rebuild)
     return 0
 
 
