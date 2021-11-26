@@ -656,32 +656,41 @@ def calc_testing_aggregates_data(data):
     return data
 
 
-def prepare_data(data_dir, file_name, apply=None, rebuild=False):
+def cache_needs_refresh(cache, file_paths):
+    if cache.exists():
+        for file_path in file_paths:
+            if (cache.stat().st_mtime > file_path.stat().st_mtime):
+                return True
+        return False
+    return True
+
+
+def prepare_data(data_dir, file_pattern, apply=None, rebuild=False,
+                read_method=pd.read_csv):
     """Load data from  the given file name.
     This function will load from cache if the cache is older than the file. It
     also uses parallel processing to improve performance.
     """
-    logging.info(f"Reading {file_name}")
-    full_data_dir = f"{SCRIPT_DIR}/{data_dir}"
-    cache = pathlib.Path(f"{full_data_dir}/{file_name}.pkl")
-    # Get only the first matching file.
-    file_path = list(pathlib.Path(full_data_dir).glob(f"*{file_name}"))[0]
-    if cache.exists():
-        if (cache.stat().st_mtime > file_path.stat().st_mtime) and (not rebuild):
-            return pd.read_pickle(cache)
-        cache.unlink()
-    data = pd.read_csv(file_path)
+    logging.info(f"Reading {file_pattern}")
+    cache = pathlib.Path(f"{data_dir}/{file_pattern}.pkl")
+    matches = list(pathlib.Path(data_dir).glob(f"{file_pattern}"))
+    if not (cache_needs_refresh(cache, matches) or rebuild):
+        return pd.read_pickle(cache)
+    cache.unlink(missing_ok=True)
+    df_list = map(read_method, matches)
+    data = pd.concat(df_list)
     if apply:
         data = apply_parallel(data, apply)
     data.to_pickle(cache)
     return data
 
 
-def plot(data_dir: str, rebuild: bool = False):
+def plot(script_dir: str, data_dir: str, rebuild: bool = False):
     start = timer()
-    ci_data = prepare_data(data_dir, "Case Information.csv",
+    full_data_dir = f"{script_dir}/{data_dir}"
+    ci_data = prepare_data(full_data_dir, "*Case Information*.csv",
                             apply=calc_case_info_data, rebuild=rebuild)
-    test_data = prepare_data(data_dir, "Testing Aggregates.csv",
+    test_data = prepare_data(full_data_dir, "*Testing Aggregates*.csv",
                             apply=calc_testing_aggregates_data, rebuild=rebuild)
     prep_end = timer()
     if not os.path.exists(CHART_OUTPUT):
@@ -701,7 +710,7 @@ def plot(data_dir: str, rebuild: bool = False):
     pool.close()
     pool.join()
     end = timer()
-    logging.info(f"Execution times")
+    logging.info(f"Execution times for trackerchart")
     logging.info(f"Data preparation: {timedelta(seconds=prep_end-start)}")
     logging.info(f"Plot: {timedelta(seconds=end-plot_start)}")
     logging.info(f"Total time: {timedelta(seconds=end-start)}")
