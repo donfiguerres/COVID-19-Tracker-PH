@@ -121,8 +121,6 @@ can use the --folder-id option of the script.
 * Migrate to Hugo.
 
 ### Others
-* Refactor to use functional programming principles to make it more readable.
-* Modify gh-pages commit script to fit into the current setup.
 * git repo cleanup
 * Faster loading time
 
