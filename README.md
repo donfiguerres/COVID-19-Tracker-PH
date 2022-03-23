@@ -28,6 +28,12 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 
 You can see [https://python-poetry.org/](https://python-poetry.org/) for more info.
 
+To install the Python dependencies using Poetry, run the command below.
+
+```bash
+poetry install
+```
+
 See [pyproject.toml](./pyproject.toml) for the list of dependencies in this
 project.
 
