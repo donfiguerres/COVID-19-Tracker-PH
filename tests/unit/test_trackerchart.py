@@ -1,5 +1,8 @@
 """Unit tests for the trackerchart module."""
 
+import os
+import pathlib
+
 import pandas as pd
 import pytest
 
@@ -121,3 +124,25 @@ def test_filter_latest():
     assert 'calamansi' not in filtered.values
     assert 'durian' not in filtered.values
     assert 'eggplant' not in filtered.values
+
+
+@pytest.mark.parametrize("cache_mtime, path_mtime, expected", 
+                        [
+                            (10, 15, True),
+                            (15, 10, False)
+                        ])
+def test_cache_needs_refresh_1_path(mocker, cache_mtime, path_mtime, expected):
+    cache = mocker.MagicMock(pathlib.Path)
+    cache_stat = mocker.MagicMock(os.stat_result)
+    cache_stat.st_mtime = cache_mtime
+    cache.stat.return_value = cache_stat
+
+    path = mocker.MagicMock(pathlib.Path)
+    path_stat = mocker.MagicMock(os.stat_result)
+    path_stat.st_mtime = path_mtime
+    path.stat.return_value = path_stat
+    paths = [path]
+
+    result = tc.cache_needs_refresh(cache, paths)
+    assert result == expected
+    
