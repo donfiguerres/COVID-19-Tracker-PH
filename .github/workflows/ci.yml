@@ -22,6 +22,10 @@ jobs:
           export PATH="$HOME/.poetry/bin:$PATH"
           poetry install
       - name: Run pylint
-        run: poetry run pylint --fail-under=6 *.py
+        run: |
+          export PATH="$HOME/.poetry/bin:$PATH
+          poetry run pylint --fail-under=6 *.py
       - name: Run tests
-        run: poetry run pytest tests
+        run: |
+          export PATH="$HOME/.poetry/bin:$PATH
+          poetry run pytest tests
