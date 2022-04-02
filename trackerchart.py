@@ -423,7 +423,8 @@ def plot_active_cases(ci_data):
     # always at the present time.
     for area in [CITY_MUN, REGION]:
         filtered_active = filter_top(active, area, 'CaseCode')
-        plot_horizontal_bar(filtered_active, x='CaseCode', y=area, filename=f"TopActive{area}",
+        plot_horizontal_bar(filtered_active, x='CaseCode', y=area,
+                        filename=f"TopActive{area}",
                         title="Top 10 "+area,
                         color="HealthStatus", order='total ascending')
     plot_horizontal_bar(active, x='CaseCode', y='AgeGroup',
@@ -602,7 +603,9 @@ def calc_case_info_data(data):
                 ), axis=1)
     data['DateRecover'] = data.apply(lambda row :
                 row['DateRecover'] if row[RECOVER_PROXY] == 'No Proxy' else (
-                    row['DateOnset'] + timedelta(days=14) if row['DateOnset'] + timedelta(days=14) < max_date_repconf else max_date_repconf
+                    row['DateOnset'] + timedelta(days=14)
+                        if row['DateOnset'] + timedelta(days=14) < max_date_repconf
+                        else max_date_repconf
                 ) , axis=1)
     # Add column for easily identifying newly reported cases.
     logging.info("Setting case report type")
@@ -628,7 +631,7 @@ def calc_case_info_data(data):
 
 
 def calc_testing_aggregates_data(data):
-    """Calculate data needed for the plots.""" 
+    """Calculate data needed for the plots."""
     data['report_date'] = pd.to_datetime(data['report_date'], errors='coerce')
     # Filter out invalid data. Data from previous uploads included empty data
     # with invalid dates some are dating back to around 1900's.
@@ -643,7 +646,7 @@ def calc_testing_aggregates_data(data):
     if data.shape[0] == 0:
         data['pct_positive_daily'] = ""
     else:
-        data['pct_positive_daily'] = data.apply(lambda row : 
+        data['pct_positive_daily'] = data.apply(lambda row :
                 row['daily_output_positive_individuals']/row['daily_output_unique_individuals']
                     if row['daily_output_unique_individuals']
                     else 0,
@@ -659,7 +662,7 @@ def calc_testing_aggregates_data(data):
 def cache_needs_refresh(cache, file_paths):
     if cache.exists():
         for file_path in file_paths:
-            if (cache.stat().st_mtime < file_path.stat().st_mtime):
+            if cache.stat().st_mtime < file_path.stat().st_mtime:
                 return True
         return False
     return True
