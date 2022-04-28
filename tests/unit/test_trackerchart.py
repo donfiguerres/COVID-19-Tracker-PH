@@ -133,6 +133,7 @@ def test_filter_latest():
                         ])
 def test_cache_needs_refresh_1_path(mocker, cache_mtime, path_mtime, expected):
     cache = mocker.MagicMock(pathlib.Path)
+    cache.exists.return_value = True
     cache_stat = mocker.MagicMock(os.stat_result)
     cache_stat.st_mtime = cache_mtime
     cache.stat.return_value = cache_stat
@@ -144,5 +145,44 @@ def test_cache_needs_refresh_1_path(mocker, cache_mtime, path_mtime, expected):
     paths = [path]
 
     result = tc.cache_needs_refresh(cache, paths)
-    assert result == expected
-    
+    assert expected == result
+
+
+@pytest.mark.parametrize("cache_mtime, path_mtimes, expected", 
+                        [
+                            (10, (15, 10), True),
+                            (10, (10, 14), True),
+                            (10, (15, 14), True),
+                            (15, (10, 10), False),
+                        ])
+def test_cache_needs_refresh_multiple_path(mocker, cache_mtime, path_mtimes, expected):
+    cache = mocker.MagicMock(pathlib.Path)
+    cache.exists.return_value = True
+    cache_stat = mocker.MagicMock(os.stat_result)
+    cache_stat.st_mtime = cache_mtime
+    cache.stat.return_value = cache_stat
+
+    paths = list()
+    for path_mtime in path_mtimes:
+        path = mocker.MagicMock(pathlib.Path)
+        path_stat = mocker.MagicMock(os.stat_result)
+        path_stat.st_mtime = path_mtime
+        path.stat.return_value = path_stat
+        paths.append(path)
+
+    result = tc.cache_needs_refresh(cache, paths)
+    assert expected == result
+
+
+def test_cache_needs_refresh_no_cache(mocker):
+    cache = mocker.MagicMock(pathlib.Path)
+    cache.exists.return_value = False
+
+    path = mocker.MagicMock(pathlib.Path)
+    path_stat = mocker.MagicMock(os.stat_result)
+    path_stat.st_mtime = 10
+    path.stat.return_value = path_stat
+    paths = [path]
+
+    result = tc.cache_needs_refresh(cache, paths)
+    assert True == result
