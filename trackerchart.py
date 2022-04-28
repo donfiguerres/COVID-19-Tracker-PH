@@ -10,6 +10,7 @@ ma: moving average
 mun: municipality
 """
 
+
 import os
 from datetime import datetime
 from datetime import timedelta
