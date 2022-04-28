@@ -1,4 +1,14 @@
-""" Plots the tracker charts. """
+"""
+Plots the tracker charts.
+
+Acronyms and abbreviations used in this module
+agg: aggregate
+ci: case information
+cumsum: cumulative sum
+df: dataframe
+ma: moving average
+mun: municipality
+"""
 
 import os
 from datetime import datetime
