@@ -671,12 +671,9 @@ def calc_testing_aggregates_data(data):
 
 
 def cache_needs_refresh(cache, file_paths):
-    if cache.exists():
-        for file_path in file_paths:
-            if cache.stat().st_mtime < file_path.stat().st_mtime:
-                return True
-        return False
-    return True
+    return True if not cache.exists() else any(
+                    file_path.stat().st_mtime > cache.stat().st_mtime
+                        for file_path in file_paths)
 
 
 def prepare_data(data_dir, file_pattern, apply=None, rebuild=False,
