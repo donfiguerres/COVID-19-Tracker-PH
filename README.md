@@ -128,7 +128,6 @@ can use the --folder-id option of the script.
 
 ### Others
 * git repo cleanup
-* Faster loading time
 
 
 ## Limitations
