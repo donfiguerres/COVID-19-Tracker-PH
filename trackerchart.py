@@ -32,8 +32,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "tracker", "charts")
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
-MA_SUFFIX = '_MA7'
-MA_NAME = "7-day MA"
+WEEKLY_FREQ = 'W-SUN'
+DAY_OF_WEEK = 6
 REGION = 'Region'
 CITY_MUN = 'CityMunRes'
 CASE_REP_TYPE = 'CaseRepType'
@@ -105,7 +105,7 @@ def plot_for_period(df: pd.DataFrame,
             write_fn = write_chart
         kwargs_passed['write_chart'] = (lambda fig, filename :
                                     write_fn(fig, f"{filename}{days}days"))
-        plot(df, **kwargs_passed)
+        plot(filtered, **kwargs_passed)
 
 
 def filter_date_range(data, start=None, end=None, date_column=None):
@@ -149,6 +149,11 @@ def filter_latest(data, days, date_column=None, return_latest=True):
             return data[data.index > cutoff_date]
         return data[data.index <= cutoff_date]
 
+# TODO: ADD PARAMETER FOR date column name
+def filter_day_of_week(df, date, dayofweek=DAY_OF_WEEK) -> pd.DataFrame:
+    """Return only the rows that fall on the given day of week."""
+    return df[df[date].dt.dayofweek == dayofweek] 
+
 
 def moving_average(data, column, days=7):
     return data[column].rolling(days).mean()
@@ -169,16 +174,20 @@ def reproduction_number(doubling_time):
     return np.exp((np.log(2)/doubling_time) * 5)
 
 
+def weekly_grouper(date_col):
+    return pd.Grouper(key=date_col, freq=WEEKLY_FREQ)
+
+
 def agg_count_cumsum_by_date(data, cumsum, group, date):
     """ Aggregate using the count groupby function then get the cumsum of each
     group by date. Non-observed dates are filled using data from the previous
     day.
     """
-    agg = data.groupby([group, date]).count()
+    agg = data.groupby([group, weekly_grouper(date)]).count()
     # Create new index for filling empty days with 0
     unique_index = agg.index.unique(level=group)
     date_range = pd.DatetimeIndex(pd.date_range(start=data[date].min(),
-                                    end=data[date].max(), freq='D'))
+                                    end=data[date].max(), freq=WEEKLY_FREQ))
     new_index = pd.MultiIndex.from_product(iterables=[unique_index, date_range],
                                             names=[group, date])
     agg = agg.reindex(new_index, fill_value=0)
@@ -250,12 +259,13 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
     logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
+    grouper = weekly_grouper(x)
     dataplot = data if not agg_func else (
-        aggregate(data, x, agg_func) if not color else (
+        aggregate(data, grouper, agg_fn=agg_func) if not color else (
             # We're filling non-observed dates so that the chart won't have
             # dates with no data
             agg_count_cumsum_by_date(data, y, color, x) if agg_func == 'cumsum' else (
-                aggregate(data, [x, color], agg_func, color)
+                aggregate(data, [grouper, color], agg_fn=agg_func, reset_index=color)
             )
         )
     )
@@ -334,28 +344,25 @@ def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
 def plot_test(test_data):
     # daily
     x = 'report_date'
-    daily_agg = test_data.groupby(x).sum()
     daily_columns = ['daily_output_samples_tested',
                     'daily_output_unique_individuals',
                 'daily_output_positive_individuals', ]
     for column in daily_columns:
-        daily_agg[f'{column}{MA_SUFFIX}'] = moving_average(daily_agg, column)
-        title = column.replace("_", " ")
-        ma_line = go.Scatter(x=daily_agg.index,
-                        y=daily_agg[f'{column}{MA_SUFFIX}'], name=MA_NAME)
+        title = column.replace("daily_output_", "").replace("_", " ")
         plot_trend_chart(test_data, agg_func='sum', x=x,
-                        y=column, title=f"{column}",
-                        filename=f"{column}",
-                        color='REGION',
-                        overlays=[ma_line])
+                        y=column, title=title,
+                        filename=column,
+                        color='REGION')
     # cumulative
     cumulative_columns = ['cumulative_samples_tested',
                         'cumulative_unique_individuals',
                         'cumulative_positive_individuals']
+    filtered = filter_day_of_week(test_data, 'report_date')
     for column in cumulative_columns:
-        plot_trend_chart(test_data, agg_func='sum', x=x,
-                    y=column, title=f"{column}",
-                    filename=f"{column}", color='REGION')
+        title = column.replace("_", " ")
+        plot_trend_chart(filtered, agg_func='sum', x=x,
+                    y=column, title=title,
+                    filename=column, color='REGION')
 
 
 def plot_test_reports_comparison(ci_data, test_data,
@@ -383,13 +390,10 @@ def plot_reporting(ci_data, days=None):
 def plot_case_trend(ci_data, x, title="", filename="", colors=[],
                         vertical_marker=None, write_chart=write_chart):
     y = 'CaseCode'
-    agg = ci_data.groupby([x]).count()
-    agg[f'{x}{MA_SUFFIX}'] = moving_average(agg, y)
-    ma_line = go.Scatter(x=agg.index, y=agg[f'{x}{MA_SUFFIX}'], name=MA_NAME)
     if colors:
         plot = lambda agg_func, title, filename, color : (
                 plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
-                filename=filename, color=color, overlays=[ma_line],
+                filename=filename, color=color,
                 vertical_marker=vertical_marker,
                 write_chart=write_chart))
         for color in colors:
@@ -399,7 +403,7 @@ def plot_case_trend(ci_data, x, title="", filename="", colors=[],
     else:
         plot = lambda agg_func, title, filename : (
                 plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
-                filename=filename, overlays=[ma_line],
+                filename=filename,
                 vertical_marker=vertical_marker,
                 write_chart=write_chart))
         plot('count', title, f"{filename}")
@@ -418,10 +422,13 @@ def plot_active_cases(ci_data):
             logging.warning(f"Ignoring group {name}")
     ci_agg = agg_count_cumsum_by_date(ci_data, 'CaseCode', REGION, 'DateOnset').reset_index()
     closed_agg = agg_count_cumsum_by_date(closed, 'CaseCode', REGION, DATE_CLOSED).reset_index()
+    filter_sundays = lambda df : df[df['date'].dt.dayofweek == 6]
     # Creating common date columns for easier merging.
     ci_agg['date'] = ci_agg['DateOnset']
+    ci_agg = filter_sundays(ci_agg)
     ci_agg = ci_agg.set_index('date')
     closed_agg['date'] = closed_agg[DATE_CLOSED]
+    closed_agg = filter_sundays(closed_agg)
     closed_agg = closed_agg.set_index('date')
     merged = ci_agg.merge(closed_agg, left_on=['date', REGION], right_on=['date', REGION])
     # The active cases count is calculated by subtracting the number of closed
