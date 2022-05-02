@@ -4,6 +4,7 @@ layout: tracker_default
 
 {{ content }}
 
+<br>
 <h2>Confirmed Cases</h2>
 <p>
 Daily confirmed cases with highlighted newly reported cases are shown in the chart below.
@@ -13,7 +14,7 @@ Data within the last 15 days is not yet complete due to reporting delays.
 to see more on confirmed case statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateOnsetCaseRepType{{ page.period }}.html %}
+{% include chart_image.html filename="DateOnsetCaseRepType" %}
 </div>
 
 <h2>Active Cases</h2>
@@ -29,7 +30,7 @@ the weekly recovery tagging by DOH.
 to see more on active case statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/Active{{ page.period }}.html %}
+{% include chart_image.html filename="Active"%}
 </div>
 
 <h2>Recoveries</h2>
@@ -43,7 +44,7 @@ the weekly recovery tagging by DOH.
 to see more on recovery statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateRecoverRecoverProxy{{ page.period }}.html %}
+{% include chart_image.html filename="DateRecoverRecoverProxy" %}
 </div>
 
 <h2>Deaths</h2>
@@ -54,7 +55,7 @@ Daily deaths by region are shown in the chart below.
 to see more on death statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateDiedRegion{{ page.period }}.html %}
+{% include chart_image.html filename="DateDiedRegion" %}
 </div>
 
 <h2>Testing</h2>
@@ -65,7 +66,7 @@ Daily test output by region is shown in the chart below.
 to see more on testing statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/daily_output_positive_individuals{{ page.period }}.html %}
+{% include chart_image.html filename="daily_output_positive_individuals" %}
 </div>
 
 <h2>Reporting</h2>
@@ -77,5 +78,5 @@ reporting is shown in the chart below.
 to see more on reporting statistics.
 </p>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/SpecimenToRepConf{{ page.period }}.html %}
+{% include chart_image.html filename="SpecimenToRepConf" %}
 </div>

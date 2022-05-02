@@ -130,6 +130,7 @@ token.pickle
 
 # project artifacts
 /data
+/charts
 /_includes/tracker/charts
 !.keep
 *.sass-cache
