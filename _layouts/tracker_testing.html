@@ -7,27 +7,27 @@ layout: tracker_default
 <h2>Daily</h2>
 
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/daily_output_positive_individuals{{ page.period }}.html %}
+{% include chart_image.html filename="daily_output_positive_individuals" %}
 </div>
 
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/daily_output_unique_individuals{{ page.period }}.html %}
+{% include chart_image.html filename="daily_output_unique_individuals" %}
 </div>
 
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/daily_output_samples_tested{{ page.period }}.html %}
+{% include chart_image.html filename="daily_output_samples_tested" %}
 </div>
 
 <h2>Cumulative</h2>
 
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/cumulative_positive_individuals{{ page.period }}.html %}
+{% include chart_image.html filename="cumulative_positive_individuals" %}
 </div>
 
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/cumulative_unique_individuals{{ page.period }}.html %}
+{% include chart_image.html filename="cumulative_unique_individuals" %}
 </div>
 
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/cumulative_samples_tested{{ page.period }}.html %}
+{% include chart_image.html filename="cumulative_samples_tested" %}
 </div>

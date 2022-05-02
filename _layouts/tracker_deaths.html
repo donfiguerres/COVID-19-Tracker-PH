@@ -6,25 +6,25 @@ layout: tracker_default
 
 <h2>Daily Death by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateDiedRegion{{ page.period }}.html %}
+{% include chart_image.html filename="DateDiedRegion" %}
 </div>
 
 <h2>Cumulative Death by Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DateDiedCumulativeRegion{{ page.period }}.html %}
+{% include chart_image.html filename="DateDiedCumulativeRegion" %}
 </div>
 
 <h2>Top Region</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/TopDeathRegion{{ page.period }}.html %}
+{% include chart_image.html filename="TopDeathRegion" %}
 </div>
 
 <h2>Top City/Municipality</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/TopDeathCityMunRes{{ page.period }}.html %}
+{% include chart_image.html filename="TopDeathCityMunRes" %}
 </div>
 
 <h2>Age Group</h2>
 <div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
-{% include tracker/charts/DeathAgeGroup{{ page.period }}.html %}
+{% include chart_image.html filename="DeathAgeGroup" %}
 </div>

@@ -29,7 +29,8 @@ import plotly.graph_objects as go
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CHART_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "tracker", "charts")
+CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
+TABLE_OUTPUT = os.path.join(SCRIPT_DIR, "_include", "tracker", "charts")
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 WEEKLY_FREQ = 'W-SUN'
@@ -74,7 +75,7 @@ def write_table(header, body, filename):
         row_html = "".join(f"<td>{cell}</td>" for cell in row)
         table += f"<tr>{row_html}</tr>"
     table = f"<div><table>{table}</table></div>"
-    with open(f"{CHART_OUTPUT}/{filename}.html", 'w') as f:
+    with open(f"{TABLE_OUTPUT}/{filename}.html", 'w') as f:
         f.write(table)
 
 
@@ -82,6 +83,9 @@ def write_chart(fig, filename):
     logging.info(f"Writing {filename}")
     fig.update_layout(template=TEMPLATE)
     fig.update_layout(margin=dict(l=5, r=5, b=50, t=70))
+    # Max width of the grid is 1000px. Change these values when the layout
+    # is changed.
+    fig.write_image(f"{CHART_OUTPUT}/{filename}.png", width=1000, height=800)
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
                         full_html=False)
 
