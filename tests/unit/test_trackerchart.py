@@ -126,6 +126,29 @@ def test_filter_latest():
     assert 'eggplant' not in filtered.values
 
 
+@pytest.mark.parametrize("dayofweek, expected", 
+                        [
+                            (0, "banana"),
+                            (1, "calamansi"),
+                            (6, "apple")
+                        ])
+def test_filter_day_of_wek(dayofweek, expected):
+    columns = ["date", "fruit"]
+    data = [
+        ["2022-4-24", "apple"],
+        ["2022-4-25", "banana"],
+        ["2022-4-26", "calamansi"],
+        ["2022-4-27", "durian"],
+        ["2022-4-28", "eggplant"],
+        ["2022-4-29", "tomato"],
+        ["2022-4-30", "orange"]
+    ]
+    df = pd.DataFrame(data, columns=columns)
+    df['date'] = df.apply(lambda row : pd.to_datetime(row['date']), axis=1)
+    filtered = tc.filter_day_of_week(df, 'date', dayofweek=dayofweek)
+    assert filtered['fruit'].values[0] == expected
+
+
 @pytest.mark.parametrize("cache_mtime, path_mtime, expected", 
                         [
                             (10, 15, True),
