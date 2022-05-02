@@ -149,7 +149,7 @@ def filter_latest(data, days, date_column=None, return_latest=True):
             return data[data.index > cutoff_date]
         return data[data.index <= cutoff_date]
 
-# TODO: ADD PARAMETER FOR date column name
+
 def filter_day_of_week(df, date, dayofweek=DAY_OF_WEEK) -> pd.DataFrame:
     """Return only the rows that fall on the given day of week."""
     return df[df[date].dt.dayofweek == dayofweek] 
