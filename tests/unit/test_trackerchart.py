@@ -5,6 +5,7 @@ import pathlib
 
 import pandas as pd
 import pytest
+import mock
 
 import trackerchart as tc
 
@@ -209,3 +210,30 @@ def test_cache_needs_refresh_no_cache(mocker):
 
     result = tc.cache_needs_refresh(cache, paths)
     assert True == result
+
+
+@pytest.mark.parametrize("exists, rebuild, expect_mkdir, expect_rmtree", 
+                        [
+                            (False, False, True, False),
+                            (True, False, False, False),
+                            (False, True, True, False),
+                            (True, True, True, True)
+                        ])
+def test_create_dir(mocker, exists, rebuild, expect_mkdir, expect_rmtree):
+    path = "/my/test/path"
+    mock_os_path_exists = mocker.patch('os.path.exists')
+    mock_os_path_exists.return_value = exists
+    mock_os_mkdir = mocker.patch('os.mkdir')
+    mock_shutil_rmtree = mocker.patch('shutil.rmtree')
+
+    tc.create_dir(path, rebuild)
+
+    if expect_mkdir:
+        mock_os_mkdir.assert_called_with(path)
+    else:
+        mock_os_mkdir.assert_not_called()
+
+    if expect_rmtree:
+        mock_shutil_rmtree.assert_called_with(path)
+    else:
+        mock_shutil_rmtree.assert_not_called()
