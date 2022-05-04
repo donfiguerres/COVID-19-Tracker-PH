@@ -707,7 +707,21 @@ def prepare_data(data_dir, file_pattern, apply=None, rebuild=False,
     return data
 
 
+def create_dir(path: str, rebuild: bool):
+    """Create directory if it does not exist. If it exists and rebuild is True,
+    remove the current tree and create a new directory.
+    """
+    if not os.path.exists(path):
+        os.mkdir(path)
+    elif rebuild:
+        shutil.rmtree(path)
+        os.mkdir(path)
+
+
 def plot(script_dir: str, data_dir: str, rebuild: bool = False):
+    create_dir(CHART_OUTPUT, rebuild)
+    create_dir(TABLE_OUTPUT, rebuild)
+
     start = timer()
     full_data_dir = f"{script_dir}/{data_dir}"
     ci_data = prepare_data(full_data_dir, "*Case Information*.csv",
@@ -715,12 +729,7 @@ def plot(script_dir: str, data_dir: str, rebuild: bool = False):
     test_data = prepare_data(full_data_dir, "*Testing Aggregates*.csv",
                             apply=calc_testing_aggregates_data, rebuild=rebuild)
     prep_end = timer()
-    if not os.path.exists(CHART_OUTPUT):
-        os.mkdir(CHART_OUTPUT)
-    elif rebuild:
-        shutil.rmtree(CHART_OUTPUT)
-        os.mkdir(CHART_OUTPUT)
-    # else keep directory
+
     pool = mp.Pool(num_processes)
     plot_start = timer()
     results = [pool.apply_async(plot_summary, (ci_data, test_data)),
