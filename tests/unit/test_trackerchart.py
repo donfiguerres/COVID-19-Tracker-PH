@@ -5,7 +5,6 @@ import pathlib
 
 import pandas as pd
 import pytest
-import mock
 
 import trackerchart as tc
 
