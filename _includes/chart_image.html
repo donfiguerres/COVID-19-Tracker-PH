@@ -1,3 +1,6 @@
+<div class="{% if site.scrollappear_enabled %}scrollappear{% endif %}">
 <a href="{{ '//charts/' | relative_url}}{{ include.filename }}{{ page.period }}.html">
-    <img src="{{ '//charts/' | relative_url}}{{ include.filename }}{{ page.period }}.svg">
+    <img src="{{ '//charts/' | relative_url}}{{ include.filename }}{{ page.period }}.png">
 </a>
+<small>Click on the image to open the interactive chart.</small>
+</div>
