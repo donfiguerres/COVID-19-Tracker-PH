@@ -306,7 +306,8 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
             rangeselector=dict(buttons=ranges, bgcolor='darkgrey'),
             rangeslider=dict(visible=True),
             type="date"
-        )
+        ),
+        yaxis=dict(fixedrange=False)
     )
     write_chart(fig, f"{filename}")
     for days in PERIOD_DAYS:
