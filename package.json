@@ -1,7 +1,6 @@
 {
   "name": "chalk",
   "scripts": {
-    "setup": "bin/setup",
     "serve": "bundle exec jekyll serve --drafts",
     "build": "bundle exec jekyll build",
     "deploy": "gh-pages -d _site"
