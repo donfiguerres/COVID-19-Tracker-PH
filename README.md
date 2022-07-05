@@ -100,9 +100,19 @@ project.
 
 ### Hardware Requirements
 Due to the amount of data that's available in the Data Drop, you will need
-around 10GB of RAM to run the update-tracker.py script. If you only have ~8GB
-of physical RAM, consider increasing your swap partition (if in Linux) or
-virtual memory (if in Windows).
+around 10GB of RAM to run the update-tracker.py script on an 8-core machine.
+If you only have ~8GB of physical RAM, consider increasing your swap partition
+(if in Linux) or virtual memory (if in Windows).
+
+If you're on WSL, you can set your memory through the `.wslconfig` or
+`wsl.config` files. The configuration settings are documented
+[here](https://docs.microsoft.com/en-us/windows/wsl/wsl-config).
+
+```conf
+[wsl2]
+memory=12GB
+swap=10GB
+```
 
 ## Overview
 The update-tracker.py script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
