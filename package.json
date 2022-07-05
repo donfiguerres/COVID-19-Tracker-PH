@@ -1,10 +1,5 @@
 {
   "name": "chalk",
-  "scripts": {
-    "serve": "bundle exec jekyll serve --drafts",
-    "build": "bundle exec jekyll build",
-    "deploy": "gh-pages -d _site"
-  },
   "dependencies": {
     "jquery": "^3.2.1",
     "npm": "^6.0.1",
