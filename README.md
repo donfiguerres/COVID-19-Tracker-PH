@@ -79,7 +79,13 @@ You can see [https://python-poetry.org/](https://python-poetry.org/) for more in
 Once you have Poetry installed, create a virtual environment.
 
 ```bash
-python -m venv venv\\wsl.localhost\Ubuntu\home\donfiguerres\GitHub\COVID-19-Tracker-PH
+python -m venv venv
+```
+
+Then activate the virtual environment.
+
+```bash
+source venv/bin/activate
 ```
 
 To install the Python dependencies using Poetry, run the command below.
