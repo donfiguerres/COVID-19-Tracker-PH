@@ -60,6 +60,12 @@ Once you have it installed, install python version 3.9.13.
 pyenv install -v 3.9.13
 ```
 
+Set 3.9.13 as the project's Python version.
+
+```bash
+pyenv local 3.9.13
+```
+
 #### Poetry
 
 Poetry is used for dependency managemant.
@@ -69,6 +75,12 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 ```
 
 You can see [https://python-poetry.org/](https://python-poetry.org/) for more info.
+
+Once you have Poetry installed, create a virtual environment.
+
+```bash
+python -m venv venv\\wsl.localhost\Ubuntu\home\donfiguerres\GitHub\COVID-19-Tracker-PH
+```
 
 To install the Python dependencies using Poetry, run the command below.
 
