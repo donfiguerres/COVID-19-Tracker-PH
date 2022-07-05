@@ -149,7 +149,6 @@ below.
 Navigate to your project directory then run the 'update-tracker.py' script.
 
 ```bash
-cd /path/to/COVID-19-Tracker-PH
 python update-tracker.py
 ```
 
