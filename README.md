@@ -15,12 +15,54 @@ the DOH Data Drop as a data source.
 
 
 ## Requirements
+
+> ___NOTE___ This project runs best in Linux and MacOS. You might run into
+problems that are not documented here if you try running it in Windows. It is
+recommended to use WSL instead if you're on a Windows machine since it is my
+current development setup.
+
+### install-dependencies script
+
+Run the dependency installation script below to install the needed Ruby and
+NPM packages for building the site.
+
+```bash
+./install-dependencies.sh
+```
+
 ### Python
-Python can be installed from [python.org](https://www.python.org/) or from
-[anaconda](https://www.anaconda.com/). The anaconda distribution is recommended
-since we're using python for data processing.
+Python can be installed from [python.org](https://www.python.org/). If you're
+setting up your project on a then most probably it already has Python installed.
+
+
+There are also several ways to setup a Python development environment which is
+why I didn't create a script for it. Some people may have a personal preference
+in setting up their development environments. I have listed below steps that
+beginners can follow to setup their development environments. For more advanced,
+developers, you can use whatever workflow you like. However, make sure to
+install __Poetry__ for the dependency management.
+
+#### pyenv
+
+pyenv is a recommended way to manage multiple python versions and virtual
+environments. You will need this to avoid changing your OS-installed Python
+version. You may follow the steps below to install pyenv in a Linux distro.
+If the steps below do not work, follow the installation instructions for your OS
+or distro in the [pyenv GitHub page](https://github.com/pyenv/pyenv).
+
+```bash
+curl https://pyenv.run | bash
+```
+
+Once you have it installed, install python version 3.9.13.
+
+```bash
+pyenv install -v 3.9.13
+```
 
 #### Poetry
+
+Poetry is used for dependency managemant.
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
@@ -37,24 +79,6 @@ poetry install
 See [pyproject.toml](./pyproject.toml) for the list of dependencies in this
 project.
 
-### Other Requirements
-
-Install the requirements to build the site.
-
-```bash
-# Jekyll dependencies
-sudo apt install gem
-sudo gem install bundler
-
-# Install gem dependencies
-bundle install
-bundle update
-
-# Install npm dependencies
-sudo apt install npm
-sudo npm -g yarn gh-pages
-yarn install --modules-folder ./_assets/yarn
-```
 
 ### Hardware Requirements
 Due to the amount of data that's available in the Data Drop, you will need
