@@ -148,17 +148,22 @@ below.
 ### Running the Script
 Navigate to your project directory then run the 'update-tracker.py' script.
 
-    cd /path/to/COVID-19-Tracker-PH
-    python update-tracker.py
+```bash
+cd /path/to/COVID-19-Tracker-PH
+python update-tracker.py
+```
 
 ### Errors
 Sometimes, the link in the PDF file is not annotated - meaning it is only a text
 and not a link - so PyPDF2 will not be able to find it. To get around that, you
 can use the --folder-id option of the script.
 
-    python update-tracker.py --folder-id=<folder-id-of-latest-datadrop>
-    # example
-    python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
+```bash
+python update-tracker.py --folder-id=<folder-id-of-latest-datadrop>
+
+# example
+python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
+```
 
 ## TODOs
 ### Plots
@@ -176,7 +181,7 @@ can use the --folder-id option of the script.
 * Organize post tags.
 * Create own icon.
 * Change about image.
-* Migrate to Hugo.
+* Migrate to [Next.js](https://nextjs.org/).
 
 ### Others
 * git repo cleanup
