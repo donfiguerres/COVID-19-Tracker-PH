@@ -1,5 +1,7 @@
 PYTHON_VERSION=3.9.13
 
+.PHONY: build setup python-setup serve build deploy
+
 default: build
 
 setup:
