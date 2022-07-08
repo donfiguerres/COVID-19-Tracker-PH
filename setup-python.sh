@@ -64,3 +64,7 @@ echo Installing Python dependencies
 echo ==============================
 echo 
 poetry install
+
+echo
+echo REMINDER: You still need to activate venv in your current shell.
+echo You can activate it by executing \'source venv/bin/activate\'.
