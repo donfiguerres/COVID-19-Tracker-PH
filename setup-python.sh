@@ -53,7 +53,7 @@ echo Setting up virtual environment
 echo ==============================
 echo 
 python -m venv venv
-source venv/bin/activate
+. venv/bin/activate
 
 echo
 echo ==============================
