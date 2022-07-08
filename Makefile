@@ -7,13 +7,8 @@ default: build
 setup:
 	./install-dependencies.sh
 
-python-setup:
-	pyenv install -v ${PYTHON_VERSION}
-	pyenv local ${PYTHON_VERSION}
-	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-	python -m venv venv
-	source venv/bin/activate
-	poetry install
+setup-python:
+	./setup-python.sh ${PYTHON_VERSION}
 
 serve:
 	bundle exec jekyll serve --drafts
