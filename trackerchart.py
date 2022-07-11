@@ -60,10 +60,10 @@ def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
     logging.info("Running multiprocessing on %s with %d processes",
                 func.__name__, n_proc)
     df_split = np.array_split(df, n_proc)
-    pool = mp.Pool(n_proc)
-    df = pd.concat(pool.map(func, df_split))
-    pool.close()
-    pool.join()
+    with mp.Pool(n_proc) as pool:
+        df = pd.concat(pool.map(func, df_split))
+        pool.close()
+        pool.join()
     return df
 
 
