@@ -12,7 +12,6 @@ mun: municipality
 
 
 import os
-from datetime import datetime
 from datetime import timedelta
 import logging
 import shutil
@@ -25,7 +24,6 @@ import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
 import plotly.express as px
-import plotly.graph_objects as go
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -59,7 +57,8 @@ def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
     missing features and instability in modin, I've resorted to doing the
     parallel processing in here.
     """
-    logging.info(f"Running multiprocessing on {func.__name__} with {n_proc} processes")
+    logging.info("Running multiprocessing on %s with %d processes",
+                func.__name__, n_proc)
     df_split = np.array_split(df, n_proc)
     pool = mp.Pool(n_proc)
     df = pd.concat(pool.map(func, df_split))
@@ -69,7 +68,7 @@ def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
 
 
 def write_table(header, body, filename):
-    logging.info(f"Writing {filename}")
+    logging.info("Writing %s", filename)
     table = "".join(f"<th>{cell}</th>" for cell in header)
     for row in body:
         row_html = "".join(f"<td>{cell}</td>" for cell in row)
@@ -80,7 +79,7 @@ def write_table(header, body, filename):
 
 
 def write_chart(fig, filename):
-    logging.info(f"Writing {filename}")
+    logging.info("Writing %s", filename)
     fig.update_layout(template=TEMPLATE)
     fig.update_layout(margin=dict(l=5, r=5, b=50, t=70))
     # Max width of the grid is 1000px. Change these values when the layout
