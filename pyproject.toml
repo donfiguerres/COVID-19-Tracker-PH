@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "covid-19-tracker-ph"
+name = "covid19trackerph"
 version = "0.1.0"
 description = ""
 authors = ["donfiguerres <lyndonfiguerres@gmail.com>"]
