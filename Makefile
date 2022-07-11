@@ -13,8 +13,19 @@ setup-python:
 serve:
 	bundle exec jekyll serve --drafts
 
-build:
+build: update-charts
 	bundle exec jekyll build
+
+# Skipping downloads here for the meantime due to errors in reading the
+# Data Drop PDF files.
+update-charts:
+	python update-tracker.py --skip-download
+
+test:
+	pytest tests
+
+lint:
+	pylint *.py
 
 deploy:
 	gh-pages -d _site
