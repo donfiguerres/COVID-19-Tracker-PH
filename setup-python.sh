@@ -47,17 +47,6 @@ then
     . $HOME/.poetry/env
 fi
 
-if [ ! -d "venv" ]
-then
-    echo
-    echo ==============================
-    echo Setting up virtual environment
-    echo ==============================
-    echo 
-    python -m venv venv
-fi
-. venv/bin/activate
-
 echo
 echo ==============================
 echo Installing Python dependencies
