@@ -55,5 +55,6 @@ echo
 poetry install
 
 echo
-echo REMINDER: You still need to activate venv in your current shell.
-echo You can activate it by executing \'source venv/bin/activate\'.
+echo REMINDER: You still need to activate the virtual environment in your \
+ current shell.
+echo You can activate it by executing \'poetry shell\'.
