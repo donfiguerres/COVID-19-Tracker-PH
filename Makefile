@@ -13,13 +13,15 @@ setup-python:
 serve:
 	bundle exec jekyll serve --drafts
 
-build: update-charts
+build: update-charts build-site
+
+build-site:
 	bundle exec jekyll build
 
 # Skipping downloads here for the meantime due to errors in reading the
 # Data Drop PDF files.
 update-charts:
-	python update-tracker.py --skip-download
+	updatetracker --skip-download
 
 test:
 	pytest tests
