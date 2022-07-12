@@ -66,9 +66,7 @@ defaults:
     values:
       layout: articles_by_tag
 exclude:
-  - .travis.yml
   - bin/*
-  - circle.yml
   - Gemfile
   - Gemfile.lock
   - package.json
