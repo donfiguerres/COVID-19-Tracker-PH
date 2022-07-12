@@ -76,10 +76,7 @@ exclude:
   - README.md
   - vendor/
   - yarn.lock
-  - datadrop.py
-  - deploy.py
-  - trackerchart.py
-  - update-tracker.py
+  - Makefile
   - data
   - resources
   - testdata
@@ -87,6 +84,8 @@ exclude:
   - client_secret.json
   - pyproject.toml
   - poetry.lock
+  - /*.sh
+  - covid19trackerph
 plugins:
   - jekyll-assets
   - jekyll-paginate
