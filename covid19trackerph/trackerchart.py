@@ -730,17 +730,17 @@ def plot(script_dir: str, data_dir: str, rebuild: bool = False):
                             apply=calc_testing_aggregates_data, rebuild=rebuild)
     prep_end = timer()
 
-    pool = mp.Pool(num_processes)
     plot_start = timer()
-    results = [pool.apply_async(plot_summary, (ci_data, test_data)),
-        pool.apply_async(plot_active_cases, (ci_data,)),
-        pool.apply_async(plot_reporting, (ci_data,)),
-        pool.apply_async(plot_test, (test_data,))] + plot_ci_async(pool, ci_data)
-    # Must wait for all tasks to be complete.
-    for result in results:
-        result.get()
-    pool.close()
-    pool.join()
+    with mp.Pool(num_processes) as pool:
+        results = [pool.apply_async(plot_summary, (ci_data, test_data)),
+            pool.apply_async(plot_active_cases, (ci_data,)),
+            pool.apply_async(plot_reporting, (ci_data,)),
+            pool.apply_async(plot_test, (test_data,))] + plot_ci_async(pool, ci_data)
+        # Must wait for all tasks to be complete.
+        for result in results:
+            result.get()
+        pool.close()
+        pool.join()
     end = timer()
     logging.info("Execution times for trackerchart")
     logging.info("Data preparation: %s", timedelta(seconds=prep_end-start))
