@@ -737,11 +737,12 @@ def plot(script_dir: str, data_dir: str, rebuild: bool = False):
         pool.apply_async(plot_reporting, (ci_data,)),
         pool.apply_async(plot_test, (test_data,))] + plot_ci_async(pool, ci_data)
     # Must wait for all tasks to be complete.
-    [result.get() for result in results]
+    for result in results:
+        result.get()
     pool.close()
     pool.join()
     end = timer()
-    logging.info(f"Execution times for trackerchart")
-    logging.info(f"Data preparation: {timedelta(seconds=prep_end-start)}")
-    logging.info(f"Plot: {timedelta(seconds=end-plot_start)}")
-    logging.info(f"Total time: {timedelta(seconds=end-start)}")
+    logging.info("Execution times for trackerchart")
+    logging.info("Data preparation: %s", timedelta(seconds=prep_end-start))
+    logging.info("Plot: %s", timedelta(seconds=end-plot_start))
+    logging.info("Total time: %s", timedelta(seconds=end-start))
