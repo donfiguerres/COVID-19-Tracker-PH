@@ -26,7 +26,7 @@ from scipy.interpolate import interp1d
 import plotly.express as px
 
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = pathlib.Path(os.path.dirname(os.path.abspath(__file__))).parent
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
 TABLE_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "tracker", "charts")
 TEMPLATE = 'plotly_dark'

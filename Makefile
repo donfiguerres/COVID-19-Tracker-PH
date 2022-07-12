@@ -24,8 +24,13 @@ update-charts:
 test:
 	pytest tests
 
-lint:
-	pylint *.py
+lint: lint-src lint-test
+
+lint-src:
+	pylint covid19trackerph --fail-under=7.5
+
+lint-test:
+	pylint tests --fail-under=8.5
 
 deploy:
 	gh-pages -d _site

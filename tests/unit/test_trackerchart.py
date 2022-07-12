@@ -6,7 +6,7 @@ import pathlib
 import pandas as pd
 import pytest
 
-import trackerchart as tc
+import covid19trackerph.trackerchart as tc
 
 
 # TODO: parameterize this test

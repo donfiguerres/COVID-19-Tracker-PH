@@ -6,12 +6,13 @@ import traceback
 import glob
 import logging
 import argparse
+import pathlib
 
-import datadrop
-import trackerchart
+from covid19trackerph import datadrop
+from covid19trackerph import trackerchart
 
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = pathlib.Path(os.path.dirname(os.path.abspath(__file__))).parent
 
 
 def _parse_args():
