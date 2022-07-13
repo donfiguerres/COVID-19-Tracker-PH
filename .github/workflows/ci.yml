@@ -12,11 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install Poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
+      - name: Install Python
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
+      - name: Install Poetry
+        run: pipx install poetry
+      - name: Cache poetry dependencies
+        uses: actions/setup-python@v4
+        with:
           cache: 'poetry'
       - name: Run linting
         run: poetry run make lint
