@@ -11,21 +11,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - name: Install Poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
         with:
           python-version: 3.9
-      - name: Install dependencies
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-          export PATH="$HOME/.poetry/bin:$PATH"
-          poetry install
-      - name: Run pylint
-        run: |
-          export PATH="$HOME/.poetry/bin:$PATH"
-          poetry run make lint
+          cache: 'poetry'
+      - name: Run linting
+        run: poetry run make lint
       - name: Run tests
-        run: |
-          export PATH="$HOME/.poetry/bin:$PATH"
-          poetry run make test
+        run: poetry run make test
