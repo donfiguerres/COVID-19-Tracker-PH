@@ -26,6 +26,12 @@ then
     echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
     echo 'eval "$(pyenv init -)"' >> ~/.bashrc
     echo '' >> ~/.bashrc
+    # Adding again to profile to make sure the pyenv path comes before the 
+    # ~/.local/bin path.
+    echo '# PYENV' >> ~/.profile
+    echo '# Need to export again so that it comes before .local/bin' >> ~/.profile
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
+    echo '' >> ~/.profile
     # Loading pyenv so we can install the needed Python version
     export PYENV_ROOT="$HOME/.pyenv"
     command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
