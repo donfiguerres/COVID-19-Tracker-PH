@@ -21,16 +21,10 @@ then
         xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
     curl https://pyenv.run | bash
     # Appending the needed commands to .bashrc so you don't have to do it manually
-    echo '# PYENV' >> ~/.bashrc
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-    echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-    echo '' >> ~/.bashrc
-    # Adding again to profile to make sure the pyenv path comes before the 
-    # ~/.local/bin path.
     echo '# PYENV' >> ~/.profile
-    echo '# Need to export again so that it comes before .local/bin' >> ~/.profile
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
+    echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
+    echo 'eval "$(pyenv init -)"' >> ~/.profile
     echo '' >> ~/.profile
     # Loading pyenv so we can install the needed Python version
     export PYENV_ROOT="$HOME/.pyenv"
