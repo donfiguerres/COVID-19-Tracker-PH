@@ -92,10 +92,11 @@ def write_chart(fig, filename):
                    full_html=False)
 
 
-def plot_for_period(df: pd.DataFrame,
-                    plot_fn: typing.Callable,
-                    filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
-                    **kwargs):
+def plot_for_period(
+        df: pd.DataFrame, plot_fn: typing.Callable, filter_df: typing.Callable
+        [[pd.DataFrame, int],
+         pd.DataFrame],
+        **kwargs):
     """Execute the plot function for the overall data and for each PERIOD_DAYS.
     The plot function must take a 'write_chart' keyword argument which is the
     function that writes the chart to a file.
@@ -118,7 +119,8 @@ def filter_date_range(data, start=None, end=None, date_column=None):
     """Return only the rows within the specified date range."""
     if date_column:
         if start and end:
-            return data[(data[date_column] >= start) & (data[date_column] <= end)]
+            return data[(data[date_column] >= start) &
+                        (data[date_column] <= end)]
         elif start:
             return data[data[date_column] >= start]
         elif end:
@@ -192,8 +194,11 @@ def agg_count_cumsum_by_date(data, cumsum, group, date):
     agg = data.groupby([group, weekly_grouper(date)]).count()
     # Create new index for filling empty days with 0
     unique_index = agg.index.unique(level=group)
-    date_range = pd.DatetimeIndex(pd.date_range(start=data[date].min(),
-                                                end=data[date].max(), freq=WEEKLY_FREQ))
+    date_range = pd.DatetimeIndex(
+        pd.date_range(
+            start=data[date].min(),
+            end=data[date].max(),
+            freq=WEEKLY_FREQ))
     new_index = pd.MultiIndex.from_product(iterables=[unique_index, date_range],
                                            names=[group, date])
     agg = agg.reindex(new_index, fill_value=0)
@@ -222,7 +227,8 @@ def filter_died(data):
     return data[data.HealthStatus == 'DIED']
 
 
-def plot_histogram(data, xaxis=None, xaxis_title=None, suffix="", write_chart=write_chart):
+def plot_histogram(data, xaxis=None, xaxis_title=None, suffix="",
+                   write_chart=write_chart):
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
     percentile_50 = desc['50%']
@@ -260,9 +266,10 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
     fig.write_image(fig, f"{filename}")
 
 
-def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
-                     filename=None, color=None, overlays=[], vertical_marker=None,
-                     write_chart=write_chart):
+def plot_trend_chart(
+        data, agg_func=None, x=None, y=None, title=None, filename=None,
+        color=None, overlays=[],
+        vertical_marker=None, write_chart=write_chart):
     logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
@@ -323,9 +330,9 @@ def plot_trend_chart(data, agg_func=None, x=None, y=None, title=None,
         write_chart(fig, f"{filename}{days}days")
 
 
-def plot_horizontal_bar(data, agg_func='count', x=None, y=None, title=None,
-                        filename=None, color=None, order=None, categoryarray=None,
-                        write_chart=write_chart):
+def plot_horizontal_bar(
+        data, agg_func='count', x=None, y=None, title=None, filename=None,
+        color=None, order=None, categoryarray=None, write_chart=write_chart):
     logging.info(f"Plotting {filename}")
     if color:
         agg = aggregate(data, [y, color], agg_func, color)
@@ -383,8 +390,9 @@ def plot_test_reports_comparison(ci_data, test_data,
 
 
 def plot_reporting(ci_data, days=None):
-    def filter_by_repconf(df, days): return filter_latest(df, days,
-                                                          date_column='DateRepConf')
+    def filter_by_repconf(
+        df, days): return filter_latest(
+        df, days, date_column='DateRepConf')
     to_plot = [
         ['SpecimenToRepConf', "Specimen Collection to Reporting"],
         ['SpecimenToRelease', "Specimen Collection To Result Release"],
@@ -401,23 +409,25 @@ def plot_case_trend(ci_data, x, title="", filename="", colors=[],
                     vertical_marker=None, write_chart=write_chart):
     y = 'CaseCode'
     if colors:
-        def plot(agg_func, title, filename, color): return (
-            plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
-                             filename=filename, color=color,
-                             vertical_marker=vertical_marker,
-                             write_chart=write_chart))
+        def plot_fn(agg_func, title, filename, color):
+            return (
+                plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
+                                 filename=filename, color=color,
+                                 vertical_marker=vertical_marker,
+                                 write_chart=write_chart))
         for color in colors:
-            plot('count', title, f"{filename}{color}", color)
-            plot('cumsum', f"{title} - Cumulative",
-                 f"{filename}Cumulative{color}", color)
+            plot_fn('count', title, f"{filename}{color}", color)
+            plot_fn('cumsum', f"{title} - Cumulative",
+                    f"{filename}Cumulative{color}", color)
     else:
-        def plot(agg_func, title, filename): return (
-            plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
-                             filename=filename,
-                             vertical_marker=vertical_marker,
-                             write_chart=write_chart))
-        plot('count', title, f"{filename}")
-        plot('cumsum', f"{title} - Cumulative", f"{filename}Cumulative")
+        def plot_fn(agg_func, title, filename):
+            return (
+                plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
+                                 filename=filename,
+                                 vertical_marker=vertical_marker,
+                                 write_chart=write_chart))
+        plot_fn('count', title, f"{filename}")
+        plot_fn('cumsum', f"{title} - Cumulative", f"{filename}Cumulative")
 
 
 def plot_active_cases(ci_data):
@@ -459,10 +469,10 @@ def plot_active_cases(ci_data):
                             filename=f"TopActive{area}",
                             title="Top 10 "+area,
                             color="HealthStatus", order='total ascending')
-    plot_horizontal_bar(active, x='CaseCode', y='AgeGroup',
-                        filename=f"ActiveAgeGroup", title="Active Cases by Age Group",
-                        color='HealthStatus',
-                        categoryarray=AGE_GROUP_CATEGORYARRAY)
+    plot_horizontal_bar(
+        active, x='CaseCode', y='AgeGroup', filename=f"ActiveAgeGroup",
+        title="Active Cases by Age Group", color='HealthStatus',
+        categoryarray=AGE_GROUP_CATEGORYARRAY)
     plot_pie_chart(active, agg_func='count', values='CaseCode',
                    names='HealthStatus', title='Active Cases Health Status',
                    filename='ActivePie')
@@ -483,10 +493,11 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
     top_num = 10
     for area in [CITY_MUN, REGION]:
         filtered_top = filter_top(data, area, 'CaseCode', num=top_num)
-        plot_for_period(filtered_top, plot_horizontal_bar, filter_latest_by_onset,
-                        x='CaseCode', y=area, filename=f"{area_file_name}{area}",
-                        title=f"Top {top_num} {area}", color=area_color,
-                        order='total ascending')
+        plot_for_period(
+            filtered_top, plot_horizontal_bar, filter_latest_by_onset,
+            x='CaseCode', y=area, filename=f"{area_file_name}{area}",
+            title=f"Top {top_num} {area}", color=area_color,
+            order='total ascending')
     # by age group
     plot_for_period(data, plot_horizontal_bar, filter_latest_by_onset,
                     x='CaseCode', y='AgeGroup', filename=age_group_file_name,
@@ -614,59 +625,65 @@ def calc_case_info_data(data):
     # Some incomplete entries have no dates so we need to check first before
     # making a computation.
     logging.info("Calculating specimen to reporting data")
-    data['SpecimenToRepConf'] = data.apply(lambda row:
-                                           (row['DateRepConf'] -
-                                            row['DateSpecimen']).days
-                                           if row['DateRepConf'] and row['DateSpecimen']
-                                           and row['DateSpecimen'] < row['DateRepConf']
-                                           else np.NaN, axis=1)
-    data['SpecimenToRelease'] = data.apply(lambda row:
-                                           (row['DateResultRelease'] -
-                                            row['DateSpecimen']).days
-                                           if row['DateResultRelease'] and row['DateSpecimen']
-                                           and row['DateSpecimen'] < row['DateResultRelease']
-                                           else np.NaN, axis=1)
-    data['ReleaseToRepConf'] = data.apply(lambda row:
-                                          (row['DateRepConf'] -
-                                           row['DateResultRelease']).days
-                                          if row['DateRepConf'] and row['DateResultRelease']
-                                          and row['DateResultRelease'] < row['DateRepConf']
-                                          else np.NaN, axis=1)
+    data['SpecimenToRepConf'] = data.apply(
+        lambda row: (row['DateRepConf'] - row['DateSpecimen']).days
+        if row['DateRepConf'] and row['DateSpecimen'] and row['DateSpecimen'] <
+        row['DateRepConf'] else np.NaN, axis=1)
+    data['SpecimenToRelease'] = data.apply(
+        lambda row: (row['DateResultRelease'] - row['DateSpecimen']).days
+        if row['DateResultRelease'] and
+        row['DateSpecimen'] and row['DateSpecimen'] <
+        row['DateResultRelease'] else np.NaN, axis=1)
+    data['ReleaseToRepConf'] = data.apply(
+        lambda row: (row['DateRepConf'] - row['DateResultRelease']).days
+        if
+        row['DateRepConf'] and
+        row['DateResultRelease'] and row['DateResultRelease'] <
+        row['DateRepConf'] else np.NaN, axis=1)
     logging.info("Setting date proxies")
-    data[ONSET_PROXY] = data.apply(lambda row:
-                                   'No Proxy' if not pd.isnull(row['DateOnset']) else (
-                                       'DateSpecimen' if not pd.isnull(
-                                           row['DateSpecimen']) else 'DateRepConf'
-                                   ), axis=1)
-    data['DateOnset'] = data.apply(lambda row:
-                                   row['DateOnset'] if row[ONSET_PROXY] == 'No Proxy' else row[row[ONSET_PROXY]],
-                                   axis=1)
-    data[RECOVER_PROXY] = data.apply(lambda row:
-                                     'No Proxy' if not pd.isnull(row['DateRecover']) else (
-                                         'DateOnset+14' if row[ONSET_PROXY] == 'No Proxy' else (
-                                             row[ONSET_PROXY]+'+14')
-                                     ), axis=1)
-    data['DateRecover'] = data.apply(lambda row:
-                                     row['DateRecover'] if row[RECOVER_PROXY] == 'No Proxy' else (
-                                         row['DateOnset'] + timedelta(days=14)
-                                         if row['DateOnset'] + timedelta(days=14) < max_date_repconf
-                                         else max_date_repconf
-                                     ), axis=1)
+    data[ONSET_PROXY] = data.apply(
+        lambda row: 'No Proxy'
+        if not pd.isnull(row['DateOnset'])
+        else(
+            'DateSpecimen'
+            if not pd.isnull(row['DateSpecimen']) else 'DateRepConf'), axis=1)
+    data['DateOnset'] = data.apply(
+        lambda row: row['DateOnset']
+        if row[ONSET_PROXY] == 'No Proxy' else row[row[ONSET_PROXY]], axis=1)
+    data[RECOVER_PROXY] = data.apply(
+        lambda row: 'No Proxy'
+        if not pd.isnull(row['DateRecover'])
+        else(
+            'DateOnset+14'
+            if row[ONSET_PROXY] == 'No Proxy' else(row[ONSET_PROXY] + '+14')),
+        axis=1)
+    data['DateRecover'] = data.apply(
+        lambda row: row['DateRecover']
+        if row[RECOVER_PROXY] == 'No Proxy'
+        else(
+            row['DateOnset'] + timedelta(days=14)
+            if row['DateOnset'] + timedelta(days=14) < max_date_repconf else
+            max_date_repconf), axis=1)
     # Add column for easily identifying newly reported cases.
     logging.info("Setting case report type")
-    data[CASE_REP_TYPE] = data.apply(lambda row:
-                                     'Incomplete' if not row['DateRepConf'] else (
-                                         'New Case' if row['DateRepConf'] == max_date_repconf else 'Previous Case'),
-                                     axis=1)
+    data[CASE_REP_TYPE] = data.apply(
+        lambda row: 'Incomplete'
+        if not row['DateRepConf']
+        else (
+            'New Case'
+            if row['DateRepConf'] == max_date_repconf
+            else 'Previous Case'
+        ),
+        axis=1)
     # Add column for easily identifying closed and active cases.
     logging.info("Setting case status")
     data[CASE_STATUS] = data.apply(lambda row:
                                    'CLOSED' if row['HealthStatus'] in [
                                        "RECOVERED", "DIED"] else 'ACTIVE',
                                    axis=1)
-    data[DATE_CLOSED] = data.apply(lambda row:
-                                   row['DateDied'] if row['HealthStatus'] == 'DIED' else row['DateRecover'],
-                                   axis=1)
+    data[DATE_CLOSED] = data.apply(
+        lambda row: row['DateDied']
+        if row['HealthStatus'] == 'DIED' else row['DateRecover'], axis=1)
     # Trim Region names for shorter chart legends.
     logging.info("Setting region")
     data['Region'] = data.apply(lambda row:
@@ -692,12 +709,10 @@ def calc_testing_aggregates_data(data):
     if data.shape[0] == 0:
         data['pct_positive_daily'] = ""
     else:
-        data['pct_positive_daily'] = data.apply(lambda row:
-                                                row['daily_output_positive_individuals'] /
-                                                row['daily_output_unique_individuals']
-                                                if row['daily_output_unique_individuals']
-                                                else 0,
-                                                axis=1)
+        data['pct_positive_daily'] = data.apply(
+            lambda row: row['daily_output_positive_individuals'] /
+            row['daily_output_unique_individuals']
+            if row['daily_output_unique_individuals'] else 0, axis=1)
     logging.info("Reading test facility data")
     test_facility = pd.read_csv(f"{SCRIPT_DIR}/resources/test-facility.csv")
     data = pd.merge(data, test_facility, on='facility_name', how='left')
@@ -751,16 +766,19 @@ def plot(script_dir: str, data_dir: str, rebuild: bool = False):
     full_data_dir = f"{script_dir}/{data_dir}"
     ci_data = prepare_data(full_data_dir, "*Case Information*.csv",
                            apply=calc_case_info_data, rebuild=rebuild)
-    test_data = prepare_data(full_data_dir, "*Testing Aggregates*.csv",
-                             apply=calc_testing_aggregates_data, rebuild=rebuild)
+    test_data = prepare_data(
+        full_data_dir, "*Testing Aggregates*.csv",
+        apply=calc_testing_aggregates_data, rebuild=rebuild)
     prep_end = timer()
 
     plot_start = timer()
     with mp.Pool(num_processes) as pool:
-        results = [pool.apply_async(plot_summary, (ci_data, test_data)),
-                   pool.apply_async(plot_active_cases, (ci_data,)),
-                   pool.apply_async(plot_reporting, (ci_data,)),
-                   pool.apply_async(plot_test, (test_data,))] + plot_ci_async(pool, ci_data)
+        results = [
+            pool.apply_async(plot_summary, (ci_data, test_data)),
+            pool.apply_async(plot_active_cases, (ci_data,)),
+            pool.apply_async(plot_reporting, (ci_data,)),
+            pool.apply_async(plot_test, (test_data,))] + plot_ci_async(
+            pool, ci_data)
         # Must wait for all tasks to be complete.
         for result in results:
             result.get()
