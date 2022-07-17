@@ -3,8 +3,8 @@
 blog_theme: dark # Or use dark
 name: COVID-19-Tracker-PH
 paginate: 25
-url: https://donfiguerres.com
-baseurl: /COVID-19-Tracker-PH
+url: https://covid-19-tracker-ph.donfiguerres.com
+#baseurl: 
 
 
 # Optional settings
