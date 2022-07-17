@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom" xmlns:dc="https://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>COVID-19-Tracker-PH</title>
+    <description></description>
+    <link>https://donfiguerres.com</link>
+    <atom:link href="https://donfiguerres.com/COVID-19-Tracker-PH/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>Added Active Cases and More</title>
+        <description>Updates to the tracker.</description>
+        <pubDate>Wed, 02 Sep 2020 00:00:00 +0800</pubDate>
+        <link>https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/09/02/added-active-cases-and-more/</link>
+        <guid isPermaLink="true">https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/09/02/added-active-cases-and-more/</guid>
+      </item>
+    
+      <item>
+        <title>New Summary Table in the Tracker Home Page</title>
+        <description>A summary table is added along with a few improvements.</description>
+        <pubDate>Sun, 09 Aug 2020 01:00:00 +0800</pubDate>
+        <link>https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/08/09/new-summary-table/</link>
+        <guid isPermaLink="true">https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/08/09/new-summary-table/</guid>
+      </item>
+    
+      <item>
+        <title>New Onset and Recovery Proxy Charts</title>
+        <description>New charts to visualize date proxies and analysis of the 38k recoveries tagged by DOH.</description>
+        <pubDate>Mon, 03 Aug 2020 02:00:00 +0800</pubDate>
+        <link>https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/08/03/new-onset-and-recovery-proxy-charts/</link>
+        <guid isPermaLink="true">https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/08/03/new-onset-and-recovery-proxy-charts/</guid>
+      </item>
+    
+      <item>
+        <title>The COVID-19 Tracker Gets a New Theme</title>
+        <description>The COVID-19 Tracker is now using the Chalk Theme.</description>
+        <pubDate>Mon, 27 Jul 2020 00:30:00 +0800</pubDate>
+        <link>https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/07/27/covid-19-tracker-ph-gets-a-new-theme/</link>
+        <guid isPermaLink="true">https://donfiguerres.com/COVID-19-Tracker-PH/blog/2020/07/27/covid-19-tracker-ph-gets-a-new-theme/</guid>
+      </item>
+    
+  </channel>
+</rss>
