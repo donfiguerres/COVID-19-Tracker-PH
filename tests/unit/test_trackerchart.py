@@ -211,7 +211,7 @@ def test_cache_needs_refresh_no_cache(mocker):
     paths = [path]
 
     result = tc.cache_needs_refresh(cache, paths)
-    assert True == result
+    assert result
 
 
 @pytest.mark.parametrize("exists, rebuild, expect_mkdir, expect_rmtree",
