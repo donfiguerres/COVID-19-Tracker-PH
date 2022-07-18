@@ -197,7 +197,7 @@ python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
 
 ### Others
 
-* git repo cleanup
+* git repo cleanup - ongoing
 
 ## Limitations
 
