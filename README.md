@@ -113,10 +113,13 @@ You need to do this step due to a limitation in the Google Drive API. See
 
 ### Running the Script
 
-Navigate to your project directory then run the 'update-tracker.py' script.
+Navigate to your project directory then run the `updatetracker` script.
+
+> _**NOTE**_ Make sure that the `covid19trackerph` project package has been
+installed in your virtual environment before running the script.
 
 ```bash
-python update-tracker.py
+updatetracker
 ```
 
 ### Errors
@@ -126,10 +129,10 @@ and not a link - so PyPDF2 will not be able to find it. To get around that, you
 can use the --folder-id option of the script.
 
 ```bash
-python update-tracker.py --folder-id=<folder-id-of-latest-datadrop>
+updatetracker --folder-id=<folder-id-of-latest-datadrop>
 
 # example
-python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
+updatetracker --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
 ```
 
 ## TODOs
