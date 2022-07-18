@@ -103,7 +103,7 @@ def write_chart(fig, filename):
 def plot_for_period(
         df: pd.DataFrame,
         plot_fn: typing.Callable,
-        filter_df: typing.Callable [[pd.DataFrame, int], pd.DataFrame],
+        filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
         **kwargs):
     """Execute the plot function for the overall data and for each PERIOD_DAYS.
     The plot function must take a 'write_chart' keyword argument which is the
