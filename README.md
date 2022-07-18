@@ -11,7 +11,8 @@ tracker are pulled from DOH's
 In its current form, this project is actually a static report generator using
 the DOH Data Drop as a data source.
 
-**Disclaimer: I am not affiliated with the DOH or any government agency. This is my own personal project.**
+**Disclaimer: I am not affiliated with the DOH or any government agency. This is
+my own personal project.**
 
 ## Requirements
 
@@ -115,8 +116,10 @@ swap=10GB
 
 ## Overview
 
-The update-tracker.py script downloads the data from the [DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
-and generates the charts used in the [COVID-19 Tracker PH](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
+The update-tracker.py script downloads the data from the
+[DOH Data Drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o)
+and generates the charts used in the
+[COVID-19 Tracker PH](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
 page.
 
 Go to [tracker](https://donfiguerres.github.io/COVID-19-Tracker-PH/tracker)
@@ -139,14 +142,16 @@ Copy the client secret file to your project directory and rename the file as
 ### Open the Files in the DOH Data Drop Google Drive Folder
 
 Open README file in the [DOH folder](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o).
-This link is also available at the [DOH Covid19 Tracker](https://ncovtracker.doh.gov.ph/).
+This link is also available at the
+[DOH Covid19 Tracker](https://ncovtracker.doh.gov.ph/).
 
-The README file will have a link to the latest Data Drop folder at the last page. Click on that link to open the latest Data Drop folder.
+The README file will have a link to the latest Data Drop folder at the last
+page. Click on that link to open the latest Data Drop folder.
 
 Open all of the files in the Data Drop Folder.
 
-You need to do this step due to a limitation in the Google Drive API. See [Limitations](#limitations)
-below.
+You need to do this step due to a limitation in the Google Drive API. See
+[Limitations](#limitations) below.
 
 ### Running the Script
 
@@ -199,7 +204,8 @@ python update-tracker.py --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
 You need to open each of the new files in the DOH datadrop before the script can
 download the Google Drive files for you. This is because the files need to be
 either explicitly shared to your account or need to be opened first in order
-for them to be listed in your Drive. See this [Stackoverflow question](https://stackoverflow.com/questions/62414423/google-drive-api-list-files-in-a-shared-folder-that-are-i-have-not-accessed-ye).
+for them to be listed in your Drive. See this
+[Stackoverflow question](https://stackoverflow.com/questions/62414423/google-drive-api-list-files-in-a-shared-folder-that-are-i-have-not-accessed-ye).
 
 ## Other Useful Trackers
 
