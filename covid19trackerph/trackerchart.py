@@ -29,6 +29,13 @@ import plotly.express as px
 SCRIPT_DIR = pathlib.Path(os.path.dirname(os.path.abspath(__file__))).parent
 CHART_OUTPUT = os.path.join(SCRIPT_DIR, "charts")
 TABLE_OUTPUT = os.path.join(SCRIPT_DIR, "_includes", "tracker", "charts")
+
+# Max width of the grid is 1000px. Change these values when the layout is
+# changed.
+# See _assets/stylesheets/_variables.scss
+CHART_WIDTH = 1000
+CHART_HEIGHT = CHART_WIDTH * 9 / 16  # 16:9 aspect ratio
+
 TEMPLATE = 'plotly_dark'
 PERIOD_DAYS = [14, 30]
 WEEKLY_FREQ = 'W-SUN'
@@ -87,7 +94,8 @@ def write_chart(fig, filename):
     fig.update_layout(margin=dict(l=5, r=5, b=50, t=70))
     # Max width of the grid is 1000px. Change these values when the layout
     # is changed.
-    fig.write_image(f"{CHART_OUTPUT}/{filename}.png", width=1000, height=800)
+    fig.write_image(f"{CHART_OUTPUT}/{filename}.png",
+                    width=CHART_WIDTH, height=CHART_HEIGHT)
     fig.write_html(f"{CHART_OUTPUT}/{filename}.html", include_plotlyjs='cdn',
                    full_html=False)
 
