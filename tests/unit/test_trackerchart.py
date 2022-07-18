@@ -9,6 +9,8 @@ import pytest
 import covid19trackerph.trackerchart as tc
 
 
+# pylint: disable=missing-function-docstring
+
 # TODO: parameterize this test
 def test_filter_date_range():
     columns = ["date", "fruit"]
