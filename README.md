@@ -23,86 +23,44 @@ current development setup.
 
 ### install-dependencies script
 
-Run the dependency installation script below to install the needed Ruby and
-NPM packages for building the site.
+Run the `setup` make target to install the needed Ruby and NPM packages for
+building the site.
 
 ```bash
-./install-dependencies.sh
+make setup
 ```
+
+In its current form, it runs the `install-dependencies.sh` script which installs
+the dependency packages. However, this is written for Ubuntu which uses the apt
+package manager. If you're on a different platform, please consider updating the
+the script to accomodate your specific environment. I'll be happy to merge your
+pull request if you submit one.
 
 ### Python
 
 Python can be installed from [python.org](https://www.python.org/). If you're
 setting up your project on a then most probably it already has Python installed.
 
-There are also several ways to setup a Python development environment which is
-why I didn't create a script for it. Some people may have a personal preference
-in setting up their development environments. I have listed below steps that
-beginners can follow to setup their development environments. For more advanced,
-developers, you can use whatever workflow you like. However, make sure to
-install **Poetry** for the dependency management.
-
-#### pyenv
-
-pyenv is a recommended way to manage multiple python versions and virtual
-environments. You will need this to avoid changing your OS-installed Python
-version. You may follow the steps below to install pyenv in a Linux distro.
-If the steps below do not work, follow the installation instructions for your OS
-or distro in the [pyenv GitHub page](https://github.com/pyenv/pyenv).
+There are also several ways to setup a Python development environment but I have
+created a script for it for my typical development environment setup which is
+pyenv + Poetry. For those who are using Ubuntu (or WSL Ubuntu), you can run the
+`setup-python` make target.
 
 ```bash
-curl https://pyenv.run | bash
+make setup-python
 ```
 
-Once you have it installed, install python version 3.9.13.
-
-```bash
-pyenv install -v 3.9.13
-```
-
-Set 3.9.13 as the project's Python version.
-
-```bash
-pyenv local 3.9.13
-```
-
-#### Poetry
-
-Poetry is used for dependency managemant.
-
-```bash
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-```
-
-You can see [https://python-poetry.org/](https://python-poetry.org/) for more info.
-
-Once you have Poetry installed, create a virtual environment.
-
-```bash
-python -m venv venv
-```
-
-Then activate the virtual environment.
-
-```bash
-source venv/bin/activate
-```
-
-To install the Python dependencies using Poetry, run the command below.
-
-```bash
-poetry install
-```
-
-See [pyproject.toml](./pyproject.toml) for the list of dependencies in this
-project.
+This target executes the `setup-python.sh` script which installs pyenv and
+Poetry. If you prefer a different method of creating your virtual environments
+then you may do so. The required packages are listed in the `pyproject.toml`
+file.
 
 ### Hardware Requirements
 
 Due to the amount of data that's available in the Data Drop, you will need
 around 10GB of RAM to run the update-tracker.py script on an 8-core machine.
 If you only have ~8GB of physical RAM, consider increasing your swap partition
-(if in Linux) or virtual memory (if in Windows).
+(if in Linux).
 
 If you're on WSL, you can set your memory through the `.wslconfig` or
 `wsl.config` files. The configuration settings are documented
@@ -137,7 +95,7 @@ to understand how the API works and follow the
 to create your client secret file.
 
 Copy the client secret file to your project directory and rename the file as
-'client_secret.json'
+`client_secret.json`.
 
 ### Open the Files in the DOH Data Drop Google Drive Folder
 
