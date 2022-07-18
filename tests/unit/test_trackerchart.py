@@ -20,7 +20,7 @@ def test_filter_date_range():
         ["2021-10-13", "eggplant"]
     ]
     df = pd.DataFrame(data, columns=columns)
-    df['date'] = df.apply(lambda row : pd.to_datetime(row['date']), axis=1)
+    df['date'] = df.apply(lambda row: pd.to_datetime(row['date']), axis=1)
     # with date column arg
     # both start and end
     filtered = tc.filter_date_range(df, start=pd.to_datetime("2021-10-10"),
@@ -92,7 +92,7 @@ def test_filter_latest():
         ["2021-10-13", "eggplant"]
     ]
     df = pd.DataFrame(data, columns=columns)
-    df['date'] = df.apply(lambda row : pd.to_datetime(row['date']), axis=1)
+    df['date'] = df.apply(lambda row: pd.to_datetime(row['date']), axis=1)
     # with date column arg
     # return latest True
     filtered = tc.filter_latest(df, 3, date_column='date')
@@ -127,12 +127,12 @@ def test_filter_latest():
     assert 'eggplant' not in filtered.values
 
 
-@pytest.mark.parametrize("dayofweek, expected", 
-                        [
-                            (0, "banana"),
-                            (1, "calamansi"),
-                            (6, "apple")
-                        ])
+@pytest.mark.parametrize("dayofweek, expected",
+                         [
+                             (0, "banana"),
+                             (1, "calamansi"),
+                             (6, "apple")
+                         ])
 def test_filter_day_of_wek(dayofweek, expected):
     columns = ["date", "fruit"]
     data = [
@@ -145,16 +145,16 @@ def test_filter_day_of_wek(dayofweek, expected):
         ["2022-4-30", "orange"]
     ]
     df = pd.DataFrame(data, columns=columns)
-    df['date'] = df.apply(lambda row : pd.to_datetime(row['date']), axis=1)
+    df['date'] = df.apply(lambda row: pd.to_datetime(row['date']), axis=1)
     filtered = tc.filter_day_of_week(df, 'date', dayofweek=dayofweek)
     assert filtered['fruit'].values[0] == expected
 
 
-@pytest.mark.parametrize("cache_mtime, path_mtime, expected", 
-                        [
-                            (10, 15, True),
-                            (15, 10, False)
-                        ])
+@pytest.mark.parametrize("cache_mtime, path_mtime, expected",
+                         [
+                             (10, 15, True),
+                             (15, 10, False)
+                         ])
 def test_cache_needs_refresh_1_path(mocker, cache_mtime, path_mtime, expected):
     cache = mocker.MagicMock(pathlib.Path)
     cache.exists.return_value = True
@@ -172,13 +172,13 @@ def test_cache_needs_refresh_1_path(mocker, cache_mtime, path_mtime, expected):
     assert expected == result
 
 
-@pytest.mark.parametrize("cache_mtime, path_mtimes, expected", 
-                        [
-                            (10, (15, 10), True),
-                            (10, (10, 14), True),
-                            (10, (15, 14), True),
-                            (15, (10, 10), False),
-                        ])
+@pytest.mark.parametrize("cache_mtime, path_mtimes, expected",
+                         [
+                             (10, (15, 10), True),
+                             (10, (10, 14), True),
+                             (10, (15, 14), True),
+                             (15, (10, 10), False),
+                         ])
 def test_cache_needs_refresh_multiple_path(mocker, cache_mtime, path_mtimes, expected):
     cache = mocker.MagicMock(pathlib.Path)
     cache.exists.return_value = True
@@ -212,13 +212,13 @@ def test_cache_needs_refresh_no_cache(mocker):
     assert True == result
 
 
-@pytest.mark.parametrize("exists, rebuild, expect_mkdir, expect_rmtree", 
-                        [
-                            (False, False, True, False),
-                            (True, False, False, False),
-                            (False, True, True, False),
-                            (True, True, True, True)
-                        ])
+@pytest.mark.parametrize("exists, rebuild, expect_mkdir, expect_rmtree",
+                         [
+                             (False, False, True, False),
+                             (True, False, False, False),
+                             (False, True, True, False),
+                             (True, True, True, True)
+                         ])
 def test_create_dir(mocker, exists, rebuild, expect_mkdir, expect_rmtree):
     path = "/my/test/path"
     mock_os_path_exists = mocker.patch('os.path.exists')
