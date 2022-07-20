@@ -1,4 +1,5 @@
 """Unit tests for the trackerchart module."""
+# pylint: disable=missing-function-docstring
 
 import os
 import pathlib
@@ -9,10 +10,46 @@ import pytest
 import covid19trackerph.trackerchart as tc
 
 
-# pylint: disable=missing-function-docstring
+def test_plot_for_period():
+    columns = ["date", "fruit"]
+    data = [
+        ["2021-10-09", "apple"],
+        ["2021-10-10", "banana"],
+        ["2021-10-11", "calamansi"],
+        ["2021-10-12", "durian"],
+        ["2021-10-13", "eggplant"]
+    ]
+    df = pd.DataFrame(data, columns=columns)
+    filter_call_parameters = []
+    plot_call_parameters = []
+    write_chart_call_parameters = []
+    kwargs = {}
 
-# TODO: parameterize this test
+    def filter_fn(df, days):
+        filter_call_parameters.append([df, days])
+
+    def plot_fn(df, **kwargs):
+        plot_call_parameters.append([df, kwargs])
+        kwargs['write_chart']("", "testfilename")
+
+    def write_chart_fn(fig, filename):
+        write_chart_call_parameters.append([fig, filename])
+    kwargs['write_chart'] = write_chart_fn
+
+    tc.plot_for_period(df, plot_fn=plot_fn, filter_df=filter_fn, **kwargs)
+
+    assert len(filter_call_parameters) == len(tc.PERIOD_DAYS)
+
+    # plot the whole period + plot for each period
+    assert len(plot_call_parameters) == len(tc.PERIOD_DAYS) + 1
+
+    # check if the period is included in the in filename
+    assert str(tc.PERIOD_DAYS[0]) in write_chart_call_parameters[1][1]
+    assert str(tc.PERIOD_DAYS[1]) in write_chart_call_parameters[2][1]
+
+
 def test_filter_date_range():
+    # TODO: parameterize this test
     columns = ["date", "fruit"]
     data = [
         ["2021-10-09", "apple"],
