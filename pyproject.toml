@@ -20,6 +20,7 @@ kaleido = "0.2.1"
 autopep8 = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
+mypy = "^0.971"
 
 [tool.poetry.scripts]
 updatetracker = "covid19trackerph.updatetracker:main"
