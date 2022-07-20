@@ -1,6 +1,6 @@
 # COVID-19 Tracker Philippines
 
-![example workflow](https://github.com/donfiguerres/COVID-19-Tracker-PH/actions/workflows/ci.yml/badge.svg)
+![actions workflow](https://github.com/donfiguerres/COVID-19-Tracker-PH/actions/workflows/ci.yml/badge.svg)
 
 This serves as a supplementary tracker for the
 [COVID-19 Tracker](https://www.doh.gov.ph/covid19tracker) maintained by the
@@ -8,8 +8,13 @@ This serves as a supplementary tracker for the
 tracker are pulled from DOH's
 [data drop](https://drive.google.com/drive/folders/1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o).
 
-In its current form, this project is actually a static report generator using
-the DOH Data Drop as a data source.
+This project started as a report generator initially to track the dalays between
+testing and confirmation/reporting but evolved into a tracking and reports page
+where I've experimented with Python tools, frontend frameworks, and CI/CD
+workflows.
+
+In its current form, it is a static report generator using the DOH Data Drop as
+a data source.
 
 **Disclaimer: I am not affiliated with the DOH or any government agency. This is
 my own personal project.**
@@ -155,10 +160,6 @@ updatetracker --folder-id=12l_bfB_wuQ8wrauCbesKURswRJFl-ih_
 * Create own icon.
 * Change about image.
 * Migrate to [Next.js](https://nextjs.org/).
-
-### Others
-
-* git repo cleanup - ongoing
 
 ## Limitations
 
