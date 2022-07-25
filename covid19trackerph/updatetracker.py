@@ -3,7 +3,6 @@
 import os
 import sys
 import traceback
-import glob
 import logging
 import argparse
 import pathlib
@@ -18,17 +17,17 @@ SCRIPT_DIR = pathlib.Path(os.path.dirname(os.path.abspath(__file__))).parent
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-download", action="store_true",
-                    help="skip download of data")
+                        help="skip download of data")
     parser.add_argument("--folder-id", nargs='?',
-                    help="specify the folder id of the latest datadrop")
+                        help="specify the folder id of the latest datadrop")
     parser.add_argument("--data-dir", nargs='?', default=datadrop.DATA_DIR,
-                    help="specify the directory of the data set")
+                        help="specify the directory of the data set")
     parser.add_argument("--rebuild", action="store_true",
-                    help="rebuild chart directory")
+                        help="rebuild chart directory")
     parser.add_argument("--deploy", action="store_true",
-                    help="copy generated charts to the tracker directory")
+                        help="copy generated charts to the tracker directory")
     parser.add_argument("--loglevel", default="INFO",
-                    help="set log level")
+                        help="set log level")
     return parser.parse_args()
 
 
