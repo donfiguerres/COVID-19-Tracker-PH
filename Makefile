@@ -13,9 +13,7 @@ setup-python:
 serve:
 	bundle exec jekyll serve --drafts
 
-build: update-charts build-site
-
-build-site:
+build:
 	bundle exec jekyll build
 
 # Skipping downloads here for the meantime due to errors in reading the
