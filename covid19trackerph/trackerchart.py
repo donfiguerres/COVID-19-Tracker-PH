@@ -14,7 +14,6 @@ mun: municipality
 import os
 from datetime import timedelta
 import logging
-import functools
 import shutil
 import pathlib
 import multiprocessing as mp
@@ -133,21 +132,19 @@ def filter_date_range(data, start=None, end=None, date_column=None):
         if start and end:
             return data[(data[date_column] >= start) &
                         (data[date_column] <= end)]
-        elif start:
+        if start:
             return data[data[date_column] >= start]
-        elif end:
+        if end:
             return data[data[date_column] <= end]
-        else:
-            raise ValueError("Either start or end should not be None")
+        raise ValueError("Either start or end should not be None")
     else:
         if start and end:
             return data[(data.index >= start) & (data.index <= end)]
-        elif start:
+        if start:
             return data[data.index >= start]
-        elif end:
+        if end:
             return data[data.index <= end]
-        else:
-            raise ValueError("Either start or end should not be None")
+        raise ValueError("Either start or end should not be None")
 
 
 def filter_latest(data, days, date_column=None, return_latest=True):
@@ -184,9 +181,9 @@ def doubling_time(series):
     """Calclulate the doubling time."""
     y = series.to_numpy()
     x = np.arange(y.shape[0])
-    f = interp1d(y, x, fill_value="extrapolate")
+    func = interp1d(y, x, fill_value="extrapolate")
     y_half = y / 2.0
-    x_interp = f(y_half)
+    x_interp = func(y_half)
     return x - x_interp
 
 
@@ -574,7 +571,8 @@ def plot_summary(ci_data, test_data):
     # Using the format key on the cells will apply the formatting to all of
     # the columns and we don't want that applied to the first column so we need
     # to do the formatting for now.
-    def format_num(num): return f'{num:,}'
+    def format_num(num):
+        return f'{num:,}'
     date_format = "%Y-%m-%d"
     # confirmed cases
     last_case_reported = ci_data['DateRepConf'].max().strftime(date_format)
