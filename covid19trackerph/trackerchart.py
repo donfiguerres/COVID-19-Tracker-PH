@@ -117,8 +117,8 @@ def plot_for_period(
 
     kwargs_passed = kwargs.copy()
     # Append the period in days at the end of the filename.
-    write_fn = kwargs_passed['write_chart'] if 'write_chart' in kwargs_passed \
-        else write_chart
+    write_fn = (kwargs_passed['write_chart']
+                if 'write_chart' in kwargs_passed else write_chart)
 
     for days in PERIOD_DAYS:
         filtered = filter_df(df, days)
@@ -176,10 +176,12 @@ def filter_day_of_week(df, date, dayofweek=DAY_OF_WEEK) -> pd.DataFrame:
 
 
 def moving_average(data, column, days=7):
+    """Calculate the moving average."""
     return data[column].rolling(days).mean()
 
 
 def doubling_time(series):
+    """Calclulate the doubling time."""
     y = series.to_numpy()
     x = np.arange(y.shape[0])
     f = interp1d(y, x, fill_value="extrapolate")
@@ -189,17 +191,18 @@ def doubling_time(series):
 
 
 def reproduction_number(doubling_time):
-    """Calculate reproduction number using simple model."""
+    """Calculate the reproduction number using simple model."""
     # COVID-19 generation interval is around 5 days.
     return np.exp((np.log(2)/doubling_time) * 5)
 
 
 def weekly_grouper(date_col):
+    """Create weekly grouper."""
     return pd.Grouper(key=date_col, freq=WEEKLY_FREQ)
 
 
 def agg_count_cumsum_by_date(data, cumsum, group, date):
-    """ Aggregate using the count groupby function then get the cumsum of each
+    """Aggregate using the count groupby function then get the cumsum of each
     group by date. Non-observed dates are filled using data from the previous
     day.
     """
@@ -226,21 +229,25 @@ def aggregate(df, by, agg_fn='count', reset_index=None):
 
 
 def filter_top(data, by, criteria, num=10, agg_fn='count'):
+    """Return only the top data."""
     top = data.groupby(by).agg(agg_fn)[
         criteria].nlargest(num).reset_index()[by]
     return data[data[by].isin(top)]
 
 
 def filter_recovered(data):
+    """Return only the rows with 'RECOVERED' HealthStatus"""
     return data[data.HealthStatus == 'RECOVERED']
 
 
 def filter_died(data):
+    """Return only the rows with 'DIED' HealthStatus"""
     return data[data.HealthStatus == 'DIED']
 
 
 def plot_histogram(data, xaxis=None, xaxis_title=None, suffix="",
                    write_chart=write_chart):
+    """Generate histogram plots."""
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
     percentile_50 = desc['50%']
@@ -274,6 +281,7 @@ def plot_histogram(data, xaxis=None, xaxis_title=None, suffix="",
 
 
 def plot_line_chart(data, x_axis, y_axis, title, filename):
+    """Generate line chart."""
     fig = px.line(data, title=title, x=x_axis, y=y_axis)
     fig.write_image(fig, f"{filename}")
 
@@ -282,6 +290,7 @@ def plot_trend_chart(
         data, agg_func=None, x=None, y=None, title=None, filename=None,
         color=None, overlays=[],
         vertical_marker=None, write_chart=write_chart):
+    """Generate trend charts."""
     logging.info(f"Plotting {filename}")
     if x is None:
         x = data.index
@@ -345,6 +354,7 @@ def plot_trend_chart(
 def plot_horizontal_bar(
         data, agg_func='count', x=None, y=None, title=None, filename=None,
         color=None, order=None, categoryarray=None, write_chart=write_chart):
+    """Generate horizontal bar charts."""
     logging.info(f"Plotting {filename}")
     if color:
         agg = aggregate(data, [y, color], agg_func, color)
@@ -364,6 +374,7 @@ def plot_horizontal_bar(
 
 def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
                    filename=None, write_chart=write_chart):
+    """Generate pie charts."""
     if agg_func:
         data = aggregate(data, names, agg_func)
     fig = px.pie(data, values=values, names=names, title=title)
@@ -371,6 +382,7 @@ def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
 
 
 def plot_test(test_data):
+    """Plot test data."""
     # daily
     x = 'report_date'
     daily_columns = ['daily_output_samples_tested',
@@ -396,12 +408,14 @@ def plot_test(test_data):
 
 def plot_test_reports_comparison(ci_data, test_data,
                                  title_suffix="", filename_suffix=""):
+    """Plot test test and confirmation reports comparison."""
     # Daily reporting
     data_report_daily = ci_data['DateRepConf'].value_counts()
     logging.debug(data_report_daily)
 
 
 def plot_reporting(ci_data, days=None):
+    """Plot reporting data."""
     def filter_by_repconf(
         df, days): return filter_latest(
         df, days, date_column='DateRepConf')
@@ -419,6 +433,7 @@ def plot_reporting(ci_data, days=None):
 
 def plot_case_trend(ci_data, x, title="", filename="", colors=[],
                     vertical_marker=None, write_chart=write_chart):
+    """Generate plot case trend."""
     y = 'CaseCode'
     if colors:
         def plot_fn(agg_func, title, filename, color):
@@ -443,6 +458,7 @@ def plot_case_trend(ci_data, x, title="", filename="", colors=[],
 
 
 def plot_active_cases(ci_data):
+    """Generate active cases charts."""
     closed = None
     active = None
     for name, group in ci_data.groupby([CASE_STATUS]):
@@ -494,6 +510,7 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
                area_file_name=None, area_color=None,
                age_group_file_name=None, age_group_color=None,
                optional=None, health_status_filename=None, filter=None):
+    """Generated cases chart."""
     # Preprocessing can be done here in case we need the preprocessing to be
     # included in an async function call.
     if preprocess:
@@ -526,11 +543,15 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
 
 
 def filter_latest_by_onset(df, days):
-    """Need to be defined on top level for async multiprocessing."""
+    """Return latest data by date of onset.
+
+    Note: Need to be defined on top level for async multiprocessing.
+    """
     return filter_latest(df, days, 'DateOnset')
 
 
 def plot_ci_async(pool, data):
+    """Generate charts aynchronously."""
     return [
         # confirmed cases
         pool.apply_async(plot_cases, (data, 'Confirmed Cases',),
@@ -557,6 +578,7 @@ def plot_ci_async(pool, data):
 
 
 def plot_summary(ci_data, test_data):
+    """Generate summary table."""
     # Using the format key on the cells will apply the formatting to all of
     # the columns and we don't want that applied to the first column so we need
     # to do the formatting for now.
@@ -734,6 +756,7 @@ def calc_testing_aggregates_data(data):
 
 
 def cache_needs_refresh(cache, file_paths):
+    """Check if the cache needs refresh."""
     return True if not cache.exists() else any(
         file_path.stat().st_mtime > cache.stat().st_mtime
         for file_path in file_paths)
@@ -742,6 +765,7 @@ def cache_needs_refresh(cache, file_paths):
 def prepare_data(data_dir, file_pattern, apply=None, rebuild=False,
                  read_method=pd.read_csv):
     """Load data from  the given file name.
+
     This function will load from cache if the cache is older than the file. It
     also uses parallel processing to improve performance.
     """
@@ -771,6 +795,7 @@ def create_dir(path: str, rebuild: bool):
 
 
 def plot(script_dir: str, data_dir: str, rebuild: bool = False):
+    """Plot the charts."""
     create_dir(CHART_OUTPUT, rebuild)
     create_dir(TABLE_OUTPUT, rebuild)
 
