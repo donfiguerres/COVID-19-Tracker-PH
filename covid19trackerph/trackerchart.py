@@ -14,6 +14,7 @@ mun: municipality
 import os
 from datetime import timedelta
 import logging
+import functools
 import shutil
 import pathlib
 import multiprocessing as mp
@@ -116,13 +117,12 @@ def plot_for_period(
     plot_fn(df, **kwargs)
 
     kwargs_passed = kwargs.copy()
-    # Append the period in days at the end of the filename.
-    write_fn = (kwargs_passed['write_chart']
-                if 'write_chart' in kwargs_passed else write_chart)
+    write_fn = kwargs_passed.get('write_chart', write_chart)
 
     for days in PERIOD_DAYS:
         filtered = filter_df(df, days)
-        kwargs_passed['write_chart'] = (lambda fig, filename:
+        # Append the period in days at the end of the filename.
+        kwargs_passed['write_chart'] = (lambda fig, filename, days=days:
                                         write_fn(fig, f"{filename}{days}days"))
         plot_fn(filtered, **kwargs_passed)
 
