@@ -158,13 +158,13 @@ def filter_latest(data, days, date_column=None, return_latest=True):
     """
     if date_column:
         cutoff_date = data[date_column].max() - pd.Timedelta(days=days)
-        logging.debug(f"Filtering {date_column} cutoff {cutoff_date}.")
+        logging.debug("Filtering %s cutoff %s.", date_column, cutoff_date)
         if return_latest:
             return data[data[date_column] > cutoff_date]
         return data[data[date_column] <= cutoff_date]
     else:
         cutoff_date = data.index.max() - pd.Timedelta(days=days)
-        logging.debug(f"Filtering index cutoff {cutoff_date}.")
+        logging.debug("Filtering index cutoff %s.", cutoff_date)
         if return_latest:
             return data[data.index > cutoff_date]
         return data[data.index <= cutoff_date]
@@ -190,10 +190,10 @@ def doubling_time(series):
     return x - x_interp
 
 
-def reproduction_number(doubling_time):
+def reproduction_number(doubling_time_):
     """Calculate the reproduction number using simple model."""
     # COVID-19 generation interval is around 5 days.
-    return np.exp((np.log(2)/doubling_time) * 5)
+    return np.exp((np.log(2)/doubling_time_) * 5)
 
 
 def weekly_grouper(date_col):
@@ -246,7 +246,7 @@ def filter_died(data):
 
 
 def plot_histogram(data, xaxis=None, xaxis_title=None, suffix="",
-                   write_chart=write_chart):
+                   write_chart_fn=write_chart):
     """Generate histogram plots."""
     desc = data[xaxis].describe(percentiles=[0.5, 0.9])
     logging.debug(desc)
@@ -277,7 +277,7 @@ def plot_histogram(data, xaxis=None, xaxis_title=None, suffix="",
                           )
                       ]
                       )
-    write_chart(fig, f"{xaxis}{suffix}")
+    write_chart_fn(fig, f"{xaxis}{suffix}")
 
 
 def plot_line_chart(data, x_axis, y_axis, title, filename):
@@ -288,10 +288,10 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
 
 def plot_trend_chart(
         data, agg_func=None, x=None, y=None, title=None, filename=None,
-        color=None, overlays=[],
-        vertical_marker=None, write_chart=write_chart):
+        color=None, overlays=None,
+        vertical_marker=None, write_chart_fn=write_chart):
     """Generate trend charts."""
-    logging.info(f"Plotting {filename}")
+    logging.info("Plotting %s", filename)
     if x is None:
         x = data.index
     grouper = weekly_grouper(x)
@@ -341,21 +341,21 @@ def plot_trend_chart(
         ),
         yaxis=dict(fixedrange=False)
     )
-    write_chart(fig, f"{filename}")
+    write_chart_fn(fig, f"{filename}")
     for days in PERIOD_DAYS:
         current_date = data[x].max() if isinstance(
             x, str) else data.index.max()
         cutoff_date = current_date - pd.Timedelta(days=days)
         initial_range = [cutoff_date, current_date]
         fig['layout']['xaxis'].update(range=initial_range)
-        write_chart(fig, f"{filename}{days}days")
+        write_chart_fn(fig, f"{filename}{days}days")
 
 
 def plot_horizontal_bar(
         data, agg_func='count', x=None, y=None, title=None, filename=None,
-        color=None, order=None, categoryarray=None, write_chart=write_chart):
+        color=None, order=None, categoryarray=None, write_chart_fn=write_chart):
     """Generate horizontal bar charts."""
-    logging.info(f"Plotting {filename}")
+    logging.info("Plotting %s", filename)
     if color:
         agg = aggregate(data, [y, color], agg_func, color)
     else:
@@ -369,16 +369,16 @@ def plot_horizontal_bar(
     elif order:
         fig.update_layout(yaxis={'categoryorder': order})
     # else no ordering
-    write_chart(fig, f"{filename}")
+    write_chart_fn(fig, filename)
 
 
 def plot_pie_chart(data, agg_func=None, values=None, names=None, title=None,
-                   filename=None, write_chart=write_chart):
+                   filename=None, write_chart_fn=write_chart):
     """Generate pie charts."""
     if agg_func:
         data = aggregate(data, names, agg_func)
     fig = px.pie(data, values=values, names=names, title=title)
-    write_chart(fig, filename)
+    write_chart_fn(fig, filename)
 
 
 def plot_test(test_data):
@@ -406,19 +406,10 @@ def plot_test(test_data):
                          filename=column, color='REGION')
 
 
-def plot_test_reports_comparison(ci_data, test_data,
-                                 title_suffix="", filename_suffix=""):
-    """Plot test test and confirmation reports comparison."""
-    # Daily reporting
-    data_report_daily = ci_data['DateRepConf'].value_counts()
-    logging.debug(data_report_daily)
-
-
 def plot_reporting(ci_data, days=None):
     """Plot reporting data."""
-    def filter_by_repconf(
-        df, days): return filter_latest(
-        df, days, date_column='DateRepConf')
+    def filter_by_repconf(df, days=days):
+        return filter_latest(df, days, date_column='DateRepConf')
     to_plot = [
         ['SpecimenToRepConf', "Specimen Collection to Reporting"],
         ['SpecimenToRelease', "Specimen Collection To Result Release"],
@@ -431,8 +422,8 @@ def plot_reporting(ci_data, days=None):
                         xaxis=column, xaxis_title=title)
 
 
-def plot_case_trend(ci_data, x, title="", filename="", colors=[],
-                    vertical_marker=None, write_chart=write_chart):
+def plot_case_trend(ci_data, x, title="", filename="", colors=None,
+                    vertical_marker=None, write_chart_fn=write_chart):
     """Generate plot case trend."""
     y = 'CaseCode'
     if colors:
@@ -441,7 +432,7 @@ def plot_case_trend(ci_data, x, title="", filename="", colors=[],
                 plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
                                  filename=filename, color=color,
                                  vertical_marker=vertical_marker,
-                                 write_chart=write_chart))
+                                 write_chart_fn=write_chart_fn))
         for color in colors:
             plot_fn('count', title, f"{filename}{color}", color)
             plot_fn('cumsum', f"{title} - Cumulative",
@@ -452,7 +443,7 @@ def plot_case_trend(ci_data, x, title="", filename="", colors=[],
                 plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
                                  filename=filename,
                                  vertical_marker=vertical_marker,
-                                 write_chart=write_chart))
+                                 write_chart_fn=write_chart_fn))
         plot_fn('count', title, f"{filename}")
         plot_fn('cumsum', f"{title} - Cumulative", f"{filename}Cumulative")
 
@@ -467,13 +458,14 @@ def plot_active_cases(ci_data):
         elif name == 'ACTIVE':
             active = group
         else:
-            logging.warning(f"Ignoring group {name}")
+            logging.warning("Ignoring group %s", name)
     ci_agg = agg_count_cumsum_by_date(
         ci_data, 'CaseCode', REGION, 'DateOnset').reset_index()
     closed_agg = agg_count_cumsum_by_date(
         closed, 'CaseCode', REGION, DATE_CLOSED).reset_index()
 
-    def filter_sundays(df): return df[df['date'].dt.dayofweek == 6]
+    def filter_sundays(df):
+        return df[df['date'].dt.dayofweek == 6]
     # Creating common date columns for easier merging.
     ci_agg['date'] = ci_agg['DateOnset']
     ci_agg = filter_sundays(ci_agg)
@@ -498,7 +490,7 @@ def plot_active_cases(ci_data):
                             title="Top 10 "+area,
                             color="HealthStatus", order='total ascending')
     plot_horizontal_bar(
-        active, x='CaseCode', y='AgeGroup', filename=f"ActiveAgeGroup",
+        active, x='CaseCode', y='AgeGroup', filename="ActiveAgeGroup",
         title="Active Cases by Age Group", color='HealthStatus',
         categoryarray=AGE_GROUP_CATEGORYARRAY)
     plot_pie_chart(active, agg_func='count', values='CaseCode',
@@ -509,7 +501,7 @@ def plot_active_cases(ci_data):
 def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
                area_file_name=None, area_color=None,
                age_group_file_name=None, age_group_color=None,
-               optional=None, health_status_filename=None, filter=None):
+               optional=None, health_status_filename=None):
     """Generated cases chart."""
     # Preprocessing can be done here in case we need the preprocessing to be
     # included in an async function call.
@@ -646,7 +638,7 @@ def calc_case_info_data(data):
                        # There is no DateRepRem column in the 2020-07-10 data.
                        'DateOnset', 'DateRecover', 'DateDied']
     for column in convert_columns:
-        logging.debug(f"Converting column {column} to datetime")
+        logging.debug("Converting column %s to datetime", column)
         # Some of the data are invalid.
         data[column] = pd.to_datetime(data[column], errors='coerce')
     logging.info("Filling empty data")
@@ -769,7 +761,7 @@ def prepare_data(data_dir, file_pattern, apply=None, rebuild=False,
     This function will load from cache if the cache is older than the file. It
     also uses parallel processing to improve performance.
     """
-    logging.info(f"Reading {file_pattern}")
+    logging.info("Reading %s", file_pattern)
     cache = pathlib.Path(f"{data_dir}/{file_pattern}.pkl")
     matches = list(pathlib.Path(data_dir).glob(f"{file_pattern}"))
     if not (cache_needs_refresh(cache, matches) or rebuild):
