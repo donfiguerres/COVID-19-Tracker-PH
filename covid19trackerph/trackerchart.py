@@ -63,6 +63,7 @@ num_processes = 1 if (mp.cpu_count() <= 2) else mp.cpu_count() - 1
 
 def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
     """ Apply function to the dataframe using multiprocessing.
+
     The initial plan was to use modin but because there are still a lot of
     missing features and instability in modin, I've resorted to doing the
     parallel processing in here.
@@ -78,17 +79,19 @@ def apply_parallel(df: pd.DataFrame, func, n_proc=num_processes):
 
 
 def write_table(header, body, filename):
+    """Generate the table html file from the given data and filename."""
     logging.info("Writing %s", filename)
     table = "".join(f"<th>{cell}</th>" for cell in header)
     for row in body:
         row_html = "".join(f"<td>{cell}</td>" for cell in row)
         table += f"<tr>{row_html}</tr>"
     table = f"<div><table>{table}</table></div>"
-    with open(f"{TABLE_OUTPUT}/{filename}.html", 'w', encoding='utf-8') as f:
-        f.write(table)
+    with open(f"{TABLE_OUTPUT}/{filename}.html", 'w', encoding='utf-8') as file:
+        file.write(table)
 
 
 def write_chart(fig, filename):
+    """Generate the chart files from the given figure object and filename."""
     logging.info("Writing %s", filename)
     fig.update_layout(template=TEMPLATE)
     fig.update_layout(margin=dict(l=5, r=5, b=50, t=70))
@@ -106,6 +109,7 @@ def plot_for_period(
         filter_df: typing.Callable[[pd.DataFrame, int], pd.DataFrame],
         **kwargs):
     """Execute the plot function for the overall data and for each PERIOD_DAYS.
+
     The plot function must take a 'write_chart' keyword argument which is the
     function that writes the chart to a file.
     """
