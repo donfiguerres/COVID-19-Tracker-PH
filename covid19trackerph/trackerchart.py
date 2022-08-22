@@ -137,14 +137,13 @@ def filter_date_range(data, start=None, end=None, date_column=None):
         if end:
             return data[data[date_column] <= end]
         raise ValueError("Either start or end should not be None")
-    else:
-        if start and end:
-            return data[(data.index >= start) & (data.index <= end)]
-        if start:
-            return data[data.index >= start]
-        if end:
-            return data[data.index <= end]
-        raise ValueError("Either start or end should not be None")
+    if start and end:
+        return data[(data.index >= start) & (data.index <= end)]
+    if start:
+        return data[data.index >= start]
+    if end:
+        return data[data.index <= end]
+    raise ValueError("Either start or end should not be None")
 
 
 def filter_latest(data, days, date_column=None, return_latest=True):
@@ -159,12 +158,12 @@ def filter_latest(data, days, date_column=None, return_latest=True):
         if return_latest:
             return data[data[date_column] > cutoff_date]
         return data[data[date_column] <= cutoff_date]
-    else:
-        cutoff_date = data.index.max() - pd.Timedelta(days=days)
-        logging.debug("Filtering index cutoff %s.", cutoff_date)
-        if return_latest:
-            return data[data.index > cutoff_date]
-        return data[data.index <= cutoff_date]
+
+    cutoff_date = data.index.max() - pd.Timedelta(days=days)
+    logging.debug("Filtering index cutoff %s.", cutoff_date)
+    if return_latest:
+        return data[data.index > cutoff_date]
+    return data[data.index <= cutoff_date]
 
 
 def filter_day_of_week(df, date, dayofweek=DAY_OF_WEEK) -> pd.DataFrame:

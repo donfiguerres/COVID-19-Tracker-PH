@@ -15,6 +15,7 @@ SCRIPT_DIR = pathlib.Path(os.path.dirname(os.path.abspath(__file__))).parent
 
 
 def _parse_args():
+    """Parse the CLI arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-download", action="store_true",
                         help="skip download of data")
@@ -32,11 +33,13 @@ def _parse_args():
 
 
 def set_loglevel(loglevel):
+    """Set log level."""
     numeric_level = getattr(logging, loglevel.upper())
     logging.basicConfig(level=numeric_level)
 
 
 def main():
+    """Main function"""
     args = _parse_args()
     if args.loglevel:
         set_loglevel(args.loglevel)
