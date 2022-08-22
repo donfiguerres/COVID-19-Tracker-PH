@@ -34,7 +34,7 @@ test:
 lint: lint-src lint-test
 
 lint-src:
-	pylint covid19trackerph --fail-under=9.11
+	pylint covid19trackerph --fail-under=9.19
 
 lint-test:
 	pylint tests --fail-under=8.5
