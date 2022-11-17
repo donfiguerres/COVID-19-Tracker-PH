@@ -110,19 +110,19 @@ def plot_for_period(
         **kwargs):
     """Execute the plot function for the overall data and for each PERIOD_DAYS.
 
-    The plot function must take a 'write_chart' keyword argument which is the
+    The plot function must take a 'write_chart_fn' keyword argument which is the
     function that writes the chart to a file.
     """
     plot_fn(df, **kwargs)
 
     kwargs_passed = kwargs.copy()
-    write_fn = kwargs_passed.get('write_chart', write_chart)
+    write_fn = kwargs_passed.get('write_chart_fn', write_chart)
 
     for days in PERIOD_DAYS:
         filtered = filter_df(df, days)
         # Append the period in days at the end of the filename.
-        kwargs_passed['write_chart'] = (lambda fig, filename, days=days:
-                                        write_fn(fig, f"{filename}{days}days"))
+        kwargs_passed['write_chart_fn'] = (lambda fig, filename, days=days:
+                                           write_fn(fig, f"{filename}{days}days"))
         plot_fn(filtered, **kwargs_passed)
 
 
@@ -284,8 +284,7 @@ def plot_line_chart(data, x_axis, y_axis, title, filename):
 
 def plot_trend_chart(
         data, agg_func=None, x=None, y=None, title=None, filename=None,
-        color=None, overlays=None,
-        vertical_marker=None, write_chart_fn=write_chart):
+        color=None, vertical_marker=None, write_chart_fn=write_chart):
     """Generate trend charts."""
     logging.info("Plotting %s", filename)
     if x is None:
@@ -302,8 +301,6 @@ def plot_trend_chart(
         )
     )
     fig = px.bar(dataplot, y=y, color=color, barmode='stack', title=title)
-    for trace in overlays:
-        fig.add_trace(trace)
     if vertical_marker:
         max_date = data[x].max() if agg_func else data.index.max()
         marker_date = max_date - pd.Timedelta(days=vertical_marker)
@@ -546,11 +543,13 @@ def plot_ci_async(pool, data):
                          dict(trend_col='DateOnset',
                               trend_colors=[CASE_REP_TYPE,
                                             'Region', ONSET_PROXY],
-                              area_file_name='TopConfirmedCase', area_color='HealthStatus',
+                              area_file_name='TopConfirmedCase',
+                              area_color='HealthStatus',
                               age_group_file_name='ConfirmedAgeGroup',
                               age_group_color='HealthStatus',
-                              optional=['health_status'], health_status_filename='ConfirmedPie',
-                              filter=filter_latest_by_onset)),
+                              optional=['health_status'],
+                              health_status_filename='ConfirmedPie',
+                              )),
         # recovery
         pool.apply_async(plot_cases, (data, 'Recovery',),
                          dict(preprocess=filter_recovered,

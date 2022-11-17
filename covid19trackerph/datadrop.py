@@ -11,7 +11,6 @@ import os
 import sys
 import logging
 import traceback
-import io
 import requests
 import re
 
@@ -31,8 +30,10 @@ DOH_README_FOLDER_ID = '1ZPPcVU4M7T-dtRyUceb0pMAd8ickYf8o'
 README_FILE_NAME = "READ ME FIRST.pdf"
 DATA_DIR = "data"
 
+
 class RemoteFileNotFoundError(Exception):
     pass
+
 
 class PDFParsingError(Exception):
     pass
@@ -52,7 +53,7 @@ def build_gdrive_service(credentials_path, token_path, scopes):
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                                credentials_path, scopes)
+                credentials_path, scopes)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open(token_path, 'wb') as token:
@@ -100,10 +101,11 @@ def download_gdrive_file(drive_service, file_id, download_path):
 
 def get_readme_id(drive_service):
     results = drive_service.files().list(
-                q=f"mimeType='application/pdf' and name contains 'READ ME' and parents in '{DOH_README_FOLDER_ID}' and trashed = false",
-                fields="nextPageToken, files(id, name)",
-                supportsAllDrives=True,
-                includeItemsFromAllDrives=True).execute()
+        q=("mimeType='application/pdf' and name contains 'READ ME' and"
+           f"arents in '{DOH_README_FOLDER_ID}' and trashed = false"),
+        fields="nextPageToken, files(id, name)",
+        supportsAllDrives=True,
+        includeItemsFromAllDrives=True).execute()
     items = results.get('files', [])
     # We expect only one file in the folder.
     if len(items) > 1:
@@ -116,13 +118,14 @@ def get_readme_id(drive_service):
 
 def list_data_files(drive_service, folder_id):
     results = drive_service.files().list(
-                q=f"parents in '{folder_id}' and trashed = false",
-                fields="nextPageToken, files(id, name)",
-                supportsAllDrives=True,
-                includeItemsFromAllDrives=True).execute()
+        q=f"parents in '{folder_id}' and trashed = false",
+        fields="nextPageToken, files(id, name)",
+        supportsAllDrives=True,
+        includeItemsFromAllDrives=True).execute()
     items = results.get('files', [])
     if not items:
-        raise RemoteFileNotFoundError(f"No files listed in folder ID: {folder_id}")
+        raise RemoteFileNotFoundError(
+            f"No files listed in folder ID: {folder_id}")
     while True:
         for item in items:
             logging.info(f"Found file: {item['name']}")
