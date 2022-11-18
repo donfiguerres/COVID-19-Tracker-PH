@@ -163,6 +163,7 @@ def download_data_files(drive_service, folder_id):
 
 
 def extract_datadrop_link(filename):
+    """Extract the data drop link from the given PDF file"""
     pdf = PyPDF2.PdfFileReader(filename)
     for page in range(pdf.numPages):
         logging.debug(f"Reading PDF page: {page}")
