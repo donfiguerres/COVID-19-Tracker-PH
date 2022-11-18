@@ -62,6 +62,7 @@ def build_gdrive_service(credentials_path, token_path, scopes):
 
 
 def get_gdrive_id(url):
+    """Get the Google Drive id for the given URL."""
     matches = re.findall(r"[-\w]{25,}", url)
     # We only expect one match from the URL.
     for m in matches:
