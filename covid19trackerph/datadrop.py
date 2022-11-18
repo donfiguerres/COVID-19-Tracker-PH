@@ -73,10 +73,9 @@ def trim_readme_name(name):
     """"Remove date in name for easier tracking in the repo."""
     if '/' in name:
         return re.sub(r" (\(\d+)/(\d+\))", r"", name)
-    elif '_' in name:
+    if '_' in name:
         return re.sub(r" (\(\d+)_(\d+\))", r"", name)
-    else:
-        return(name)
+    return name
 
 
 def trim_data_file_name(name):
