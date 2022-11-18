@@ -155,11 +155,11 @@ def download_data_files(drive_service, folder_id):
         download_path = os.path.join(DATA_DIR, file_name)
         try:
             download_gdrive_file(drive_service, item['id'], download_path)
-        except errors.HttpError as e:
+        except errors.HttpError as error:
             if "Changelog" in item_file_name:
                 logging.warn(f"Failed to download {item_file_name}")
             else:
-                raise e
+                raise error
 
 
 def extract_datadrop_link(filename):
