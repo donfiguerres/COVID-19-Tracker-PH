@@ -346,7 +346,7 @@ def plot_trend_chart(
 
 def plot_horizontal_bar(
         data, agg_func='count', x=None, y=None, title=None, filename=None,
-        color=None, order=None, categoryarray=None, write_chart_fn=write_chart):
+        color=None, order=None, category_array=None, write_chart_fn=write_chart):
     """Generate horizontal bar charts."""
     logging.info("Plotting %s", filename)
     if color:
@@ -354,11 +354,11 @@ def plot_horizontal_bar(
     else:
         agg = aggregate(data, y, agg_func)
     fig = px.bar(agg, x=x, color=color, barmode='stack', title=f"{title}")
-    if categoryarray:
+    if category_array:
         # The order kwarg is intentionally disregarded since only the array
         # ordering uses categoryarray.
         fig.update_layout(yaxis={'categoryorder': 'array',
-                                 'categoryarray': categoryarray})
+                                 'categoryarray': category_array})
     elif order:
         fig.update_layout(yaxis={'categoryorder': order})
     # else no ordering
@@ -485,7 +485,7 @@ def plot_active_cases(ci_data):
     plot_horizontal_bar(
         active, x='CaseCode', y='AgeGroup', filename="ActiveAgeGroup",
         title="Active Cases by Age Group", color='HealthStatus',
-        categoryarray=AGE_GROUP_CATEGORY_ARRAY)
+        category_array=AGE_GROUP_CATEGORY_ARRAY)
     plot_pie_chart(active, agg_func='count', values='CaseCode',
                    names='HealthStatus', title='Active Cases Health Status',
                    filename='ActivePie')
@@ -516,7 +516,7 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
     plot_for_period(data, plot_horizontal_bar, filter_latest_by_onset,
                     x='CaseCode', y='AgeGroup', filename=age_group_file_name,
                     title=f"{title} by Age Group", color=age_group_color,
-                    categoryarray=AGE_GROUP_CATEGORY_ARRAY)
+                    category_array=AGE_GROUP_CATEGORY_ARRAY)
     # health status
     if optional and 'health_status' in optional:
         plot_for_period(data, plot_pie_chart,
