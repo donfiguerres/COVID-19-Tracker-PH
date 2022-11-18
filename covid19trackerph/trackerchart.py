@@ -48,12 +48,12 @@ RECOVER_PROXY = 'RecoverProxy'
 CASE_STATUS = 'CaseStatus'
 DATE_CLOSED = 'DateClosed'
 
-AGE_GROUP_CATEGORYARRAY = ['0 to 4', '5 to 9', '10 to 14', '15 to 19',
-                           '20 to 24', '25 to 29', '30 to 34', '35 to 39',
-                           '40 to 44', '45 to 49', '50 to 54', '55 to 59',
-                           '60 to 64', '65 to 69', '70 to 74', '75 to 79',
-                           '80+', 'No Data'
-                           ]
+AGE_GROUP_CATEGORY_ARRAY = ['0 to 4', '5 to 9', '10 to 14', '15 to 19',
+                            '20 to 24', '25 to 29', '30 to 34', '35 to 39',
+                            '40 to 44', '45 to 49', '50 to 54', '55 to 59',
+                            '60 to 64', '65 to 69', '70 to 74', '75 to 79',
+                            '80+', 'No Data'
+                            ]
 
 
 # Number of processes to launch when applying a parallel processing.
@@ -485,7 +485,7 @@ def plot_active_cases(ci_data):
     plot_horizontal_bar(
         active, x='CaseCode', y='AgeGroup', filename="ActiveAgeGroup",
         title="Active Cases by Age Group", color='HealthStatus',
-        categoryarray=AGE_GROUP_CATEGORYARRAY)
+        categoryarray=AGE_GROUP_CATEGORY_ARRAY)
     plot_pie_chart(active, agg_func='count', values='CaseCode',
                    names='HealthStatus', title='Active Cases Health Status',
                    filename='ActivePie')
@@ -516,7 +516,7 @@ def plot_cases(data, title, preprocess=None, trend_col=None, trend_colors=None,
     plot_for_period(data, plot_horizontal_bar, filter_latest_by_onset,
                     x='CaseCode', y='AgeGroup', filename=age_group_file_name,
                     title=f"{title} by Age Group", color=age_group_color,
-                    categoryarray=AGE_GROUP_CATEGORYARRAY)
+                    categoryarray=AGE_GROUP_CATEGORY_ARRAY)
     # health status
     if optional and 'health_status' in optional:
         plot_for_period(data, plot_pie_chart,
