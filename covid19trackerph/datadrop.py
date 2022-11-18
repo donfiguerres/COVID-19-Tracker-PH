@@ -94,10 +94,10 @@ def download_gdrive_file(drive_service, file_id, download_path):
     with open(download_path, 'wb+') as fh:
         downloader = MediaIoBaseDownload(fh, request)
         done = False
-        logging.info(f"Downloading {download_path}")
+        logging.info("Downloading %s", download_path)
         while done is False:
             status, done = downloader.next_chunk()
-            logging.info("Downloading %d%%." % int(status.progress() * 100))
+            logging.info("Downloading %d%%.", int(status.progress() * 100))
 
 
 def get_readme_id(drive_service):
