@@ -32,11 +32,11 @@ DATA_DIR = "data"
 
 
 class RemoteFileNotFoundError(Exception):
-    pass
+    """Remote Google Drive file not found"""
 
 
 class PDFParsingError(Exception):
-    pass
+    """Failed to parse PDF file"""
 
 
 def build_gdrive_service(credentials_path, token_path, scopes):
