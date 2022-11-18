@@ -401,7 +401,7 @@ def plot_test(test_data):
 
 def plot_reporting(ci_data, days=None):
     """Plot reporting data."""
-    def filter_by_repconf(df, days=days):
+    def filter_by_rep_conf(df, days=days):
         return filter_latest(df, days, date_column='DateRepConf')
     to_plot = [
         ['SpecimenToRepConf', "Specimen Collection to Reporting"],
@@ -411,7 +411,7 @@ def plot_reporting(ci_data, days=None):
     for col_title in to_plot:
         column = col_title[0]
         title = col_title[1]
-        plot_for_period(ci_data, plot_histogram, filter_by_repconf,
+        plot_for_period(ci_data, plot_histogram, filter_by_rep_conf,
                         xaxis=column, xaxis_title=title)
 
 
