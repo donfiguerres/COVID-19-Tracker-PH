@@ -420,16 +420,16 @@ def plot_case_trend(ci_data, x, title="", filename="", colors=None,
     """Generate plot case trend."""
     y = 'CaseCode'
     if colors:
-        def plot_fn(agg_func, title, filename, color):
+        def plot_fn_color(agg_func, title, filename, color):
             return (
                 plot_trend_chart(ci_data, agg_func, x=x, y=y, title=title,
                                  filename=filename, color=color,
                                  vertical_marker=vertical_marker,
                                  write_chart_fn=write_chart_fn))
         for color in colors:
-            plot_fn('count', title, f"{filename}{color}", color)
-            plot_fn('cumsum', f"{title} - Cumulative",
-                    f"{filename}Cumulative{color}", color)
+            plot_fn_color('count', title, f"{filename}{color}", color)
+            plot_fn_color('cumsum', f"{title} - Cumulative",
+                          f"{filename}Cumulative{color}", color)
     else:
         def plot_fn(agg_func, title, filename):
             return (
