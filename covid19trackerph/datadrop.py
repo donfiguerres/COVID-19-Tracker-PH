@@ -113,7 +113,7 @@ def get_readme_id(drive_service):
     if len(items) > 1:
         logging.warning("The READ ME contents have changed.")
     for item in items:
-        logging.info(f"Found file: {item['name']}")
+        logging.info("Found file: %s", item['name'])
         return item['id']
     raise RemoteFileNotFoundError("DOH Readme Not Found")
 
