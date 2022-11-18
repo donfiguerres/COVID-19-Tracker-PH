@@ -187,6 +187,7 @@ def get_full_url(url):
 
 
 def get_datadrop_url(drive_service):
+    """Get the data drop URL"""
     readme_file_id = get_readme_id(drive_service)
     download_gdrive_file(drive_service, readme_file_id, README_FILE_NAME)
     extracted_url = extract_datadrop_link(README_FILE_NAME)
