@@ -182,6 +182,7 @@ def extract_datadrop_link(filename):
 
 
 def get_full_url(url):
+    """Get full URL from the given URL"""
     return requests.head(url).headers['location']
 
 
