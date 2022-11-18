@@ -41,24 +41,24 @@ class PDFParsingError(Exception):
 
 def build_gdrive_service(credentials_path, token_path, scopes):
     """ This function is derived from the Google Drive API quickstart guide. """
-    creds = None
+    credentials = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
     if os.path.exists(token_path):
         with open(token_path, 'rb') as token:
-            creds = pickle.load(token)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            credentials = pickle.load(token)
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 credentials_path, scopes)
-            creds = flow.run_local_server(port=0)
+            credentials = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open(token_path, 'wb') as token:
-            pickle.dump(creds, token)
-    return build('drive', 'v3', credentials=creds)
+            pickle.dump(credentials, token)
+    return build('drive', 'v3', credentials=credentials)
 
 
 def get_gdrive_id(url):
