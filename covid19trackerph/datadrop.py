@@ -10,11 +10,11 @@ This module will dowload the latest data to the 'data' directory.
 import os
 import sys
 import logging
-import traceback
-import requests
-import re
-
 import pickle
+import re
+import traceback
+
+import requests
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
