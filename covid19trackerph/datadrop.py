@@ -196,6 +196,7 @@ def get_datadrop_url(drive_service):
 
 
 def download(folder_id=None):
+    """Download the data drop files"""
     drive_service = build_gdrive_service(CLIENT_KEY_PATH, TOKEN, ACCESS_SCOPES)
     if not folder_id:
         datadrop_short_url = get_datadrop_url(drive_service)
