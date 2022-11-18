@@ -536,7 +536,7 @@ def filter_latest_by_onset(df, days):
 
 
 def plot_ci_async(pool, data):
-    """Generate charts aynchronously."""
+    """Generate charts asynchronously."""
     return [
         # confirmed cases
         pool.apply_async(plot_cases, (data, 'Confirmed Cases',),
