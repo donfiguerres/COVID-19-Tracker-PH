@@ -131,7 +131,7 @@ def list_data_files(drive_service, folder_id):
             f"No files listed in folder ID: {folder_id}")
     while True:
         for item in items:
-            logging.info(f"Found file: {item['name']}")
+            logging.info("Found file: %s", item['name'])
             yield item
         if results.get('nextPageToken', None) is None:
             break
