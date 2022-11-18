@@ -65,8 +65,8 @@ def get_gdrive_id(url):
     """Get the Google Drive id for the given URL."""
     matches = re.findall(r"[-\w]{25,}", url)
     # We only expect one match from the URL.
-    for m in matches:
-        return m
+    for match in matches:
+        return match
 
 
 def trim_readme_name(name):
