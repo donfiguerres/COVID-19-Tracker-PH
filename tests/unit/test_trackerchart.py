@@ -30,11 +30,11 @@ def test_plot_for_period():
 
     def plot_fn(df, **kwargs):
         plot_call_parameters.append([df, kwargs])
-        kwargs['write_chart']("", "testfilename")
+        kwargs['write_chart_fn']("", "testfilename")
 
     def write_chart_fn(fig, filename):
         write_chart_call_parameters.append([fig, filename])
-    kwargs['write_chart'] = write_chart_fn
+    kwargs['write_chart_fn'] = write_chart_fn
 
     tc.plot_for_period(df, plot_fn=plot_fn, filter_df=filter_fn, **kwargs)
 
