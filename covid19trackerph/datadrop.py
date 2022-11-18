@@ -170,11 +170,11 @@ def extract_datadrop_link(filename):
         pdf_page = pdf.getPage(page)
         page_object = pdf_page.getObject()
         if '/Annots' in page_object.keys():
-            ann = page_object['/Annots']
-            for a in ann:
-                u = a.getObject()
-                if '/URI' in u['/A'].keys():
-                    url = u['/A']['/URI']
+            annotations = page_object['/Annots']
+            for annotation in annotations:
+                urls = annotation.getObject()
+                if '/URI' in urls['/A'].keys():
+                    url = urls['/A']['/URI']
                     logging.debug("URL: %s", url)
                     if "DataDropArchives" not in url and "mailto:" not in url:
                         return url
