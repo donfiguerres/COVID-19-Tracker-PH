@@ -175,7 +175,7 @@ def extract_datadrop_link(filename):
                 u = a.getObject()
                 if '/URI' in u['/A'].keys():
                     url = u['/A']['/URI']
-                    logging.debug(f"URL: {url}")
+                    logging.debug("URL: %s", url)
                     if "DataDropArchives" not in url and "mailto:" not in url:
                         return url
     raise PDFParsingError(f"Failed to extract datadrop link from {filename}")
