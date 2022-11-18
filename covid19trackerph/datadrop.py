@@ -157,7 +157,7 @@ def download_data_files(drive_service, folder_id):
             download_gdrive_file(drive_service, item['id'], download_path)
         except errors.HttpError as error:
             if "Changelog" in item_file_name:
-                logging.warn(f"Failed to download {item_file_name}")
+                logging.info("Failed to download %s", item_file_name)
             else:
                 raise error
 
