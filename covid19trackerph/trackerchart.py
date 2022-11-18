@@ -177,7 +177,7 @@ def moving_average(data, column, days=7):
 
 
 def doubling_time(series):
-    """Calclulate the doubling time."""
+    """Calculate the doubling time."""
     y = series.to_numpy()
     x = np.arange(y.shape[0])
     func = interp1d(y, x, fill_value="extrapolate")
