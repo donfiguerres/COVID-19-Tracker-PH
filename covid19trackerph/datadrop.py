@@ -89,14 +89,15 @@ def trim_oddball_file_name(name):
 
 
 def download_gdrive_file(drive_service, file_id, download_path):
+    """Download the Google Drive file for the given file id."""
     request = drive_service.files().get_media(fileId=file_id)
-    fh = open(download_path, 'wb+')
-    downloader = MediaIoBaseDownload(fh, request)
-    done = False
-    logging.info(f"Downloading {download_path}")
-    while done is False:
-        status, done = downloader.next_chunk()
-        logging.info("Downloading %d%%." % int(status.progress() * 100))
+    with open(download_path, 'wb+') as fh:
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        logging.info(f"Downloading {download_path}")
+        while done is False:
+            status, done = downloader.next_chunk()
+            logging.info("Downloading %d%%." % int(status.progress() * 100))
 
 
 def get_readme_id(drive_service):
