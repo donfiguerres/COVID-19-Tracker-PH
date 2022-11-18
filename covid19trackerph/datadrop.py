@@ -214,6 +214,6 @@ def main():
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         logging.error(traceback.format_exc())
         sys.exit(1)
