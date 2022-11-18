@@ -166,7 +166,7 @@ def extract_datadrop_link(filename):
     """Extract the data drop link from the given PDF file"""
     pdf = PyPDF2.PdfFileReader(filename)
     for page in range(pdf.numPages):
-        logging.debug(f"Reading PDF page: {page}")
+        logging.debug("Reading PDF page: %s", page)
         pdf_page = pdf.getPage(page)
         page_object = pdf_page.getObject()
         if '/Annots' in page_object.keys():
