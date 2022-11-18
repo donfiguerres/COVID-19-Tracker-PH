@@ -643,7 +643,7 @@ def calc_case_info_data(data):
     data['Quarantined'].fillna('No Data', inplace=True)
     data['Admitted'].fillna('No Data', inplace=True)
     data['AgeGroup'].fillna('No Data', inplace=True)
-    max_date_repconf = data.DateRepConf.max()
+    max_date_rep_conf = data.DateRepConf.max()
     # Some incomplete entries have no dates so we need to check first before
     # making a computation.
     logging.info("Calculating specimen to reporting data")
@@ -684,8 +684,8 @@ def calc_case_info_data(data):
         if row[RECOVER_PROXY] == 'No Proxy'
         else(
             row['DateOnset'] + timedelta(days=14)
-            if row['DateOnset'] + timedelta(days=14) < max_date_repconf else
-            max_date_repconf), axis=1)
+            if row['DateOnset'] + timedelta(days=14) < max_date_rep_conf else
+            max_date_rep_conf), axis=1)
     # Add column for easily identifying newly reported cases.
     logging.info("Setting case report type")
     data[CASE_REP_TYPE] = data.apply(
@@ -693,7 +693,7 @@ def calc_case_info_data(data):
         if not row['DateRepConf']
         else (
             'New Case'
-            if row['DateRepConf'] == max_date_repconf
+            if row['DateRepConf'] == max_date_rep_conf
             else 'Previous Case'
         ),
         axis=1)
