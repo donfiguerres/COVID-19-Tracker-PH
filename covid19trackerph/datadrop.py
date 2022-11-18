@@ -206,6 +206,7 @@ def download(folder_id=None):
 
 
 def main():
+    """Main data drop download function"""
     download()
     return 0
 
