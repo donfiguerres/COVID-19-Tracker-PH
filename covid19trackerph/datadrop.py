@@ -138,6 +138,7 @@ def list_data_files(drive_service, folder_id):
 
 
 def download_data_files(drive_service, folder_id):
+    """Download the data files from the given Google Drive folder id"""
     if not os.path.exists(DATA_DIR):
         os.mkdir(DATA_DIR)
     items = list_data_files(drive_service, folder_id)
