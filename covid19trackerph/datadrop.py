@@ -119,6 +119,7 @@ def get_readme_id(drive_service):
 
 
 def list_data_files(drive_service, folder_id):
+    """Get a list of data files for the given folder id"""
     results = drive_service.files().list(
         q=f"parents in '{folder_id}' and trashed = false",
         fields="nextPageToken, files(id, name)",
